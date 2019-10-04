@@ -24,14 +24,14 @@ typedef struct _neuron {
     float activation;
     float bias;
 
-    axon_t* leftAxons;
-    axon_t* rightAxons;
-    size_t lAxons;
-    size_t rAxons;
+    axon_t** leftAxons;
+    axon_t** rightAxons;
+    size_t lAxonsCount;
+    size_t rAxonsCount;
 
 } neuron_t;
 
-neuron_t* create_neuron();
+neuron_t* create_neuron(size_t lAxonsCount, size_t rAxonsCount);
 void free_neuron(neuron_t* neuron);
 
 axon_t* create_axon();

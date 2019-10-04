@@ -31,6 +31,8 @@ typedef enum _fillMode {
 } fillMode_t;
 
 network_t* nw_build(size_t input, size_t output, size_t hidden, size_t hiddenCount);
+void nw_free(network_t* network);
 void nw_fill(fillMode_t fillMode, float value, float bias);
+void nw_print(network_t* network);
 
 #endif //ML_NETWORK_H

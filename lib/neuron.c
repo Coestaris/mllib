@@ -3,10 +3,21 @@
 //
 
 #include "neuron.h"
+uint64_t globalNeuronCounter = 0;
 
-neuron_t* create_neuron()
+neuron_t* create_neuron(size_t lAxonsCount, size_t rAxonsCount)
 {
     neuron_t* neuron = malloc(sizeof(neuron_t));
+    neuron->lAxonsCount = lAxonsCount;
+    neuron->rAxonsCount = rAxonsCount;
+
+    if(lAxonsCount == 0) neuron->leftAxons = NULL;
+    else neuron->leftAxons = malloc(sizeof(axon_t*) * lAxonsCount);
+
+    if(rAxonsCount == 0) neuron->rightAxons = NULL;
+    else neuron->rightAxons = malloc(sizeof(axon_t*) * rAxonsCount);
+    neuron->id = globalNeuronCounter++;
+
     return neuron;
 }
 
