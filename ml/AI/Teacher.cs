@@ -31,14 +31,14 @@ namespace ml.AI
         public void Teach(NeuralNetwork network)
         {
             var error = 0.0;
-            for (var i = 0; i < TasksDivision; i++)
+            for (var i = 0; i < 1; i++)
             {
-                network.ForwardPass(Tasks[i].Input);
-                error += network.CalculateError(Tasks[i].Expected);
+                network.ForwardPass(new double[2] { 0.05, 0.10 });
+                error += network.CalculateError(new double[2] { 0.01, 0.99 });
             }
 
-            error /= TasksDivision;
-            network.BackProp(error);
+            //error /= TasksDivision;
+            network.BackProp(new double[2] { 0.01, 0.99 }, error);
             Console.WriteLine(error);
         }
     }
