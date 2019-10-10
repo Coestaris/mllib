@@ -128,11 +128,11 @@ namespace ml.AI
             }
 
             //other layers derivatives
-            for (int l = Layers.Count - 2; l >= 0; l--)
+            for (int l = Layers.Count - 2; l >= 1; l--)
             {
                 derivativePacks[l] = new List<DerivativePack>();
                 var currentLayer = Layers[l];
-                prevLayer = l >= 1 ? Layers[l - 1] : null;
+                prevLayer = Layers[l - 1];
                 var nextLayer = Layers[l + 1];
 
                 //every neuron loop
@@ -158,6 +158,9 @@ namespace ml.AI
                         dA, dZ, dW, dB));
                 }
             }
+
+
+
 
             return 0;
         }
