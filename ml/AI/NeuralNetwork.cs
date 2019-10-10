@@ -17,7 +17,8 @@ namespace ml.AI
             for(var i = 0; i < layerSizes.Count; i++)
             {
                 Layers.Add(new NNLayer(layerSizes[i],
-                    i != layerSizes.Count - 1 ? layerSizes[i + 1] : -1));
+                    i != layerSizes.Count - 1 ? layerSizes[i + 1] : -1,
+                    i != 0 ? layerSizes[i - 1] : 0));
             }
         }
 
@@ -88,81 +89,70 @@ namespace ml.AI
 
         private double LearningRate = 0.5;
 
-        struct DerivativePack
+        internal void BackProp(double[] expected)
         {
-            public double   dA;
-            public double   dZ;
-            public double[] dW;
-            public double   dB;
-
-            public DerivativePack(double dA, double dZ, double[] dW, double dB)
-            {
-                this.dA = dA;
-                this.dZ = dZ;
-                this.dW = dW;
-                this.dB = dB;
-            }
-
-        }
-
-        internal double BackProp(double[] expected, double error)
-        {
-            var derivativePacks = new List<DerivativePack>[Layers.Count];
-
             //output layer derivatives
             var outputLayer = Layers.Last();
             var prevLayer = Layers[Layers.Count - 2];
-            derivativePacks[Layers.Count - 1] = new List<DerivativePack>();
 
-            for (int i = 0; i < outputLayer.Size; i++)
+            for (int n = 0; n < outputLayer.Size; n++)
             {
-                double dA = outputLayer.Activations[i] - expected[i];
-                double dZ = NNLayer.DSigmoid(outputLayer.Activations[i]);
-                double[] dW = new double[outputLayer.Size];
+                double dA = outputLayer.Activations[n] - expected[n];
+                double dZ = NNLayer.DSigmoid(outputLayer.Activations[n]);
                 for (int j = 0; j < prevLayer.Size; j++)
-                    dW[j] = dA * dZ * prevLayer.Activations[j];
+                    outputLayer.Derivatives[n].dW[j] = dA * dZ * prevLayer.Activations[j];
 
-                double dB = dA * dZ;
-                derivativePacks[Layers.Count - 1].Add(new DerivativePack(
-                    dA, dZ, dW, dB));
+                outputLayer.Derivatives[n].dA = dA;
+                outputLayer.Derivatives[n].dZ = dZ;
+                outputLayer.Derivatives[n].dB = dA * dZ;
             }
 
             //other layers derivatives
             for (int l = Layers.Count - 2; l >= 1; l--)
             {
-                derivativePacks[l] = new List<DerivativePack>();
                 var currentLayer = Layers[l];
                 prevLayer = Layers[l - 1];
                 var nextLayer = Layers[l + 1];
 
                 //every neuron loop
-                for (int i = 0; i < currentLayer.Size; i++)
+                for (int n = 0; n < currentLayer.Size; n++)
                 {
                     double dA = 0;
                     //next layer`s neurons loop
                     for (int j = 0; j < nextLayer.Size; j++)
                     {
-                        double nextDA = derivativePacks[l + 1][j].dA;
-                        double nextDZ = derivativePacks[l + 1][j].dZ;
-                        dA += nextDZ * nextDA * currentLayer.Weights[j * nextLayer.Size + i];
+                        double nextDA = nextLayer.Derivatives[j].dA;
+                        double nextDZ = nextLayer.Derivatives[j].dZ;
+                        dA += nextDZ * nextDA * currentLayer.Weights[j * nextLayer.Size + n];
                     }
 
-                    double dZ = NNLayer.DSigmoid(outputLayer.Activations[i]);
-                    double[] dW = new double[outputLayer.Size];
+                    double dZ = NNLayer.DSigmoid(currentLayer.Activations[n]);
                     if(prevLayer != null)
                         for (int j = 0; j < prevLayer.Size; j++)
-                            dW[j] = dA * dZ * prevLayer.Activations[j];
+                            currentLayer.Derivatives[n].dW[j] = dA * dZ * prevLayer.Activations[j];
 
-                    double dB = dA * dZ;
-                    derivativePacks[l].Add(new DerivativePack(
-                        dA, dZ, dW, dB));
+                    outputLayer.Derivatives[n].dA = dA;
+                    outputLayer.Derivatives[n].dZ = dZ;
+                    outputLayer.Derivatives[n].dB = dA * dZ;
                 }
             }
 
+            //apply the nudge
+            for (int l = Layers.Count - 1; l >= 1; l--)
+            {
+                var currentLayer = Layers[l];
+                prevLayer = Layers[l - 1];
+                for (int n = 0; n < currentLayer.Size; n++)
+                {
+                    //bias
+                    currentLayer.Biases[n] -= LearningRate * currentLayer.Derivatives[n].dB;
 
+                    //weight
+                    for (int p = 0; p < prevLayer.Size; p++)
+                        prevLayer.Weights[p * currentLayer.Size + n] -= LearningRate * currentLayer.Derivatives[n].dW[p];
 
-
-            return 0;
+                }
+            }
         }
     }
 }

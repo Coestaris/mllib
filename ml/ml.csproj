@@ -38,6 +38,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AI\DerivativePack.cs" />
     <Compile Include="AI\NeuralNetwork.cs" />
     <Compile Include="AI\NNLayer.cs" />
     <Compile Include="AI\Teacher.cs" />

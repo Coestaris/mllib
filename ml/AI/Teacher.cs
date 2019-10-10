@@ -38,7 +38,7 @@ namespace ml.AI
             }
 
             //error /= TasksDivision;
-            network.BackProp(new double[2] { 0.01, 0.99 }, error);
+            network.BackProp(new double[2] { 0.01, 0.99 });
             Console.WriteLine(error);
         }
     }

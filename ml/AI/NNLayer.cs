@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -16,7 +17,9 @@ namespace ml.AI
 
         public double[] Weights; //to right
 
-        public NNLayer(int size, int nextLayerSize)
+        public DerivativePack[] Derivatives;
+
+        public NNLayer(int size, int nextLayerSize, int prevLayerSize)
         {
             Size = size;
             NextLayerSize = nextLayerSize;
@@ -26,6 +29,12 @@ namespace ml.AI
 
             if(nextLayerSize != -1)
                 Weights = new double[size * nextLayerSize];
+
+            Derivatives = new DerivativePack[size];
+            for(int i = 0; i < size; i++)
+                Derivatives[i] = new DerivativePack() {
+                    dW = new double[prevLayerSize]
+                };
         }
 
         public void Fill()
@@ -77,15 +86,15 @@ namespace ml.AI
             else sb.AppendFormat("Hidden layer #{0}.", index);
 
             sb.Append(" Activations: [");
-            sb.Append(string.Join(", ", Activations.Select(p => p.ToString("0.00"))));
+            sb.Append(string.Join(", ", Activations.Select(p => p.ToString("0.0000"))));
 
             sb.Append("]. Biases: [");
-            sb.Append(string.Join(", ", Biases.Select(p => p.ToString("0.00"))));
+            sb.Append(string.Join(", ", Biases.Select(p => p.ToString("0.0000"))));
 
             if (Weights != null)
             {
                 sb.Append("]. Weights: [");
-                sb.Append(string.Join(", ", Weights.Select(p => p.ToString("0.00"))));
+                sb.Append(string.Join(", ", Weights.Select(p => p.ToString("0.0000"))));
 
             }
 
