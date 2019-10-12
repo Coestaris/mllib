@@ -131,9 +131,9 @@ namespace ml.AI
                         for (int j = 0; j < prevLayer.Size; j++)
                             currentLayer.Derivatives[n].dW[j] = dA * dZ * prevLayer.Activations[j];
 
-                    outputLayer.Derivatives[n].dA = dA;
-                    outputLayer.Derivatives[n].dZ = dZ;
-                    outputLayer.Derivatives[n].dB = dA * dZ;
+                    currentLayer.Derivatives[n].dA = dA;
+                    currentLayer.Derivatives[n].dZ = dZ;
+                    currentLayer.Derivatives[n].dB = dA * dZ;
                 }
             }
 
@@ -149,10 +149,17 @@ namespace ml.AI
 
                     //weight
                     for (int p = 0; p < prevLayer.Size; p++)
-                        prevLayer.Weights[p * currentLayer.Size + n] -= LearningRate * currentLayer.Derivatives[n].dW[p];
+                        prevLayer.Weights[p * currentLayer.Size + n] -=
+                            LearningRate * currentLayer.Derivatives[n].dW[p];
 
                 }
             }
+        }
+
+        public double[] Run(double[] input)
+        {
+            ForwardPass(input);
+            return Layers.Last().Activations;
         }
     }
 }

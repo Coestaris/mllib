@@ -19,6 +19,9 @@ namespace ml.AI
 
         public DerivativePack[] Derivatives;
 
+        public double[] WeightsNudge;
+        public double[] BiasNudge;
+
         public NNLayer(int size, int nextLayerSize, int prevLayerSize)
         {
             Size = size;
@@ -35,6 +38,10 @@ namespace ml.AI
                 Derivatives[i] = new DerivativePack() {
                     dW = new double[prevLayerSize]
                 };
+
+            if(Weights != null)
+                WeightsNudge = new double[Weights.Length];
+            BiasNudge = new double[Biases.Length];
         }
 
         public void Fill()

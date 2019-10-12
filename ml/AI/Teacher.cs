@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ml.AI
 {
@@ -19,6 +20,7 @@ namespace ml.AI
     {
         public int TasksDivision;
         public List<TeacherTask> Tasks;
+        public Random Shuffler = new Random();
 
         public Teacher(int tasksCount, int tasksDivision, Func<int, TeacherTask> taskCreatorFunc)
         {
@@ -28,18 +30,53 @@ namespace ml.AI
                 Tasks.Add(taskCreatorFunc(i));
         }
 
-        public void Teach(NeuralNetwork network)
+        public void Teach(NeuralNetwork network, int count)
         {
-            var error = 0.0;
-            for (var i = 0; i < 1; i++)
+            for (int i = 0; i < count; i++)
             {
-                network.ForwardPass(new double[2] { 0.05, 0.10 });
-                error += network.CalculateError(new double[2] { 0.01, 0.99 });
-            }
+                foreach (var batch in Tasks.ToArray().Split(TasksDivision))
+                {
+                    foreach (var task in batch)
+                    {
+                        network.ForwardPass(task.Input);
+                        network.BackProp(task.Expected);
+                    }
 
-            //error /= TasksDivision;
-            network.BackProp(new double[2] { 0.01, 0.99 });
-            Console.WriteLine(error);
+                    //network.ApplyNudge(batch.Count());
+                    Tasks = Shuffler.NextList(Tasks);
+                }
+            }
+        }
+    }
+
+    public static class Extension
+    {
+        public static IEnumerable<IEnumerable<T>> Split<T>(this T[] array, int size)
+        {
+            for (var i = 0; i < (float)array.Length / size; i++)
+            {
+                yield return array.Skip(i * size).Take(size);
+            }
+        }
+
+        public static List<T> NextList<T>(this Random r, IEnumerable<T> source)
+        {
+            var list = new List<T>();
+            foreach (var item in source)
+            {
+                var i = r.Next(list.Count + 1);
+                if (i == list.Count)
+                {
+                    list.Add(item);
+                }
+                else
+                {
+                    var temp = list[i];
+                    list[i] = item;
+                    list.Add(temp);
+                }
+            }
+            return list;
         }
     }
 }

@@ -5,9 +5,15 @@ namespace ml
 {
     internal class Program
     {
+        public static void DoTest(double a, double b, NeuralNetwork network)
+        {
+            Console.WriteLine("[{0}]", string.Join(",",
+                network.Run(new double[] {a, b})));
+        }
+
         public static void Main(string[] args)
         {
-            var network = new NeuralNetwork(new[] {2, 2, 2});
+            var network = new NeuralNetwork(new[] {2, 7, 2});
             var random = new Random();
             network.Fill(
                 (i, j) => random.NextDouble(),
@@ -15,7 +21,7 @@ namespace ml
                 (i, j) => 0);
 
 
-            var teacher = new Teacher(10000, 100, i =>
+            var teacher = new Teacher(1000, 1000, i =>
             {
                 var input = new double[] {random.Next() % 2, random.Next() % 2};
                 var result = ((int) input[0] ^ (int) input[1]) == 1;
@@ -23,17 +29,15 @@ namespace ml
                 return new TeacherTask(input, expected);
             });
 
-            network.Layers[0].Biases = new double[2] { 0, 0 };
-            network.Layers[1].Biases = new double[2] { 0.35, 0.35 };
-            network.Layers[0].Weights = new double[4] {.15, .20, .25, .30};
-
-            network.Layers[2].Biases = new double[2] { 0.60, 0.60 };
-            network.Layers[1].Weights = new double[4] {.40, .45, .50, .50};
             network.Print();
 
-            teacher.Teach(network);
-            Console.WriteLine();
+            teacher.Teach(network, 9000);
             network.Print();
+
+            DoTest(1, 1, network);
+            DoTest(1, 0, network);
+            DoTest(0, 1, network);
+            DoTest(0, 0, network);
         }
     }
 }
