@@ -3,3 +3,4 @@ obj/
 cmake-build-debug/
 \.idea/
 *.tmp
+packages/

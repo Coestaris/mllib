@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ml", "ml\ml.csproj", "{F3A99D22-8EF0-4156-8300-7C903D407D4E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NNVisualizer", "NNVisualizer\NNVisualizer.csproj", "{55646B4F-B18F-478B-AABE-7026F5E6391C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{F3A99D22-8EF0-4156-8300-7C903D407D4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3A99D22-8EF0-4156-8300-7C903D407D4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3A99D22-8EF0-4156-8300-7C903D407D4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55646B4F-B18F-478B-AABE-7026F5E6391C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55646B4F-B18F-478B-AABE-7026F5E6391C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55646B4F-B18F-478B-AABE-7026F5E6391C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55646B4F-B18F-478B-AABE-7026F5E6391C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

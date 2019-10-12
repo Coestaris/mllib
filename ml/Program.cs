@@ -13,7 +13,7 @@ namespace ml
 
         public static void Main(string[] args)
         {
-            var network = new NeuralNetwork(new[] {2, 7, 2});
+            var network = new NeuralNetwork(new[] {2, 5, 5, 2});
             var random = new Random();
             network.Fill(
                 (i, j) => random.NextDouble(),
