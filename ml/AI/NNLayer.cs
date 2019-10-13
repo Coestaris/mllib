@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ml.AI
 {
-    internal  class NNLayer
+    public class NNLayer
     {
         private Random _random = new Random((int)DateTime.Now.ToBinary());
 
@@ -17,7 +17,7 @@ namespace ml.AI
 
         public double[] Weights; //to right
 
-        public DerivativePack[] Derivatives;
+        internal DerivativePack[] Derivatives;
 
         public double[] WeightsNudge;
         public double[] BiasNudge;

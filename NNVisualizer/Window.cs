@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
@@ -7,9 +8,13 @@ using OpenTK.Input;
 
 namespace NNVisualizer
 {
-    internal class Window : GameWindow
+    public class Window : GameWindow
     {
         public List<DrawableObject> Objects;
+        public Color4 BackgroundColor;
+
+        public Action UpdateFunc;
+        public Action DrawFunc;
 
         public Window(int width, int height, string title) : base(width, height, GraphicsMode.Default, title)
         {
@@ -23,8 +28,17 @@ namespace NNVisualizer
             {
                 Exit();
             }
+
+            foreach (var drawableObject in Objects)
+                drawableObject.Update();
+
+            //UpdateFunc();
+
             base.OnUpdateFrame(e);
         }
+
+        private TextRenderer _renderer;
+        private int _texture;
 
         protected override void OnLoad(EventArgs e)
         {
@@ -39,8 +53,12 @@ namespace NNVisualizer
 
             GL.MatrixMode(MatrixMode.Modelview);
 
-            GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-            Objects.Add(new Circle(new Vector2(20, 20), new Vector3(1, 1, 1), 100));
+            GL.ClearColor(BackgroundColor);
+
+            _renderer = new TextRenderer(200, 200);
+            _renderer.DrawString("123456789", new Font(FontFamily.GenericSansSerif, 16), Brushes.Peru, new PointF(0, 0));
+            _texture = _renderer.Texture;
+
             base.OnLoad(e);
         }
 
@@ -50,6 +68,18 @@ namespace NNVisualizer
 
             foreach (var obj in Objects)
                 obj.Draw();
+
+            GL.Enable(EnableCap.Texture2D);
+            GL.BindTexture(TextureTarget.Texture2D, _texture);
+            GL.Begin(BeginMode.Quads);
+
+            GL.TexCoord2(0.0f, 1.0f); GL.Vertex2(-1f, -1f);
+            GL.TexCoord2(1.0f, 1.0f); GL.Vertex2(100f, -1f);
+            GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(100f, 100f);
+            GL.TexCoord2(0.0f, 0.0f); GL.Vertex2(-1f, 100f);
+
+            GL.End();
+            //DrawFunc();
 
             Context.SwapBuffers();
             base.OnRenderFrame(e);

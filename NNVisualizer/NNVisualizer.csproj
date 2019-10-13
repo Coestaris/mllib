@@ -47,11 +47,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Objects\Button.cs" />
     <Compile Include="Objects\Circle.cs" />
     <Compile Include="Objects\DrawableObject.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TextRenderer.cs" />
+    <Compile Include="Visualizer.cs" />
     <Compile Include="Window.cs" />
+    <Compile Include="WindowHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ml\ml.csproj">

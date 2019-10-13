@@ -6,7 +6,7 @@ namespace ml.AI
 {
     public class NeuralNetwork
     {
-        internal readonly List<NNLayer> Layers;
+        public readonly List<NNLayer> Layers;
 
         public NeuralNetwork(IReadOnlyList<int> layerSizes)
         {
