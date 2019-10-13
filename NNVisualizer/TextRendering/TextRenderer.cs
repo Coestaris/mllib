@@ -5,7 +5,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace NNVisualizer
 {
-    public class TextRenderer : IDisposable
+    internal class TextRenderer : IDisposable
     {
         private Bitmap bmp;
         private Graphics gfx;
@@ -49,6 +49,14 @@ namespace NNVisualizer
             SizeF size = gfx.MeasureString(text, font);
             dirty_region = Rectangle.Round(RectangleF.Union(dirty_region, new RectangleF(point, size)));
             dirty_region = Rectangle.Intersect(dirty_region, new Rectangle(0, 0, bmp.Width, bmp.Height));
+        }
+
+        static Bitmap sampleBmp = new Bitmap(1, 1);
+        static Graphics sampleGraphics = Graphics.FromImage(sampleBmp);
+
+        public static SizeF MeasureString(string text, Font f)
+        {
+            return sampleGraphics.MeasureString(text, f);
         }
 
         public int Texture

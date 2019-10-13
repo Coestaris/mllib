@@ -8,7 +8,7 @@ namespace NNVisualizer
         {
             var win = new Window(800, 600, "NNVisualizer")
             {
-                BackgroundColor = Color4.Black
+                BackgroundColor = Color4.DarkBlue
             };
 
             WindowHandler handler = new NNVisualizer(win, null);
