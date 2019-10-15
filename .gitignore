@@ -4,3 +4,5 @@ cmake-build-debug/
 \.idea/
 *.tmp
 packages/
+
+ml\.sln\.DotSettings\.user

@@ -36,8 +36,6 @@ namespace NNVisualizer
             base.OnUpdateFrame(e);
         }
 
-        private StringRenderer HelloDrawer;
-
         protected override void OnLoad(EventArgs e)
         {
             //setup matrices
@@ -50,10 +48,6 @@ namespace NNVisualizer
             GL.Viewport(0, 0, Width, Height);
             GL.MatrixMode(MatrixMode.Modelview);
 
-            HelloDrawer = new StringRenderer(
-                StringRenderer.FullCharSet,
-                new Font(FontFamily.GenericSerif, 32),
-                Brushes.White);
             base.OnLoad(e);
         }
 
@@ -64,9 +58,6 @@ namespace NNVisualizer
 
             foreach (var obj in Objects)
                 obj.Draw();
-
-            DrawString("123.421", new Vector2(200, 200));
-            //DrawFunc()
 
             Context.SwapBuffers();
             base.OnRenderFrame(e);

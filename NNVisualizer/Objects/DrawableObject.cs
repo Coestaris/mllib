@@ -12,7 +12,6 @@ namespace NNVisualizer
         public Window Parent;
 
         public Vector2 Position;
-        public Vector3 Color;
 
         public abstract void Draw();
 
@@ -69,10 +68,9 @@ namespace NNVisualizer
         public virtual void OnMouseHover(MouseState ms) {}
         public virtual void OnMouseHoverChanged(MouseState ms, bool state) {}
 
-        public DrawableObject(Vector2 position, Vector3 color)
+        public DrawableObject(Vector2 position)
         {
             Position = position;
-            Color = color;
         }
 
     }

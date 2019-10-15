@@ -19,12 +19,13 @@ namespace NNVisualizer
         }
 
         private readonly TextRenderer _renderer;
-        private readonly int _texture;
+        public readonly int _texture;
         private readonly Dictionary<char, CharInfo> _charInfos;
 
         public readonly string CharSet;
         public readonly Font Font;
 
+        public static string NumericCharSet = "0123456789.";
         public static string FullCharSet
         {
             get
@@ -70,12 +71,13 @@ namespace NNVisualizer
             }
 
             GL.Enable(EnableCap.Blend);
+            GL.Enable(EnableCap.Texture2D);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.BlendEquation(BlendEquationMode.FuncAdd);
         }
 
 
-        void DrawString(string str, Vector2 pos)
+        public void DrawString(string str, Vector2 pos)
         {
             GL.BindTexture(TextureTarget.Texture2D, _texture);
 
@@ -100,6 +102,13 @@ namespace NNVisualizer
                 GL.End();
                 xOff = xNext;
             }
+
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+        }
+
+        public SizeF MeasureString(string text)
+        {
+            return TextRenderer.MeasureString(text, Font);
         }
     }
 }
