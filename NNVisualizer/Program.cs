@@ -2,6 +2,7 @@
 using System.Drawing;
 using ml.AI;
 using OpenTK.Graphics;
+using WindowHandler;
 
 namespace NNVisualizer
 {
@@ -29,7 +30,7 @@ namespace NNVisualizer
                 return new TeacherTask(input, expected);
             });
 
-            WindowHandler handler = new NNVisualizer(win, network);
+            var handler = new NNVisualizer(win, network);
             handler.Start();
         }
     }

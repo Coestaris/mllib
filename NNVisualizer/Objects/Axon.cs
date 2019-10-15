@@ -1,6 +1,7 @@
 using System.Drawing;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using WindowHandler;
 
 namespace NNVisualizer
 {

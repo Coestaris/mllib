@@ -1,4 +1,4 @@
-namespace NNVisualizer
+namespace WindowHandler
 {
     public abstract class WindowHandler
     {

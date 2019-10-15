@@ -1,10 +1,11 @@
 using System.Drawing;
 using ml.AI;
 using OpenTK;
+using WindowHandler;
 
 namespace NNVisualizer
 {
-    public class NNVisualizer : WindowHandler
+    public class NNVisualizer : WindowHandler.WindowHandler
     {
         public NeuralNetwork Network;
         internal StringRenderer _neuronStringRenderer;

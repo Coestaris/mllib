@@ -2,7 +2,7 @@ using System.Drawing;
 using OpenTK;
 using OpenTK.Input;
 
-namespace NNVisualizer
+namespace WindowHandler
 {
     public abstract class DrawableObject
     {
@@ -72,6 +72,5 @@ namespace NNVisualizer
         {
             Position = position;
         }
-
     }
 }

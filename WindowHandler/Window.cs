@@ -6,7 +6,7 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 
-namespace NNVisualizer
+namespace WindowHandler
 {
     public class Window : GameWindow
     {
