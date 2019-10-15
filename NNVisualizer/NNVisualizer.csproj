@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Objects\Axon.cs" />
+    <Compile Include="Objects\InfoRenderer.cs" />
     <Compile Include="Objects\Neuron.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

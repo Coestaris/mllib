@@ -14,7 +14,6 @@ namespace WindowHandler
         public Color4 BackgroundColor;
 
         public Action UpdateFunc;
-        public Action DrawFunc;
 
         public Window(int width, int height, string title) : base(width, height, GraphicsMode.Default, title)
         {
@@ -32,7 +31,7 @@ namespace WindowHandler
             foreach (var drawableObject in Objects)
                 drawableObject.Update();
 
-            //UpdateFunc();
+            UpdateFunc();
             base.OnUpdateFrame(e);
         }
 

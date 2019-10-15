@@ -1,35 +1,59 @@
+using System;
 using System.Drawing;
 using ml.AI;
 using OpenTK;
 using WindowHandler;
+using WindowHandler.Controls;
 
 namespace NNVisualizer
 {
     public class NNVisualizer : WindowHandler.WindowHandler
     {
+        public Texture ButtonActiveTexture;
+        public Texture ButtonTexture;
+
         public NeuralNetwork Network;
+        public Teacher Teacher;
+
         internal StringRenderer _neuronStringRenderer;
+        internal StringRenderer _buttonStringRenderer;
+        internal StringRenderer _textRenderer;
 
         private Neuron[][] _neurons;
         private Axon[][] _axons;
+        private InfoRenderer _infoRenderer;
 
-        public NNVisualizer(Window window, NeuralNetwork network) : base(window)
+        public NNVisualizer(Window window, NeuralNetwork network, Teacher teacher) : base(window)
         {
             Network = network;
-            Window.UpdateFunc = Update;
+            Teacher = teacher;
         }
 
-        public void Update()
+        public override void Update()
         {
-
+            _infoRenderer.Step++;
         }
 
         public override void Start()
         {
+            ButtonTexture = new Texture("button.png");
+            ButtonActiveTexture = new Texture("buttonActive.png");
+
             _neuronStringRenderer = new StringRenderer(
                 StringRenderer.NumericCharSet,
                 new Font(FontFamily.GenericSerif, 12),
                 Brushes.Black);
+
+            _buttonStringRenderer = new StringRenderer(
+                StringRenderer.FullCharSet,
+                new Font(FontFamily.GenericMonospace, 16),
+                Brushes.Black);
+
+            _textRenderer = new StringRenderer(
+                StringRenderer.FullCharSet,
+                new Font(FontFamily.GenericMonospace, 20),
+                Brushes.White);
+
 
             _neurons = new Neuron[Network.Layers.Count][];
             _axons   = new Axon  [Network.Layers.Count][];
@@ -81,6 +105,26 @@ namespace NNVisualizer
             foreach (var neurons in _neurons)
                 foreach (var neuron in neurons)
                     AddObject(neuron);
+
+            AddObject(
+                new Button(ButtonActiveTexture, ButtonTexture, new Vector2(60, 30),
+                () => Console.WriteLine("start"), _buttonStringRenderer, "Start"));
+
+            AddObject(
+                new Button(ButtonActiveTexture, ButtonTexture, new Vector2(185, 30),
+                    () => Console.WriteLine("stop"), _buttonStringRenderer, "Stop"));
+
+
+            AddObject(
+                new Button(ButtonActiveTexture, ButtonTexture, new Vector2(310, 30),
+                    () => Console.WriteLine("reset"), _buttonStringRenderer, "Reset"));
+
+            AddObject(
+                new Button(ButtonActiveTexture, ButtonTexture, new Vector2(435, 30),
+                    () => Console.WriteLine("step"), _buttonStringRenderer, "Step"));
+
+            _infoRenderer = new InfoRenderer(_textRenderer, Vector2.One);
+            AddObject(_infoRenderer);
 
             base.Start();
         }

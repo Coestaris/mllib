@@ -1,5 +1,7 @@
 using System.Drawing;
+using System.Globalization;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 
 namespace WindowHandler
@@ -67,6 +69,43 @@ namespace WindowHandler
         public virtual void OnMouseClickChanged(MouseState ms, bool state) {}
         public virtual void OnMouseHover(MouseState ms) {}
         public virtual void OnMouseHoverChanged(MouseState ms, bool state) {}
+
+        protected void DrawCenteredString(string str, StringRenderer renderer, bool x, bool y)
+        {
+            var text = str;
+            var textSize = renderer.MeasureString(text);
+            var offsetPoint = new Vector2(x ? textSize.Width / 2 : 0, y ? textSize.Height / 2 : 0);
+            renderer.DrawString(text, Position - offsetPoint);
+        }
+
+        protected void DrawCenteredTexture(Texture texture, bool x, bool y)
+        {
+            var offsetPoint = new Vector2(x ? texture.Size.Width / 2 : 0, y ? texture.Size.Height / 2 : 0);
+            DrawTexture(texture, Position - offsetPoint);
+        }
+
+        protected void DrawTexture(Texture texture, Vector2 vector)
+        {
+            GL.Disable(EnableCap.Blend);
+            GL.BindTexture(TextureTarget.Texture2D, texture.ID);
+            GL.Begin(BeginMode.Quads);
+
+            GL.TexCoord2(0, 0);
+            GL.Vertex2(vector);
+
+            GL.TexCoord2(1, 0);
+            GL.Vertex2(vector.X + texture.Size.Width, vector.Y);
+
+            GL.TexCoord2(1, 1);
+            GL.Vertex2(vector.X + texture.Size.Width, vector.Y + texture.Size.Height);
+
+            GL.TexCoord2(0, 1);
+            GL.Vertex2(vector.X, vector.Y + texture.Size.Height);
+
+            GL.End();
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+            GL.Enable(EnableCap.Blend);
+        }
 
         public DrawableObject(Vector2 position)
         {

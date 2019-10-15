@@ -31,12 +31,7 @@ namespace NNVisualizer
                     Position.Y + Math.Sin(a) * Radius);
 
             GL.End();
-
-            var text = Weight.ToString(CultureInfo.InvariantCulture);
-            var textSize = _renderer.MeasureString(text);
-            var offsetPoint = new Vector2(textSize.Width / 2, textSize.Height / 2);
-
-            _renderer.DrawString(text, Position - offsetPoint);
+            DrawCenteredString(Weight.ToString("F1"), _renderer, true, true);
         }
     }
 }

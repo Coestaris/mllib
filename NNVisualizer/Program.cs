@@ -10,12 +10,12 @@ namespace NNVisualizer
     {
         public static void Main(string[] args)
         {
-            var win = new Window(800, 600, "NNVisualizer")
+            var win = new Window(1000, 800, "NNVisualizer")
             {
                 BackgroundColor = new Color4(.2f, .2f, .2f, 0)
             };
 
-            var network = new NeuralNetwork(new []{ 2, 4, 2} );
+            var network = new NeuralNetwork(new []{ 2, 4, 4, 2} );
             var random = new Random();
             network.Fill(
                 (i, j) => random.NextDouble(),
@@ -30,7 +30,7 @@ namespace NNVisualizer
                 return new TeacherTask(input, expected);
             });
 
-            var handler = new NNVisualizer(win, network);
+            var handler = new NNVisualizer(win, network, teacher);
             handler.Start();
         }
     }

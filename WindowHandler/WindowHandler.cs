@@ -15,8 +15,11 @@ namespace WindowHandler
             Window = window;
         }
 
+        public virtual void Update() {}
+
         public virtual void Start()
         {
+            Window.UpdateFunc = Update;
             Window.Run(60);
         }
     }
