@@ -123,7 +123,7 @@ namespace ml.AI
                     {
                         double nextDA = nextLayer.Derivatives[j].dA;
                         double nextDZ = nextLayer.Derivatives[j].dZ;
-                        dA += nextDZ * nextDA * currentLayer.Weights[j * nextLayer.Size + n];
+                        dA += nextDZ * nextDA * currentLayer.Weights[n * nextLayer.Size + j];
                     }
 
                     double dZ = NNLayer.DSigmoid(currentLayer.Activations[n]);

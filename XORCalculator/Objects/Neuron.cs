@@ -5,11 +5,11 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using WindowHandler;
 
-namespace NNVisualizer
+namespace XORCalculator.Objects
 {
     public class Neuron : DrawableObject
     {
-        public float Weight;
+        public float Activation;
         public float Radius;
 
         internal StringRenderer _renderer;
@@ -22,7 +22,7 @@ namespace NNVisualizer
         public override void Draw()
         {
             GL.Begin(PrimitiveType.TriangleFan);
-            GL.Color3(Color.Beige);
+            GL.Color3(lerpColor(Color.Red, Color.Green, Activation));
 
             GL.Vertex2(Position);
             for (double a = 0; a < Math.PI * 2; a += 0.01)
@@ -31,7 +31,7 @@ namespace NNVisualizer
                     Position.Y + Math.Sin(a) * Radius);
 
             GL.End();
-            DrawCenteredString(Weight.ToString("F1"), _renderer, true, true);
+            DrawCenteredString(Activation.ToString("F3"), _renderer, true, true);
         }
     }
 }

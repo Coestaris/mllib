@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ml", "ml\ml.csproj", "{F3A99D22-8EF0-4156-8300-7C903D407D4E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NNVisualizer", "NNVisualizer\NNVisualizer.csproj", "{55646B4F-B18F-478B-AABE-7026F5E6391C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XORCalculator", "XORCalculator\XORCalculator.csproj", "{55646B4F-B18F-478B-AABE-7026F5E6391C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowHandler", "WindowHandler\WindowHandler.csproj", "{A170AF94-DD8F-4726-B218-DEBECBFC703B}"
 EndProject

@@ -87,6 +87,7 @@ namespace WindowHandler
         protected void DrawTexture(Texture texture, Vector2 vector)
         {
             GL.Disable(EnableCap.Blend);
+            GL.Color3(Color.White);
             GL.BindTexture(TextureTarget.Texture2D, texture.ID);
             GL.Begin(BeginMode.Quads);
 
@@ -106,6 +107,25 @@ namespace WindowHandler
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.Enable(EnableCap.Blend);
         }
+
+        private float clipValue(float v, float min, float max)
+        {
+            if (v < min) return min;
+            if (v > max) return max;
+
+            return v;
+        }
+
+        protected Color lerpColor(Color a, Color b, float k)
+        {
+            //k = (float)ml.AI.NNLayer.Sigmoid(k);
+            return Color.FromArgb(
+                0,
+                (int) clipValue(a.R * k + b.R * (1 - k), 0, 255),
+                (int) clipValue(a.G * k + b.G * (1 - k), 0, 255),
+                (int) clipValue(a.B * k + b.B * (1 - k), 0, 255));
+        }
+
 
         public DrawableObject(Vector2 position)
         {

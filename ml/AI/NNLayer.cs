@@ -146,7 +146,7 @@ namespace ml.AI
         {
             double acc = 0;
             for (var i = 0; i < Size; i++)
-                acc += .5 * Math.Pow(expected[i] - Activations[i], 2);
+                acc += Math.Pow(expected[i] - Activations[i], 2);
             return acc;
         }
     }

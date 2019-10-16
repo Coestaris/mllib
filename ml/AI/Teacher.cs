@@ -22,30 +22,50 @@ namespace ml.AI
         public List<TeacherTask> Tasks;
         public Random Shuffler = new Random();
 
+        private double _errorSum;
+        private int _n;
+
         public Teacher(int tasksCount, int tasksDivision, Func<int, TeacherTask> taskCreatorFunc)
         {
             TasksDivision = tasksDivision;
             Tasks = new List<TeacherTask>();
             for(var i = 0; i < tasksCount; i++)
                 Tasks.Add(taskCreatorFunc(i));
+
+            _errorSum = 0;
+            _n = 0;
         }
+
+        public double Error => _errorSum / _n;
 
         public void Teach(NeuralNetwork network, int count)
         {
             for (int i = 0; i < count; i++)
-            {
-                foreach (var batch in Tasks.ToArray().Split(TasksDivision))
-                {
-                    foreach (var task in batch)
-                    {
-                        network.ForwardPass(task.Input);
-                        network.BackProp(task.Expected);
-                    }
+                TeachStep(network);
+        }
 
-                    //network.ApplyNudge(batch.Count());
-                    Tasks = Shuffler.NextList(Tasks);
+        public void TeachStep(NeuralNetwork network)
+        {
+            foreach (var batch in Tasks.ToArray().Split(TasksDivision))
+            {
+                foreach (var task in batch)
+                {
+                    network.ForwardPass(task.Input);
+                    network.BackProp(task.Expected);
+
+                    _errorSum += network.CalculateError(task.Expected);
+                    _n++;
                 }
+
+                //network.ApplyNudge(batch.Count());
+                Tasks = Shuffler.NextList(Tasks);
             }
+        }
+
+        public void ResetError()
+        {
+            _errorSum = 0;
+            _n = 0;
         }
     }
 

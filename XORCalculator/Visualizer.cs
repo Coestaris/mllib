@@ -1,11 +1,13 @@
 using System;
 using System.Drawing;
+using System.Threading;
 using ml.AI;
 using OpenTK;
+using XORCalculator.Objects;
 using WindowHandler;
 using WindowHandler.Controls;
 
-namespace NNVisualizer
+namespace XORCalculator
 {
     public class NNVisualizer : WindowHandler.WindowHandler
     {
@@ -23,15 +25,73 @@ namespace NNVisualizer
         private Axon[][] _axons;
         private InfoRenderer _infoRenderer;
 
-        public NNVisualizer(Window window, NeuralNetwork network, Teacher teacher) : base(window)
+        public bool _working;
+
+        private const int StepsPerFrame = 2;
+        private const int ErrorResetFactor = 0;
+        private const int StepsDelay = 0;
+
+        private Action _resetFunc;
+
+        public NNVisualizer(Window window, NeuralNetwork network, Teacher teacher, Action ResetFunc) : base(window)
         {
+            _resetFunc = ResetFunc;
             Network = network;
             Teacher = teacher;
         }
 
         public override void Update()
         {
+            if (_working)
+            {
+                for (var i = 0; i < StepsPerFrame; i++)
+                {
+                    Step();
+                    Thread.Sleep(StepsDelay);
+                }
+            }
+        }
+
+        private void Step()
+        {
+            Teacher.TeachStep(Network);
+
+            DisplayValues();
+
+            if (ErrorResetFactor != 0 && _infoRenderer.Step % ErrorResetFactor == 0)
+                Teacher.ResetError();
+
+            _infoRenderer.Error = Teacher.Error;
             _infoRenderer.Step++;
+        }
+
+        private void Reset()
+        {
+            Teacher.ResetError();
+            _resetFunc();
+            DisplayValues();
+
+            _infoRenderer.Error = Teacher.Error;
+            _infoRenderer.Step = 0;
+        }
+
+        private void DisplayValues()
+        {
+            for(var l = 0; l < Network.Layers.Count; l++)
+            for (var n = 0; n < Network.Layers[l].Size; n++)
+                _neurons[l][n].Activation = (float)Network.Layers[l].Activations[n];
+
+            for(var l = 0; l < Network.Layers.Count - 1; l++)
+            {
+                var layer = Network.Layers[l];
+                var nextLayer = Network.Layers[l + 1];
+                for (var n = 0; n < layer.Size; n++)
+                {
+                    for (var j = 0; j < nextLayer.Size; j++)
+                        _axons[l][n * nextLayer.Size + j].Weight =
+                            (float)Network.Layers[l].Weights[n * nextLayer.Size + j];
+                }
+            }
         }
 
         public override void Start()
@@ -108,23 +168,25 @@ namespace NNVisualizer
 
             AddObject(
                 new Button(ButtonActiveTexture, ButtonTexture, new Vector2(60, 30),
-                () => Console.WriteLine("start"), _buttonStringRenderer, "Start"));
+                () => _working = true, _buttonStringRenderer, "Start"));
 
             AddObject(
                 new Button(ButtonActiveTexture, ButtonTexture, new Vector2(185, 30),
-                    () => Console.WriteLine("stop"), _buttonStringRenderer, "Stop"));
+                    () => _working = false, _buttonStringRenderer, "Stop"));
 
 
             AddObject(
                 new Button(ButtonActiveTexture, ButtonTexture, new Vector2(310, 30),
-                    () => Console.WriteLine("reset"), _buttonStringRenderer, "Reset"));
+                    () => Reset(), _buttonStringRenderer, "Reset"));
 
             AddObject(
                 new Button(ButtonActiveTexture, ButtonTexture, new Vector2(435, 30),
-                    () => Console.WriteLine("step"), _buttonStringRenderer, "Step"));
+                    () => Step(), _buttonStringRenderer, "Step"));
 
             _infoRenderer = new InfoRenderer(_textRenderer, Vector2.One);
             AddObject(_infoRenderer);
+
+            Reset();
 
             base.Start();
         }

@@ -1,14 +1,18 @@
+using System;
 using System.Drawing;
+using ml.AI;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using WindowHandler;
 
-namespace NNVisualizer
+namespace XORCalculator.Objects
 {
     public class Axon : DrawableObject
     {
         public Vector2 Position2;
         public float Weight;
+
+        private const float scaleFactor = 5;
 
         public Axon(Vector2 position, Vector2 position2, float weight) : base(position)
         {
@@ -18,8 +22,11 @@ namespace NNVisualizer
 
         public override void Draw()
         {
-            GL.LineWidth(Weight);
-            GL.Color3(Color.White);
+            GL.LineWidth(Weight * 2);
+            if(Weight < 0)
+                GL.Color3(lerpColor(Color.Red, Color.Black, - Weight / scaleFactor));
+            else
+                GL.Color3(lerpColor(Color.Green, Color.Black, Weight / scaleFactor));
 
             GL.Begin(BeginMode.Lines);
 
