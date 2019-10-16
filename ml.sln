@@ -6,6 +6,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XORCalculator", "XORCalcula
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowHandler", "WindowHandler\WindowHandler.csproj", "{A170AF94-DD8F-4726-B218-DEBECBFC703B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Applications", "Applications", "{564EE2C0-D171-4FFB-A529-2A6D6464644F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HWDRecognizer", "HWDRecognizer\HWDRecognizer.csproj", "{C8ED9616-BAB2-4436-9A08-990D930FA296}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,13 @@ Global
 		{A170AF94-DD8F-4726-B218-DEBECBFC703B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A170AF94-DD8F-4726-B218-DEBECBFC703B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A170AF94-DD8F-4726-B218-DEBECBFC703B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8ED9616-BAB2-4436-9A08-990D930FA296}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8ED9616-BAB2-4436-9A08-990D930FA296}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8ED9616-BAB2-4436-9A08-990D930FA296}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8ED9616-BAB2-4436-9A08-990D930FA296}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{55646B4F-B18F-478B-AABE-7026F5E6391C} = {564EE2C0-D171-4FFB-A529-2A6D6464644F}
+		{C8ED9616-BAB2-4436-9A08-990D930FA296} = {564EE2C0-D171-4FFB-A529-2A6D6464644F}
 	EndGlobalSection
 EndGlobal

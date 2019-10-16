@@ -63,6 +63,14 @@
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="ControlResources\button.png" />
+    <Content Include="ControlResources\buttonActive.png" />
+    <Content Include="ControlResources\checkBox.png" />
+    <Content Include="ControlResources\checkBoxActive.png" />
+    <Content Include="ControlResources\checkBoxChecked.png" />
+    <Content Include="ControlResources\checkBoxCheckedActive.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.

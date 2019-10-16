@@ -1,0 +1,136 @@
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Runtime.InteropServices;
+
+namespace HWDRecognizer
+{
+    public class HWImage
+    {
+        public byte[] Data;
+        public Size Size;
+        public int Index;
+        public bool IsTest;
+        public int Number;
+
+        internal HWImage(byte[] data, Size size, int index, bool isTest, int number)
+        {
+            Data = data;
+            Size = size;
+            Index = index;
+            IsTest = isTest;
+            Number = number;
+        }
+
+        public Bitmap ToBitmap()
+        {
+            var bmp = new Bitmap(Size.Width, Size.Height);
+
+/*            var palette = bmp.Palette;
+            var entries = palette.Entries;
+            for (var i = 0; i < 256; i++)
+            {
+                var b = Color.FromArgb((byte)i, (byte)i, (byte)i);
+                entries[i] = b;
+            }
+            bmp.Palette = palette;*/
+/*
+
+            var data = bmp.LockBits(new Rectangle(Point.Empty, Size),
+                ImageLockMode.WriteOnly, bmp.PixelFormat);
+
+            var targetStride = data.Stride;
+            var scan0 = data.Scan0.ToInt64();
+            for (var y = 0; y < Size.Height; y++)
+                Marshal.Copy(Data, y * 24, new IntPtr(scan0 + y * targetStride), 24);
+
+            bmp.UnlockBits(data);*/
+
+            for(int x = 0; x < Size.Width; x++)
+                for (int y = 0; y < Size.Width; y++)
+                {
+                    var b = Data[y * Size.Width + x];
+                    bmp.SetPixel(x, y, Color.FromArgb(b, b, b, 0));
+                }
+
+            return bmp;
+        }
+    }
+
+    public class Dataset
+    {
+        public string DatasetFilename;
+        public string DatasetLabelsFilename;
+        public string TestFilename;
+        public string TestLabelsFilename;
+
+        public List<HWImage> DatasetImages;
+        public List<HWImage> TestImages;
+
+        private const UInt32 labelMagicNumber = 0x00000801;
+        private const UInt32 datasetMagicNumber = 0x00000803;
+
+        public Dataset(
+            string datasetFilename,
+            string datasetLabelsFilename,
+            string testFilename,
+            string testLabelsFilename)
+        {
+            DatasetFilename = datasetFilename;
+            DatasetLabelsFilename = datasetLabelsFilename;
+            TestFilename = testFilename;
+            TestLabelsFilename = testFilename;
+
+            DatasetImages = new List<HWImage>();
+            TestImages = new List<HWImage>();
+
+            ReadDataset(DatasetImages, datasetFilename, false);
+        }
+
+        private UInt32 GetUInt32(byte[] bytes)
+        {
+            return (UInt32)
+                (bytes[0] << 24 |
+                bytes[1] << 16 |
+                bytes[2] << 8 |
+                bytes[3]);
+        }
+
+        private void ReadDataset(List<HWImage> destList, string fileName, bool isTest)
+        {
+            if(!File.Exists(fileName))
+                throw new FileNotFoundException("Unable to open file", fileName);
+
+            var imageSize = Size.Empty;
+            using (var reader = new BinaryReader(new FileStream(fileName, FileMode.Open)))
+            {
+                var offset = 0;
+                var int32Buffer = new byte[4];
+
+                reader.Read(int32Buffer, offset, 4);
+
+                if (GetUInt32(int32Buffer) != datasetMagicNumber)
+                    throw new InvalidDataException();
+
+                reader.Read(int32Buffer, 0, 4);
+                var count = GetUInt32(int32Buffer);
+
+                reader.Read(int32Buffer, 0, 4);
+                imageSize.Width = (int) GetUInt32(int32Buffer);
+
+                reader.Read(int32Buffer, 0, 4);
+                imageSize.Height = (int) GetUInt32(int32Buffer);
+
+                var dataBuffer = new byte[imageSize.Width * imageSize.Height];
+                for (int i = 0; i < count; i++)
+                {
+                    reader.Read(dataBuffer, 0, dataBuffer.Length);
+                    destList.Add(new HWImage(
+                        (byte[]) (dataBuffer.Clone()), imageSize, i, isTest, -1));
+                }
+            }
+        }
+    }
+}
