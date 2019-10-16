@@ -26,7 +26,7 @@ namespace XORCalculator
                 BackgroundColor = new Color4(.2f, .2f, .2f, 0)
             };
 
-            _network = new NeuralNetwork(new []{ 2, 6, 8, 5, 2} );
+            _network = new NeuralNetwork(new []{ 2, 5, 5, 2} );
             var teacher = new Teacher(1000, 1000, i =>
             {
                 var input = new double[] {_random.Next() % 2, _random.Next() % 2};
@@ -36,7 +36,7 @@ namespace XORCalculator
             });
 
             var handler = new NNVisualizer(win, _network, teacher, Reset);
-            handler.Start();
+            handler.OnStart();
         }
     }
 }

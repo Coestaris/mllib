@@ -14,6 +14,9 @@ namespace WindowHandler
         public Color4 BackgroundColor;
 
         public Action UpdateFunc;
+        public Action CloseFunc;
+
+        internal static ResourceManager ResourceManager;
 
         public Window(int width, int height, string title) : base(width, height, GraphicsMode.Default, title)
         {
@@ -25,6 +28,7 @@ namespace WindowHandler
             var input = Keyboard.GetState();
             if (input.IsKeyDown(Key.Escape))
             {
+                CloseFunc();
                 Exit();
             }
 

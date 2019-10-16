@@ -9,13 +9,24 @@ using WindowHandler.Controls;
 
 namespace XORCalculator
 {
+    internal static class TextureIds
+    {
+        public const int Button = 0;
+        public const int ButtonActive = 1;
+
+        public const int Checkbox = 2;
+        public const int CheckboxActive = 3;
+        public const int CheckboxChecked = 4;
+        public const int CheckboxCheckedActive = 5;
+    }
+
     public class NNVisualizer : WindowHandler.WindowHandler
     {
-        public Texture ButtonActiveTexture;
-        public Texture ButtonTexture;
-
         public NeuralNetwork Network;
         public Teacher Teacher;
+
+        public Checkbox Checkbox1;
+        public Checkbox Checkbox2;
 
         internal StringRenderer _neuronStringRenderer;
         internal StringRenderer _buttonStringRenderer;
@@ -40,7 +51,7 @@ namespace XORCalculator
             Teacher = teacher;
         }
 
-        public override void Update()
+        public override void OnUpdate()
         {
             if (_working)
             {
@@ -94,14 +105,19 @@ namespace XORCalculator
             }
         }
 
-        public override void Start()
+        public override void OnStart()
         {
-            ButtonTexture = new Texture("button.png");
-            ButtonActiveTexture = new Texture("buttonActive.png");
+            ResourceManager.PushTexture(TextureIds.Button, "button.png");
+            ResourceManager.PushTexture(TextureIds.ButtonActive, "buttonActive.png");
+
+            ResourceManager.PushTexture(TextureIds.Checkbox, "checkBox.png");
+            ResourceManager.PushTexture(TextureIds.CheckboxActive, "checkBoxActive.png");
+            ResourceManager.PushTexture(TextureIds.CheckboxChecked, "checkBoxChecked.png");
+            ResourceManager.PushTexture(TextureIds.CheckboxCheckedActive, "checkBoxCheckedActive.png");
 
             _neuronStringRenderer = new StringRenderer(
                 StringRenderer.NumericCharSet,
-                new Font(FontFamily.GenericSerif, 12),
+                new Font(FontFamily.GenericMonospace, 12),
                 Brushes.Black);
 
             _buttonStringRenderer = new StringRenderer(
@@ -167,28 +183,63 @@ namespace XORCalculator
                     AddObject(neuron);
 
             AddObject(
-                new Button(ButtonActiveTexture, ButtonTexture, new Vector2(60, 30),
-                () => _working = true, _buttonStringRenderer, "Start"));
+                new Button(
+                    TextureIds.ButtonActive,
+                    TextureIds.Button,
+                    new Vector2(60, 30),
+                () => _working = true,
+                    _buttonStringRenderer,
+                    "Start"));
 
             AddObject(
-                new Button(ButtonActiveTexture, ButtonTexture, new Vector2(185, 30),
-                    () => _working = false, _buttonStringRenderer, "Stop"));
+                new Button(
+                    TextureIds.ButtonActive,
+                    TextureIds.Button,
+                    new Vector2(185, 30),
+                    () => _working = false,
+                    _buttonStringRenderer,
+                    "Stop"));
 
 
             AddObject(
-                new Button(ButtonActiveTexture, ButtonTexture, new Vector2(310, 30),
-                    () => Reset(), _buttonStringRenderer, "Reset"));
+                new Button(
+                    TextureIds.ButtonActive,
+                    TextureIds.Button,
+                    new Vector2(310, 30),
+                    () => Reset(),
+                    _buttonStringRenderer,
+                    "Reset"));
 
             AddObject(
-                new Button(ButtonActiveTexture, ButtonTexture, new Vector2(435, 30),
-                    () => Step(), _buttonStringRenderer, "Step"));
+                new Button(
+                    TextureIds.ButtonActive,
+                    TextureIds.Button,
+                    new Vector2(435, 30),
+                    () => Step(),
+                    _buttonStringRenderer,
+                    "Step"));
+
+            Checkbox1 = new Checkbox(
+                "Input1",
+                TextureIds.Checkbox, TextureIds.ButtonActive,
+                TextureIds.CheckboxChecked, TextureIds.CheckboxCheckedActive,
+                new Vector2(50, 50),
+                (b) => Console.Write("1"), _buttonStringRenderer);
+
+            Checkbox1 = new Checkbox(
+                "Input1",
+                TextureIds.Checkbox, TextureIds.ButtonActive,
+                TextureIds.CheckboxChecked, TextureIds.CheckboxCheckedActive,
+                new Vector2(50, 50),
+                (b) => Console.Write("2"), _buttonStringRenderer);
+
 
             _infoRenderer = new InfoRenderer(_textRenderer, Vector2.One);
             AddObject(_infoRenderer);
 
             Reset();
 
-            base.Start();
+            base.OnStart();
         }
     }
 }

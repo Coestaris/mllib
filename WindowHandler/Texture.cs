@@ -12,6 +12,8 @@ namespace WindowHandler
         public Size Size;
         public string FileName;
 
+        private bool _disposed;
+
         public Texture(string fileName)
         {
             var bitmap = new Bitmap(fileName);
@@ -27,7 +29,6 @@ namespace WindowHandler
                 OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
             bitmap.UnlockBits(data);
 
-
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int) TextureMinFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int) TextureMagFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) TextureWrapMode.Repeat);
@@ -39,12 +40,15 @@ namespace WindowHandler
 
         public void Dispose()
         {
-            GL.DeleteTextures(1, ref ID);
+            if(!_disposed)
+                GL.DeleteTextures(1, ref ID);
+            _disposed = true;
         }
 
         ~Texture()
         {
-            Console.WriteLine("Memory Leaked");
+            if(!_disposed)
+                Console.WriteLine("Memory Leaked");
         }
     }
 }

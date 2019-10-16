@@ -16,15 +16,15 @@ namespace WindowHandler.Controls
         private bool _hovered;
 
         public Button(
-            Texture tex1,
-            Texture tex2,
+            int tex1,
+            int tex2,
             Vector2 position,
             Action action,
             StringRenderer renderer,
             string text) : base(position)
         {
-            TextureActive = tex1;
-            Texture = tex2;
+            TextureActive = Window.ResourceManager.Get(tex1);
+            Texture = Window.ResourceManager.Get(tex2);
             Action = action;
             _renderer = renderer;
             Text = text;

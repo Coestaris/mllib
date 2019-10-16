@@ -3,6 +3,7 @@ namespace WindowHandler
     public abstract class WindowHandler
     {
         public Window Window;
+        public ResourceManager ResourceManager;
 
         protected void AddObject(DrawableObject obj)
         {
@@ -12,14 +13,22 @@ namespace WindowHandler
 
         public WindowHandler(Window window)
         {
+            ResourceManager = new ResourceManager();
+            Window.ResourceManager = ResourceManager;
             Window = window;
         }
 
-        public virtual void Update() {}
+        public virtual void OnUpdate() {}
 
-        public virtual void Start()
+        public virtual void OnClose()
         {
-            Window.UpdateFunc = Update;
+            ResourceManager.FreeAll();
+        }
+
+        public virtual void OnStart()
+        {
+            Window.UpdateFunc = OnUpdate;
+            Window.CloseFunc = OnClose;
             Window.Run(60);
         }
     }
