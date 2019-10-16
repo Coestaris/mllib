@@ -18,8 +18,8 @@ namespace WindowHandler
             public SizeF CharSize;
         }
 
-        private readonly TextRenderer _renderer;
-        public readonly int _texture;
+        internal readonly TextRenderer _renderer;
+        private readonly int _texture;
         private readonly Dictionary<char, CharInfo> _charInfos;
 
         public readonly string CharSet;

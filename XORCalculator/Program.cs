@@ -14,19 +14,19 @@ namespace XORCalculator
         public static void Reset()
         {
             _network.Fill(
-                (i, j) => 1 - _random.NextDouble() * 2,
-                (i, j) => 1 - _random.NextDouble() * 2,
+                (i, j) => 3 - _random.NextDouble() * 6,
+                (i, j) => 3 - _random.NextDouble() * 6,
                 (i, j) => 0);
         }
 
         public static void Main(string[] args)
         {
-            var win = new Window(1000, 800, "XORCalculator")
+            var win = new Window(1000, 700, "XORCalculator")
             {
-                BackgroundColor = new Color4(.2f, .2f, .2f, 0)
+                BackgroundColor = new Color4(94f / 255f, 91f / 255f, 102f / 255f, 0)
             };
 
-            _network = new NeuralNetwork(new []{ 2, 5, 5, 2} );
+            _network = new NeuralNetwork(new []{ 2, 5, 2, 5, 2} );
             var teacher = new Teacher(1000, 1000, i =>
             {
                 var input = new double[] {_random.Next() % 2, _random.Next() % 2};

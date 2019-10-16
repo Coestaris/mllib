@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Threading;
 using ml.AI;
 using OpenTK;
+using OpenTK.Graphics.ES11;
 using XORCalculator.Objects;
 using WindowHandler;
 using WindowHandler.Controls;
@@ -78,6 +79,8 @@ namespace XORCalculator
 
         private void Reset()
         {
+            _working = false;
+
             Teacher.ResetError();
             _resetFunc();
             DisplayValues();
@@ -90,7 +93,10 @@ namespace XORCalculator
         {
             for(var l = 0; l < Network.Layers.Count; l++)
             for (var n = 0; n < Network.Layers[l].Size; n++)
-                _neurons[l][n].Activation = (float)Network.Layers[l].Activations[n];
+            {
+                _neurons[l][n].Activation = (float) Network.Layers[l].Activations[n];
+                _neurons[l][n].Bias = (float) Network.Layers[l].Biases[n];
+            }
 
             for(var l = 0; l < Network.Layers.Count - 1; l++)
             {
@@ -102,6 +108,15 @@ namespace XORCalculator
                         _axons[l][n * nextLayer.Size + j].Weight =
                             (float)Network.Layers[l].Weights[n * nextLayer.Size + j];
                 }
+            }
+        }
+
+        private void Manual()
+        {
+            if (!_working)
+            {
+                Network.ForwardPass(new double[] {Checkbox1.Checked ? 1 : 0, Checkbox2.Checked ? 1 : 0});
+                DisplayValues();
             }
         }
 
@@ -117,17 +132,17 @@ namespace XORCalculator
 
             _neuronStringRenderer = new StringRenderer(
                 StringRenderer.NumericCharSet,
-                new Font(FontFamily.GenericMonospace, 12),
+                new Font("DejaVu Sans Mono", 12, FontStyle.Regular),
                 Brushes.Black);
 
             _buttonStringRenderer = new StringRenderer(
                 StringRenderer.FullCharSet,
-                new Font(FontFamily.GenericMonospace, 16),
-                Brushes.Black);
+                new Font("DejaVu Sans Mono", 16, FontStyle.Regular),
+                Brushes.White);
 
             _textRenderer = new StringRenderer(
                 StringRenderer.FullCharSet,
-                new Font(FontFamily.GenericMonospace, 20),
+                new Font("DejaVu Sans Mono", 16),
                 Brushes.White);
 
 
@@ -135,7 +150,10 @@ namespace XORCalculator
             _axons   = new Axon  [Network.Layers.Count][];
 
             var xStep = Window.Width / (float)(Network.Layers.Count + 1);
-            var x = xStep;
+            var x = xStep / 2;
+
+            xStep += xStep / (Network.Layers.Count - 1);
+
             var layerCount = 0;
             foreach (var layer in Network.Layers)
             {
@@ -186,7 +204,7 @@ namespace XORCalculator
                 new Button(
                     TextureIds.ButtonActive,
                     TextureIds.Button,
-                    new Vector2(60, 30),
+                    new Vector2(65, 30),
                 () => _working = true,
                     _buttonStringRenderer,
                     "Start"));
@@ -195,7 +213,7 @@ namespace XORCalculator
                 new Button(
                     TextureIds.ButtonActive,
                     TextureIds.Button,
-                    new Vector2(185, 30),
+                    new Vector2(190, 30),
                     () => _working = false,
                     _buttonStringRenderer,
                     "Stop"));
@@ -205,7 +223,7 @@ namespace XORCalculator
                 new Button(
                     TextureIds.ButtonActive,
                     TextureIds.Button,
-                    new Vector2(310, 30),
+                    new Vector2(315, 30),
                     () => Reset(),
                     _buttonStringRenderer,
                     "Reset"));
@@ -214,25 +232,27 @@ namespace XORCalculator
                 new Button(
                     TextureIds.ButtonActive,
                     TextureIds.Button,
-                    new Vector2(435, 30),
+                    new Vector2(440, 30),
                     () => Step(),
                     _buttonStringRenderer,
                     "Step"));
 
             Checkbox1 = new Checkbox(
                 "Input1",
-                TextureIds.Checkbox, TextureIds.ButtonActive,
+                TextureIds.Checkbox, TextureIds.CheckboxActive,
                 TextureIds.CheckboxChecked, TextureIds.CheckboxCheckedActive,
-                new Vector2(50, 50),
-                (b) => Console.Write("1"), _buttonStringRenderer);
+                new Vector2(20, Window.Height - 50),
+                (b) => Manual(), _buttonStringRenderer);
 
-            Checkbox1 = new Checkbox(
-                "Input1",
-                TextureIds.Checkbox, TextureIds.ButtonActive,
+            Checkbox2 = new Checkbox(
+                "Input2",
+                TextureIds.Checkbox, TextureIds.CheckboxActive,
                 TextureIds.CheckboxChecked, TextureIds.CheckboxCheckedActive,
-                new Vector2(50, 50),
-                (b) => Console.Write("2"), _buttonStringRenderer);
+                new Vector2(20, Window.Height - 20),
+                (b) => Manual(), _buttonStringRenderer);
 
+            AddObject(Checkbox1);
+            AddObject(Checkbox2);
 
             _infoRenderer = new InfoRenderer(_textRenderer, Vector2.One);
             AddObject(_infoRenderer);

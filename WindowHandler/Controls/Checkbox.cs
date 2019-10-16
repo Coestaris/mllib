@@ -20,7 +20,7 @@ namespace WindowHandler.Controls
 
         private Action<bool> _changedValue;
 
-        public bool Hovered => _hovered;
+        public bool Checked => _checkState;
 
         public Checkbox(
             string text,
@@ -44,9 +44,9 @@ namespace WindowHandler.Controls
         private Texture getCurrentTexture()
         {
             if (_checkState)
-                return _hovered ? CheckedTexture : CheckedActiveTexture;
+                return _hovered ? CheckedActiveTexture : CheckedTexture;
             else
-                return _hovered ? Texture : ActiveTexture;
+                return _hovered ? ActiveTexture : Texture;
         }
 
         public override bool CheckMousePosition(Vector2 mouse)
@@ -79,7 +79,7 @@ namespace WindowHandler.Controls
 
             var textSize = TextRenderer.MeasureString(Text, _renderer.Font);
             _renderer.DrawString(Text, Position +
-                    new Vector2(currentTexture.Size.Width / 2.0f + 10 + textSize.Width / 2.0f, textSize.Height / 2.0f));
+                    new Vector2(currentTexture.Size.Width / 2.0f + 10, -textSize.Height / 2.0f));
         }
     }
 }

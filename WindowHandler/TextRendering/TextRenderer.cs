@@ -111,7 +111,8 @@ namespace WindowHandler
 
         ~TextRenderer()
         {
-            Console.WriteLine("[Warning] Resource leaked: {0}.", typeof(TextRenderer));
+            if (!disposed)
+                Console.WriteLine("[Warning] Resource leaked: {0}.", typeof(TextRenderer));
         }
     }
 }

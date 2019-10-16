@@ -63,7 +63,7 @@ namespace ml.AI
                 Layers[i].Print(i);
         }
 
-        internal void ForwardPass(double[] input)
+        public void ForwardPass(double[] input)
         {
             if(input == null)
                 throw new ArgumentNullException(nameof(input));

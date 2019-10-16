@@ -11,6 +11,7 @@ namespace XORCalculator.Objects
     {
         public float Activation;
         public float Radius;
+        public float Bias;
 
         internal StringRenderer _renderer;
 
@@ -24,7 +25,11 @@ namespace XORCalculator.Objects
             const double angleDelta = 0.01;
 
             GL.Begin(PrimitiveType.TriangleFan);
-            GL.Color3(lerpColor(Color.Red, Color.Green, Activation));
+            if(Bias < 0)
+                GL.Color3(lerpColor(Color.Black, Color.Red, -Bias / 10));
+            else
+                GL.Color3(lerpColor(Color.Black, Color.Green, Bias / 10));
+
             GL.Vertex2(Position);
             for (double a = 0; a < Math.PI * 2; a += angleDelta)
                 GL.Vertex2(
@@ -45,6 +50,7 @@ namespace XORCalculator.Objects
 
             GL.End();
 
+            GL.Color3(lerpColor(Color.Red, Color.Green, Activation));
             DrawCenteredString(Activation.ToString("F3"), _renderer, true, true);
         }
     }

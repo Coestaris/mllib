@@ -48,7 +48,7 @@ namespace WindowHandler
         ~Texture()
         {
             if(!_disposed)
-                Console.WriteLine("Memory Leaked");
+                Console.WriteLine("[Warning] Resource leaked: {0}.", typeof(Texture));
         }
     }
 }

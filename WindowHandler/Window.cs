@@ -18,7 +18,8 @@ namespace WindowHandler
 
         internal static ResourceManager ResourceManager;
 
-        public Window(int width, int height, string title) : base(width, height, GraphicsMode.Default, title)
+        public Window(int width, int height, string title) : base(width, height,
+            new GraphicsMode(32, 24, 0, 8), title)
         {
             Objects = new List<DrawableObject>();
         }

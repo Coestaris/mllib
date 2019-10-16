@@ -23,18 +23,20 @@ namespace XORCalculator.Objects
 
         public override void Draw()
         {
-            GL.Color3(1, 1, 1);
+            GL.Color3(Color.White);
             _renderer.DrawString("Step: " + Step, new Vector2(5, 50));
             _renderer.DrawString("Error: ", new Vector2(5, 70));
+            _renderer.DrawString("Press ESC to Exit", new Vector2(Parent.Width - 220, Parent.Height - 30));
 
             if (double.IsNaN(Error))
             {
-                _renderer.DrawString("none", new Vector2(100, 72));
+                GL.Color3(Color.White);
+                _renderer.DrawString("none", new Vector2(80, 72));
             }
             else
             {
                 GL.Color3(lerpColor(Color.Red, Color.Green, (float)Error));
-                _renderer.DrawString(Error.ToString("F4"), new Vector2(100, 72));
+                _renderer.DrawString(Error.ToString("F4"), new Vector2(80, 72));
             }
         }
     }
