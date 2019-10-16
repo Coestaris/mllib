@@ -21,59 +21,57 @@ namespace XORCalculator
         public const int CheckboxCheckedActive = 5;
     }
 
-    public class NNVisualizer : WindowHandler.WindowHandler
+    public sealed class NNVisualizer : WindowHandler.WindowHandler
     {
-        public NeuralNetwork Network;
-        public Teacher Teacher;
-
-        public Checkbox Checkbox1;
-        public Checkbox Checkbox2;
-
-        internal StringRenderer _neuronStringRenderer;
-        internal StringRenderer _buttonStringRenderer;
-        internal StringRenderer _textRenderer;
-
-        private Neuron[][] _neurons;
-        private Axon[][] _axons;
-        private InfoRenderer _infoRenderer;
-
-        public bool _working;
-
+        //Visualization parameters
         private const int StepsPerFrame = 2;
         private const int ErrorResetFactor = 0;
         private const int StepsDelay = 0;
 
+        private readonly NeuralNetwork _network;
+        private readonly Teacher _teacher;
+
+        //Scene objects
+        private Checkbox _checkbox1;
+        private Checkbox _checkbox2;
+        private Neuron[][] _neurons;
+        private Axon[][] _axons;
+        private InfoRenderer _infoRenderer;
+
+        private StringRenderer _neuronStringRenderer;
+        private StringRenderer _buttonStringRenderer;
+        private StringRenderer _textRenderer;
+
+        private bool _working;
         private Action _resetFunc;
 
         public NNVisualizer(Window window, NeuralNetwork network, Teacher teacher, Action ResetFunc) : base(window)
         {
             _resetFunc = ResetFunc;
-            Network = network;
-            Teacher = teacher;
+            _network = network;
+            _teacher = teacher;
         }
 
         public override void OnUpdate()
         {
             if (_working)
-            {
                 for (var i = 0; i < StepsPerFrame; i++)
                 {
                     Step();
                     Thread.Sleep(StepsDelay);
                 }
-            }
         }
 
         private void Step()
         {
-            Teacher.TeachStep(Network);
+            _teacher.TeachStep(_network);
 
             DisplayValues();
 
             if (ErrorResetFactor != 0 && _infoRenderer.Step % ErrorResetFactor == 0)
-                Teacher.ResetError();
+                _teacher.ResetError();
 
-            _infoRenderer.Error = Teacher.Error;
+            _infoRenderer.Error = _teacher.Error;
             _infoRenderer.Step++;
         }
 
@@ -81,32 +79,32 @@ namespace XORCalculator
         {
             _working = false;
 
-            Teacher.ResetError();
+            _teacher.ResetError();
             _resetFunc();
             DisplayValues();
 
-            _infoRenderer.Error = Teacher.Error;
+            _infoRenderer.Error = _teacher.Error;
             _infoRenderer.Step = 0;
         }
 
         private void DisplayValues()
         {
-            for(var l = 0; l < Network.Layers.Count; l++)
-            for (var n = 0; n < Network.Layers[l].Size; n++)
+            for(var l = 0; l < _network.Layers.Count; l++)
+            for (var n = 0; n < _network.Layers[l].Size; n++)
             {
-                _neurons[l][n].Activation = (float) Network.Layers[l].Activations[n];
-                _neurons[l][n].Bias = (float) Network.Layers[l].Biases[n];
+                _neurons[l][n].Activation = (float) _network.Layers[l].Activations[n];
+                _neurons[l][n].Bias = (float) _network.Layers[l].Biases[n];
             }
 
-            for(var l = 0; l < Network.Layers.Count - 1; l++)
+            for(var l = 0; l < _network.Layers.Count - 1; l++)
             {
-                var layer = Network.Layers[l];
-                var nextLayer = Network.Layers[l + 1];
+                var layer = _network.Layers[l];
+                var nextLayer = _network.Layers[l + 1];
                 for (var n = 0; n < layer.Size; n++)
                 {
                     for (var j = 0; j < nextLayer.Size; j++)
                         _axons[l][n * nextLayer.Size + j].Weight =
-                            (float)Network.Layers[l].Weights[n * nextLayer.Size + j];
+                            (float)_network.Layers[l].Weights[n * nextLayer.Size + j];
                 }
             }
         }
@@ -115,7 +113,7 @@ namespace XORCalculator
         {
             if (!_working)
             {
-                Network.ForwardPass(new double[] {Checkbox1.Checked ? 1 : 0, Checkbox2.Checked ? 1 : 0});
+                _network.ForwardPass(new double[] {_checkbox1.Checked ? 1 : 0, _checkbox2.Checked ? 1 : 0});
                 DisplayValues();
             }
         }
@@ -124,38 +122,36 @@ namespace XORCalculator
         {
             ResourceManager.PushTexture(TextureIds.Button, "button.png");
             ResourceManager.PushTexture(TextureIds.ButtonActive, "buttonActive.png");
-
             ResourceManager.PushTexture(TextureIds.Checkbox, "checkBox.png");
             ResourceManager.PushTexture(TextureIds.CheckboxActive, "checkBoxActive.png");
             ResourceManager.PushTexture(TextureIds.CheckboxChecked, "checkBoxChecked.png");
             ResourceManager.PushTexture(TextureIds.CheckboxCheckedActive, "checkBoxCheckedActive.png");
 
-            _neuronStringRenderer = new StringRenderer(
+            ResourceManager.PushRenderer(_neuronStringRenderer = new StringRenderer(
                 StringRenderer.NumericCharSet,
                 new Font("DejaVu Sans Mono", 12, FontStyle.Regular),
-                Brushes.Black);
+                Brushes.Black));
 
-            _buttonStringRenderer = new StringRenderer(
+            ResourceManager.PushRenderer(_buttonStringRenderer = new StringRenderer(
                 StringRenderer.FullCharSet,
                 new Font("DejaVu Sans Mono", 16, FontStyle.Regular),
-                Brushes.White);
+                Brushes.White));
 
-            _textRenderer = new StringRenderer(
+            ResourceManager.PushRenderer(_textRenderer = new StringRenderer(
                 StringRenderer.FullCharSet,
                 new Font("DejaVu Sans Mono", 16),
-                Brushes.White);
+                Brushes.White));
 
+            _neurons = new Neuron[_network.Layers.Count][];
+            _axons   = new Axon  [_network.Layers.Count][];
 
-            _neurons = new Neuron[Network.Layers.Count][];
-            _axons   = new Axon  [Network.Layers.Count][];
-
-            var xStep = Window.Width / (float)(Network.Layers.Count + 1);
+            var xStep = Window.Width / (float)(_network.Layers.Count + 1);
             var x = xStep / 2;
 
-            xStep += xStep / (Network.Layers.Count - 1);
+            xStep += xStep / (_network.Layers.Count - 1);
 
             var layerCount = 0;
-            foreach (var layer in Network.Layers)
+            foreach (var layer in _network.Layers)
             {
                 _neurons[layerCount] = new Neuron[layer.Size];
                 if(layer.WeightsNudge != null)
@@ -177,10 +173,10 @@ namespace XORCalculator
                 layerCount++;
             }
 
-            for(int l = 0; l < Network.Layers.Count - 1; l++)
+            for(int l = 0; l < _network.Layers.Count - 1; l++)
             {
-                var layer = Network.Layers[l];
-                var nextLayer = Network.Layers[l + 1];
+                var layer = _network.Layers[l];
+                var nextLayer = _network.Layers[l + 1];
 
                 for (var i = 0; i < layer.Size; i++)
                 {
@@ -237,28 +233,23 @@ namespace XORCalculator
                     _buttonStringRenderer,
                     "Step"));
 
-            Checkbox1 = new Checkbox(
+            AddObject(_checkbox1 = new Checkbox(
                 "Input1",
                 TextureIds.Checkbox, TextureIds.CheckboxActive,
                 TextureIds.CheckboxChecked, TextureIds.CheckboxCheckedActive,
                 new Vector2(20, Window.Height - 50),
-                (b) => Manual(), _buttonStringRenderer);
+                (b) => Manual(), _buttonStringRenderer));
 
-            Checkbox2 = new Checkbox(
+            AddObject(_checkbox2 = new Checkbox(
                 "Input2",
                 TextureIds.Checkbox, TextureIds.CheckboxActive,
                 TextureIds.CheckboxChecked, TextureIds.CheckboxCheckedActive,
                 new Vector2(20, Window.Height - 20),
-                (b) => Manual(), _buttonStringRenderer);
+                (b) => Manual(), _buttonStringRenderer));
 
-            AddObject(Checkbox1);
-            AddObject(Checkbox2);
-
-            _infoRenderer = new InfoRenderer(_textRenderer, Vector2.One);
-            AddObject(_infoRenderer);
+            AddObject(_infoRenderer = new InfoRenderer(_textRenderer, Vector2.One));
 
             Reset();
-
             base.OnStart();
         }
     }
