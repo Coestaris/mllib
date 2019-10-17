@@ -24,9 +24,13 @@ namespace ml.AI
         public double SetupTime => _setupTime.TotalMilliseconds;
 
         private TimeSpan _setupTime;
+        public Action<int> BatchCallback;
 
         private double _errorSum;
         private int _n;
+
+        public Teacher(int tasksCount, Func<int, TeacherTask> taskCreatorFunc)
+            : this(tasksCount, tasksCount, taskCreatorFunc) {}
 
         public Teacher(int tasksCount, int tasksDivision, Func<int, TeacherTask> taskCreatorFunc)
         {
@@ -43,28 +47,38 @@ namespace ml.AI
 
         public double Error => _errorSum / _n;
 
-        public void Teach(NeuralNetwork network, int count)
+        public void Teach(NeuralNetwork network)
         {
-            for (int i = 0; i < count; i++)
-                TeachStep(network);
-        }
-
-        public void TeachStep(NeuralNetwork network)
-        {
-            foreach (var batch in Tasks.Shuffle(Shuffler).ToArray().Split(TasksDivision))
+            if (TasksDivision == Tasks.Count)
             {
-                foreach (var task in batch)
+                foreach (var task in Tasks.Shuffle(Shuffler))
                 {
                     network.ForwardPass(task.Input);
                     network.BackProp(task.Expected);
+                    network.ApplyNudge(1);
 
                     _errorSum += network.CalculateError(task.Expected);
                     _n++;
                 }
+            }
+            else
+            {
+                var index = 0;
+                foreach (var batch in Tasks.ToArray().Split(TasksDivision))
+                {
+                    var batchArray = batch.Shuffle(Shuffler).ToArray();
+                    foreach (var task in batchArray)
+                    {
+                        network.ForwardPass(task.Input);
+                        network.BackProp(task.Expected);
 
-                //break;
-                //network.ApplyNudge(batch.Count());
-                //Tasks = Shuffler.ShuffleList(Tasks);
+                        _errorSum += network.CalculateError(task.Expected);
+                        _n++;
+                    }
+
+                    network.ApplyNudge(batchArray.Length);
+                    BatchCallback?.Invoke(index++);
+                }
             }
         }
 

@@ -49,11 +49,12 @@ namespace HWDRecognizer
                 dataset.DatasetImages.Count + dataset.TestImages.Count);
 
             var inputLayerSize = dataset.ImageSize.Width * dataset.ImageSize.Height;
-            var network = new NeuralNetwork(new[] { inputLayerSize, 16, 16, 10 });
+            var network = new NeuralNetwork(new[] { inputLayerSize, 4, 4, 4, 4, 10 });
 
             network.Fill();
+            network.LearningRate = 100;
 
-            var teacher = new Teacher(dataset.DatasetImages.Count, 30, i =>
+            var teacher = new Teacher(dataset.DatasetImages.Count, i =>
             {
                 var input = dataset.DatasetImages[i].ToTrainData();
                 var expected = dataset.DatasetImages[i].ToExpected();
@@ -62,10 +63,10 @@ namespace HWDRecognizer
             });
 
             Console.WriteLine("Loaded network in {0} ms.", teacher.SetupTime);
-            const int count = 1;
+            const int count = 10;
             for (int i = 0; i < count; i++)
             {
-                teacher.TeachStep(network);
+                teacher.Teach(network);
                 Console.WriteLine("[{0}/{1}]. Error: {2}", i + 1, count, teacher.Error);
                 teacher.ResetError();
             }

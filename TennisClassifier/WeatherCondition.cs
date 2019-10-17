@@ -160,5 +160,16 @@ namespace TennisClassifier
 
             return false;
         }
+
+        public double[] ToTrainData()
+        {
+            return new[] {Outlook, Humidity, Windy, Temperature};
+        }
+
+        public double[] ToExpected()
+        {
+            var s = ShouldPlay();
+            return new double[] { s ? 1 : 0 };
+        }
     }
 }

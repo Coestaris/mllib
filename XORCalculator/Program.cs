@@ -27,7 +27,7 @@ namespace XORCalculator
             };
 
             _network = new NeuralNetwork(new []{ 2, 5, 2, 5, 2} );
-            var teacher = new Teacher(1000, 1000, i =>
+            var teacher = new Teacher(10000, 100, i =>
             {
                 var input = new double[] {_random.Next() % 2, _random.Next() % 2};
                 var result = ((int) input[0] ^ (int) input[1]) == 1;

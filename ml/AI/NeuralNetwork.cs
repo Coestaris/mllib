@@ -14,11 +14,18 @@ namespace ml.AI
                 throw new ArgumentNullException(nameof(layerSizes));
 
             Layers = new List<NNLayer>();
+
+            _biasNudges = new double[layerSizes.Count][];
+            _weightNudges = new double[layerSizes.Count][];
+
             for(var i = 0; i < layerSizes.Count; i++)
             {
                 Layers.Add(new NNLayer(layerSizes[i],
                     i != layerSizes.Count - 1 ? layerSizes[i + 1] : -1,
                     i != 0 ? layerSizes[i - 1] : 0));
+
+                _biasNudges[i] = new double[layerSizes[i]];
+                _weightNudges[i] = new double[layerSizes[i] * (i != layerSizes.Count - 1 ? layerSizes[i + 1] : 0)];
             }
         }
 
@@ -87,7 +94,10 @@ namespace ml.AI
             return Layers.Last().CalculateError(expected);
         }
 
-        private double LearningRate = 0.5;
+        public double LearningRate = 0.5;
+
+        private double[][] _biasNudges;
+        private double[][] _weightNudges;
 
         internal void BackProp(double[] expected)
         {
@@ -137,7 +147,7 @@ namespace ml.AI
                 }
             }
 
-            //apply the nudge
+            //save the nudge
             for (int l = Layers.Count - 1; l >= 1; l--)
             {
                 var currentLayer = Layers[l];
@@ -145,12 +155,37 @@ namespace ml.AI
                 for (int n = 0; n < currentLayer.Size; n++)
                 {
                     //bias
-                    currentLayer.Biases[n] -= LearningRate * currentLayer.Derivatives[n].dB;
+                    _biasNudges[l][n] += currentLayer.Derivatives[n].dB;
 
                     //weight
                     for (int p = 0; p < prevLayer.Size; p++)
+                        _weightNudges[l - 1][p * currentLayer.Size + n] +=
+                            currentLayer.Derivatives[n].dW[p];
+
+                }
+            }
+        }
+
+        internal void ApplyNudge(int count)
+        {
+            //apply the nudge
+            for (int l = Layers.Count - 1; l >= 1; l--)
+            {
+                var currentLayer = Layers[l];
+                var prevLayer = Layers[l - 1];
+                for (int n = 0; n < currentLayer.Size; n++)
+                {
+                    //bias
+                    currentLayer.Biases[n] -= LearningRate * _biasNudges[l][n] / count;
+                    _biasNudges[l][n] = 0;
+
+                    //weight
+                    for (int p = 0; p < prevLayer.Size; p++)
+                    {
                         prevLayer.Weights[p * currentLayer.Size + n] -=
-                            LearningRate * currentLayer.Derivatives[n].dW[p];
+                            LearningRate * _weightNudges[l - 1][p * currentLayer.Size + n] / count;
+                        _weightNudges[l - 1][p * currentLayer.Size + n] = 0;
+                    }
 
                 }
             }

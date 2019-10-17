@@ -13,7 +13,7 @@ namespace ml
 
         public static void Main(string[] args)
         {
-            var network = new NeuralNetwork(new[] {2, 5, 5, 2});
+            var network = new NeuralNetwork(new[] {2, 3, 2});
             var random = new Random();
             network.Fill(
                 (i, j) => random.NextDouble(),
@@ -21,7 +21,7 @@ namespace ml
                 (i, j) => 0);
 
 
-            var teacher = new Teacher(1000, 1000, i =>
+            var teacher = new Teacher(2300 * 40, 10, i =>
             {
                 var input = new double[] {random.Next() % 2, random.Next() % 2};
                 var result = ((int) input[0] ^ (int) input[1]) == 1;
@@ -31,7 +31,7 @@ namespace ml
 
             network.Print();
 
-            teacher.Teach(network, 9000);
+            teacher.Teach(network);
             network.Print();
 
             DoTest(1, 1, network);
