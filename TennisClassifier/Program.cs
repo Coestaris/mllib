@@ -80,7 +80,7 @@ namespace TennisClassifier
                     outlook, humidity, windy, temperature));*/
             }
 
-            var network = new NeuralNetwork(new[] { 4, 8, 8, 8, 1 });
+            var network = new NeuralNetwork(new[] { 4, 16, 16, 1 });
             network.LearningRate = 1;
 
             network.Fill();
@@ -94,7 +94,7 @@ namespace TennisClassifier
 
             Console.WriteLine("Loaded network in {0} ms.", teacher.SetupTime);
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 20; i++)
             {
                 teacher.Teach(network);
                 Console.WriteLine("{0}. Error: {1}", i, teacher.Error);

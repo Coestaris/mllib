@@ -6,3 +6,5 @@ cmake-build-debug/
 packages/
 
 ml\.sln\.DotSettings\.user
+
+*.user
