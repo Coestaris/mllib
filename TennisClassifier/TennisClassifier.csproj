@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C8ED9616-BAB2-4436-9A08-990D930FA296}</ProjectGuid>
+    <ProjectGuid>{F59C141F-05B6-40D6-8132-35DBEB0B5150}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>HWDRecognizer</RootNamespace>
-    <AssemblyName>HWDRecognizer</AssemblyName>
+    <RootNamespace>TennisClassifier</RootNamespace>
+    <AssemblyName>TennisClassifier</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -35,19 +35,12 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DatasetParser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ml\ml.csproj">
-      <Project>{f3a99d22-8ef0-4156-8300-7c903d407d4e}</Project>
-      <Name>ml</Name>
-    </ProjectReference>
+    <Compile Include="WeatherCondition.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

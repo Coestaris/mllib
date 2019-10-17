@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace HWDRecognizer
@@ -24,19 +26,34 @@ namespace HWDRecognizer
             Number = number;
         }
 
+        public double[] ToExpected()
+        {
+            var result = new double[10];
+            result[Number] = 1;
+            return result;
+        }
+
+        public double[] ToTrainData()
+        {
+            var result = new double[Data.Length];
+            for (var i = 0; i < Data.Length; i++)
+                result[i] = Data[i] / 256.0;
+            return result;
+        }
+
         public Bitmap ToBitmap()
         {
-            var bmp = new Bitmap(Size.Width, Size.Height);
+            var bmp = new Bitmap(Size.Width, Size.Height, PixelFormat.Format8bppIndexed);
 
-/*            var palette = bmp.Palette;
+            var palette = bmp.Palette;
             var entries = palette.Entries;
             for (var i = 0; i < 256; i++)
             {
                 var b = Color.FromArgb((byte)i, (byte)i, (byte)i);
                 entries[i] = b;
             }
-            bmp.Palette = palette;*/
-/*
+            bmp.Palette = palette;
+
 
             var data = bmp.LockBits(new Rectangle(Point.Empty, Size),
                 ImageLockMode.WriteOnly, bmp.PixelFormat);
@@ -44,33 +61,36 @@ namespace HWDRecognizer
             var targetStride = data.Stride;
             var scan0 = data.Scan0.ToInt64();
             for (var y = 0; y < Size.Height; y++)
-                Marshal.Copy(Data, y * 24, new IntPtr(scan0 + y * targetStride), 24);
+                Marshal.Copy(Data, y * Size.Width, new IntPtr(scan0 + y * targetStride),  Size.Width);
 
-            bmp.UnlockBits(data);*/
-
-            for(int x = 0; x < Size.Width; x++)
-                for (int y = 0; y < Size.Width; y++)
-                {
-                    var b = Data[y * Size.Width + x];
-                    bmp.SetPixel(x, y, Color.FromArgb(b, b, b, 0));
-                }
-
+            bmp.UnlockBits(data);
             return bmp;
         }
     }
 
     public class Dataset
     {
-        public string DatasetFilename;
-        public string DatasetLabelsFilename;
-        public string TestFilename;
-        public string TestLabelsFilename;
-
         public List<HWImage> DatasetImages;
         public List<HWImage> TestImages;
 
         private const UInt32 labelMagicNumber = 0x00000801;
         private const UInt32 datasetMagicNumber = 0x00000803;
+
+        private TimeSpan _loadTime;
+        public double LoadTime => _loadTime.TotalMilliseconds;
+        public Size ImageSize
+        {
+            get
+            {
+                if(DatasetImages.Count == 0 && TestImages.Count == 0)
+                    return Size.Empty;
+
+                if (DatasetImages.Count != 0)
+                    return DatasetImages[0].Size;
+
+                return TestImages[0].Size;
+            }
+        }
 
         public Dataset(
             string datasetFilename,
@@ -78,15 +98,15 @@ namespace HWDRecognizer
             string testFilename,
             string testLabelsFilename)
         {
-            DatasetFilename = datasetFilename;
-            DatasetLabelsFilename = datasetLabelsFilename;
-            TestFilename = testFilename;
-            TestLabelsFilename = testFilename;
-
             DatasetImages = new List<HWImage>();
             TestImages = new List<HWImage>();
 
+            var startTime = DateTime.Now;
             ReadDataset(DatasetImages, datasetFilename, false);
+            //ReadDataset(TestImages, testFilename, false);
+            ReadLabels(DatasetImages, datasetLabelsFilename);
+            //ReadLabels(TestImages, testLabelsFilename);
+            _loadTime = TimeSpan.FromMilliseconds((DateTime.Now - startTime).TotalMilliseconds);
         }
 
         private UInt32 GetUInt32(byte[] bytes)
@@ -98,7 +118,7 @@ namespace HWDRecognizer
                 bytes[3]);
         }
 
-        private void ReadDataset(List<HWImage> destList, string fileName, bool isTest)
+        private void ReadDataset(ICollection<HWImage> dest, string fileName, bool isTest)
         {
             if(!File.Exists(fileName))
                 throw new FileNotFoundException("Unable to open file", fileName);
@@ -106,10 +126,8 @@ namespace HWDRecognizer
             var imageSize = Size.Empty;
             using (var reader = new BinaryReader(new FileStream(fileName, FileMode.Open)))
             {
-                var offset = 0;
                 var int32Buffer = new byte[4];
-
-                reader.Read(int32Buffer, offset, 4);
+                reader.Read(int32Buffer, 0, 4);
 
                 if (GetUInt32(int32Buffer) != datasetMagicNumber)
                     throw new InvalidDataException();
@@ -127,9 +145,32 @@ namespace HWDRecognizer
                 for (int i = 0; i < count; i++)
                 {
                     reader.Read(dataBuffer, 0, dataBuffer.Length);
-                    destList.Add(new HWImage(
+                    dest.Add(new HWImage(
                         (byte[]) (dataBuffer.Clone()), imageSize, i, isTest, -1));
                 }
+            }
+        }
+
+        private void ReadLabels(List<HWImage> target, string fileName)
+        {
+            if(!File.Exists(fileName))
+                throw new FileNotFoundException("Unable to open file", fileName);
+
+            using (var reader = new BinaryReader(new FileStream(fileName, FileMode.Open)))
+            {
+                var int32Buffer = new byte[4];
+                reader.Read(int32Buffer, 0, 4);
+
+                if (GetUInt32(int32Buffer) != labelMagicNumber)
+                    throw new InvalidDataException();
+
+                reader.Read(int32Buffer, 0, 4);
+                var count = (int) GetUInt32(int32Buffer);
+                if(count != target.Count)
+                    throw new DataException("Lengths of target images and labels are not equal");
+
+                for (int i = 0; i < count; i++)
+                    target[i].Number = reader.ReadByte();
             }
         }
     }

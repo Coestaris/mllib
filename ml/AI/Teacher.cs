@@ -21,17 +21,22 @@ namespace ml.AI
         public int TasksDivision;
         public List<TeacherTask> Tasks;
         public Random Shuffler = new Random();
+        public double SetupTime => _setupTime.TotalMilliseconds;
+
+        private TimeSpan _setupTime;
 
         private double _errorSum;
         private int _n;
 
         public Teacher(int tasksCount, int tasksDivision, Func<int, TeacherTask> taskCreatorFunc)
         {
+            var start = DateTime.Now;
             TasksDivision = tasksDivision;
             Tasks = new List<TeacherTask>();
             for(var i = 0; i < tasksCount; i++)
                 Tasks.Add(taskCreatorFunc(i));
 
+            _setupTime = TimeSpan.FromMilliseconds((DateTime.Now - start).TotalMilliseconds);
             _errorSum = 0;
             _n = 0;
         }
@@ -46,7 +51,7 @@ namespace ml.AI
 
         public void TeachStep(NeuralNetwork network)
         {
-            foreach (var batch in Tasks.ToArray().Split(TasksDivision))
+            foreach (var batch in Tasks.Shuffle(Shuffler).ToArray().Split(TasksDivision))
             {
                 foreach (var task in batch)
                 {
@@ -57,8 +62,9 @@ namespace ml.AI
                     _n++;
                 }
 
+                //break;
                 //network.ApplyNudge(batch.Count());
-                Tasks = Shuffler.NextList(Tasks);
+                //Tasks = Shuffler.ShuffleList(Tasks);
             }
         }
 
@@ -79,7 +85,18 @@ namespace ml.AI
             }
         }
 
-        public static List<T> NextList<T>(this Random r, IEnumerable<T> source)
+        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source, Random rng)
+        {
+            T[] elements = source.ToArray();
+            for (int i = elements.Length - 1; i >= 0; i--)
+            {
+                int swapIndex = rng.Next(i + 1);
+                yield return elements[swapIndex];
+                elements[swapIndex] = elements[i];
+            }
+        }
+
+        public static List<T> ShuffleList<T>(this Random r, IEnumerable<T> source)
         {
             var list = new List<T>();
             foreach (var item in source)
