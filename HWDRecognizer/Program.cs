@@ -13,7 +13,7 @@ namespace HWDRecognizer
         {
             HWImage image = set.DatasetImages[index];
             var input = image.ToTrainData();
-            var output = network.Run(input);
+            var output = network.ForwardPass(input);
 
             var counter = 0;
             var sortedOutput = output.Select(p => new double[] { p, counter++ }).OrderBy(p => p[0]).ToArray();

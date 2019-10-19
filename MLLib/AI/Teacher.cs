@@ -80,9 +80,9 @@ namespace ml.AI
             else
             {
                 var index = 0;
-                foreach (var batch in Tasks.ToArray().Split(TasksDivision))
+                foreach (var batch in Tasks.Shuffle(Shuffler).ToArray().Split(TasksDivision))
                 {
-                    var batchArray = batch.Shuffle(Shuffler).ToArray();
+                    var batchArray = batch.ToArray();
                     foreach (var task in batchArray)
                     {
                         network.ForwardPass(task.Input);

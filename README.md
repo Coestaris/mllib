@@ -10,6 +10,8 @@ Neural network stuff:
  * [CodingTrain NN explanation Videos](https://www.youtube.com/watch?v=XJ7HLz9VYz0&list=PLRqwX-V7Uu6Y7MdSCaIfsxc561QI0U0Tb)
  * [Examples of ML tasks](https://web.cs.ucdavis.edu/~vemuri/classes/ecs271/lecture3.pdf)
  * http://neuralnetworksanddeeplearning.com
+ * [Great videos about NN](https://www.youtube.com/watch?v=8bNIkfRJZpo)
+ * [A lot of tricks to improve NN](http://cs231n.github.io/neural-networks-2)
 
 Math stuff:
  * [Gaussian distribution explanation](https://habr.com/ru/post/208684/)

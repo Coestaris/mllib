@@ -205,19 +205,15 @@ namespace ml.AIMath
 
         public static Matrix operator*(Matrix a, Matrix b)
         {
-            if(a.Rows != b.Columns)
+            if(a.Rows != b.Rows && a.Columns != b.Columns)
                 throw new ArgumentException("Matrices should have same size");
 
-            var matrix = new Matrix(a.Rows, b.Columns);
-            for (int i = 0; i < matrix.Rows; i++)
-            {
-                for (int j = 0; j < matrix.Columns; j++)
-                {
-                    for (int k = 0; k < a.Columns; k++)
-                        matrix._data[i, j] = matrix._data[i, j] + a._data[i, k] * b._data[k, j];
-                }
-            }
-            return matrix;
+            var result = new Matrix(a);
+            for (int r = 0; r < result.Rows; r++)
+                for (int c = 0; c < result.Columns; c++)
+                    result._data[r, c] *= b._data[r, c];
+
+            return result;
         }
 
         public static Matrix operator*(Matrix a, double v)
@@ -238,6 +234,51 @@ namespace ml.AIMath
                    result._data[r, c] /= v;
 
             return result;
+        }
+
+        public double[] ToArray(bool rows = true)
+        {
+            var result = new double[rows ? Rows : Columns];
+            if (rows)
+                for (var i = 0; i < Rows; i++)
+                    result[i] = _data[i, 0];
+            else
+                for (var i = 0; i < Columns; i++)
+                    result[i] = _data[0, i];
+
+            return result;
+        }
+
+        public Matrix Transpose()
+        {
+            var w = Rows;
+            var h = Columns;
+
+            var result = new Matrix(h, w);
+
+            for (var i = 0; i < w; i++)
+                for (var j = 0; j < h; j++)
+                    result._data[j, i] = _data[i, j];
+
+            return result;
+        }
+
+        public Matrix Dot(Matrix b)
+        {
+            var a = this;
+            if(a.Columns != b.Rows)
+                throw new ArgumentException("Matrices should have same size");
+
+            var matrix = new Matrix(a.Rows, b.Columns);
+            for (int i = 0; i < matrix.Rows; i++)
+            {
+                for (int j = 0; j < matrix.Columns; j++)
+                {
+                    for (int k = 0; k < a.Columns; k++)
+                        matrix._data[i, j] = matrix._data[i, j] + a._data[i, k] * b._data[k, j];
+                }
+            }
+            return matrix;
         }
     }
 }

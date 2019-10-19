@@ -19,7 +19,7 @@ namespace TennisClassifier
             for (int i = DataCount; i < DataCount + TestsCount; i++)
             {
                 var input = _weatherConditions[i].ToTrainData();
-                var output = network.Run(input);
+                var output = network.ForwardPass(input);
                 var result = _weatherConditions[i].ShouldPlay();
 
                 if (output[0] > .9 && result ||

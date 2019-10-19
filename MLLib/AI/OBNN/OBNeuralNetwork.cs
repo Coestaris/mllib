@@ -71,7 +71,7 @@ namespace ml.AI.OBNN
                 Layers[i].Print(i);
         }
 
-        public void ForwardPass(double[] input)
+        public double[] ForwardPass(double[] input)
         {
             if(input == null)
                 throw new ArgumentNullException(nameof(input));
@@ -82,6 +82,8 @@ namespace ml.AI.OBNN
             Layers[0].SetActivation(input);
             for(var i = 0; i < Layers.Count - 1; i++)
                 Layers[i].ForwardPass(Layers[i + 1]);
+
+            return Layers[Layers.Count - 1].Activations;
         }
 
         public double CalculateError(double[] expected)
@@ -190,12 +192,6 @@ namespace ml.AI.OBNN
 
                 }
             }
-        }
-
-        public double[] Run(double[] input)
-        {
-            ForwardPass(input);
-            return Layers.Last().Activations;
         }
     }
 }
