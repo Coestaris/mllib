@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ml.AIMath;
 
 namespace ml.AI
 {
@@ -108,7 +109,7 @@ namespace ml.AI
             for (int n = 0; n < outputLayer.Size; n++)
             {
                 double dA = outputLayer.Activations[n] - expected[n];
-                double dZ = NNLayer.DSigmoid(outputLayer.Activations[n]);
+                double dZ = ActivationFunctions.DSigmoidS(outputLayer.Activations[n]);
                 for (int j = 0; j < prevLayer.Size; j++)
                     outputLayer.Derivatives[n].dW[j] = dA * dZ * prevLayer.Activations[j];
 
@@ -136,7 +137,7 @@ namespace ml.AI
                         dA += nextDZ * nextDA * currentLayer.Weights[n * nextLayer.Size + j];
                     }
 
-                    double dZ = NNLayer.DSigmoid(currentLayer.Activations[n]);
+                    double dZ = ActivationFunctions.DSigmoidS(currentLayer.Activations[n]);
                     if(prevLayer != null)
                         for (int j = 0; j < prevLayer.Size; j++)
                             currentLayer.Derivatives[n].dW[j] = dA * dZ * prevLayer.Activations[j];

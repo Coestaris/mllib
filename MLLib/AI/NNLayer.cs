@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ml.AIMath;
 
 namespace ml.AI
 {
@@ -116,21 +117,6 @@ namespace ml.AI
             Array.Copy(input, Activations, input.Length);
         }
 
-        public static double Sigmoid(double x)
-        {
-            return 1 / (1 + Math.Exp(-x));
-        }
-
-        public static double DSigmoid(double x)
-        {
-            return x * (1 - x);
-        }
-
-        public static double DSigmoidS(double x)
-        {
-            return DSigmoid(Sigmoid(x)); //sigmoid(x) * (1 - sigmoid(x))
-        }
-
         public void ForwardPass(NNLayer nextLayer)
         {
             for (var next = 0; next < nextLayer.Size; next++)
@@ -138,7 +124,7 @@ namespace ml.AI
                 var acc = nextLayer.Biases[next];
                 for (var curr = 0; curr < Size; curr++)
                     acc += Activations[curr] * Weights[next + nextLayer.Size * curr];
-                nextLayer.Activations[next] = Sigmoid(acc);
+                nextLayer.Activations[next] = ActivationFunctions.Sigmoid(acc);
             }
         }
 
