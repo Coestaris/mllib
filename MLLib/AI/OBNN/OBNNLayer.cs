@@ -1,10 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ml.AIMath;
 
-namespace ml.AI
+namespace ml.AI.OBNN
 {
     public class NNLayer
     {

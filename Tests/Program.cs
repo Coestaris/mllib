@@ -6,9 +6,13 @@ namespace Tests
     {
         public static void Main(string[] args)
         {
-            var m1 = new Matrix(5, 5);
-            m1.FillGaussianRandom();
+            var m1 = new Matrix(2, 3, 1,2,3,4,5,6);
+            var m2 = new Matrix(3, 3, 3,6,9,4,7,10,5,8,11);
+
             m1.Print();
+            m2.Print();
+
+            (m1 * m2).Print();
         }
     }
 }

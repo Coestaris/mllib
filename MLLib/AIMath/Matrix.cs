@@ -45,6 +45,20 @@ namespace ml.AIMath
             _gaussianRandom = new GaussianRandom(_random);
         }
 
+        public Matrix(int rows, int columns, params double[] values)
+        {
+            Rows = rows;
+            Columns = columns;
+            _data = new double[rows, columns];
+
+            for (int r = 0; r < Rows; r++)
+                for (int c = 0; c < Columns; c++)
+                    _data[r, c] = values[r * Columns + c];
+
+            _random = new Random();
+            _gaussianRandom = new GaussianRandom(_random);
+        }
+
         public Matrix(Matrix matrix)
         {
             _data = (double[,])matrix._data.Clone();
@@ -136,6 +150,94 @@ namespace ml.AIMath
                 {
                     _data[r, c] = random.Next(mean, dev);
                 }
+        }
+
+        public void ApplyFunction(Func<double, double> func)
+        {
+            for (int r = 0; r < Rows; r++)
+                for (int c = 0; c < Columns; c++)
+                    _data[r, c] = func(_data[r, c]);
+        }
+
+        public static Matrix operator+(Matrix a, Matrix b)
+        {
+            if(a.Rows != b.Rows && a.Columns != b.Columns)
+                throw new ArgumentException("Matrices should have same size");
+
+            var result = new Matrix(a);
+            for (int r = 0; r < result.Rows; r++)
+                for (int c = 0; c < result.Columns; c++)
+                    result._data[r, c] += b._data[r, c];
+            return result;
+        }
+
+        public static Matrix operator+(Matrix a, double v)
+        {
+            var result = new Matrix(a);
+            for (int r = 0; r < result.Rows; r++)
+                for (int c = 0; c < result.Columns; c++)
+                    result._data[r, c] += v;
+
+            return result;
+        }
+
+        public static Matrix operator-(Matrix a, Matrix b)
+        {
+            if(a.Rows != b.Rows && a.Columns != b.Columns)
+                throw new ArgumentException("Matrices should have same size");
+
+            var result = new Matrix(a);
+            for (int r = 0; r < result.Rows; r++)
+                for (int c = 0; c < result.Columns; c++)
+                    result._data[r, c] -= b._data[r, c];
+            return result;
+        }
+
+        public static Matrix operator-(Matrix a, double v)
+        {
+            var result = new Matrix(a);
+            for (int r = 0; r < result.Rows; r++)
+                for (int c = 0; c < result.Columns; c++)
+                    result._data[r, c] -= v;
+
+            return result;
+        }
+
+        public static Matrix operator*(Matrix a, Matrix b)
+        {
+            if(a.Columns != b.Rows)
+                throw new ArgumentException("Matrices should have same size");
+
+            var matrix = new Matrix(a.Rows, b.Columns);
+            for (int i = 0; i < matrix.Rows; i++)
+            {
+                for (int j = 0; j < matrix.Columns; j++)
+                {
+                    for (int k = 0; k < a.Columns; k++)
+                        matrix._data[i, j] = matrix._data[i, j] + a._data[i, k] * b._data[k, j];
+                }
+            }
+            return matrix;
+        }
+
+        public static Matrix operator*(Matrix a, double v)
+        {
+            var result = new Matrix(a);
+            for (int r = 0; r < result.Rows; r++)
+                for (int c = 0; c < result.Columns; c++)
+                    result._data[r, c] *= v;
+
+            return result;
+        }
+
+        public static Matrix operator/(Matrix a, double v)
+        {
+            var result = new Matrix(a);
+            for (int r = 0; r < result.Rows; r++)
+               for (int c = 0; c < result.Columns; c++)
+                   result._data[r, c] /= v;
+
+            return result;
         }
     }
 }

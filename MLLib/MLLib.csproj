@@ -40,11 +40,13 @@
   <ItemGroup>
     <Compile Include="AIMath\ActivationFunctions.cs" />
     <Compile Include="AIMath\Matrix.cs" />
-    <Compile Include="AI\DerivativePack.cs" />
-    <Compile Include="AI\NeuralNetwork.cs" />
-    <Compile Include="AI\NNLayer.cs" />
+    <Compile Include="AI\INetwork.cs" />
+    <Compile Include="AI\OBNN\DerivativePack.cs" />
+    <Compile Include="AI\OBNN\ObjectBasedNeuralNetwork.cs" />
+    <Compile Include="AI\OBNN\OBNNLayer.cs" />
     <Compile Include="AI\Teacher.cs" />
     <Compile Include="AIMath\GaussianRandom.cs" />
+    <Compile Include="AI\ITrainSample.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

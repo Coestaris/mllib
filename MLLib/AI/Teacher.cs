@@ -29,6 +29,22 @@ namespace ml.AI
         private double _errorSum;
         private int _n;
 
+        public Teacher(int tasksCount, List<ITrainSample> trainSamples)
+            : this(tasksCount, tasksCount, trainSamples) {}
+
+        public Teacher(int tasksCount, int tasksDivision, List<ITrainSample> trainSamples)
+        {
+            var start = DateTime.Now;
+            TasksDivision = tasksDivision;
+            Tasks = new List<TeacherTask>();
+            for(var i = 0; i < tasksCount; i++)
+                Tasks.Add(new TeacherTask(trainSamples[i].ToTrainData(), trainSamples[i].ToExpected()));
+
+            _setupTime = TimeSpan.FromMilliseconds((DateTime.Now - start).TotalMilliseconds);
+            _errorSum = 0;
+            _n = 0;
+        }
+
         public Teacher(int tasksCount, Func<int, TeacherTask> taskCreatorFunc)
             : this(tasksCount, tasksCount, taskCreatorFunc) {}
 
@@ -47,7 +63,7 @@ namespace ml.AI
 
         public double Error => _errorSum / _n;
 
-        public void Teach(NeuralNetwork network)
+        public void Teach(INetwork network)
         {
             if (TasksDivision == Tasks.Count)
             {

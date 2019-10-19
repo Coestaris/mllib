@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using ml.AIMath;
 
-namespace ml.AI
+namespace ml.AI.OBNN
 {
-    public class NeuralNetwork
+    public class ObjectBasedNeuralNetwork : INetwork
     {
         public readonly List<NNLayer> Layers;
 
-        public NeuralNetwork(IReadOnlyList<int> layerSizes)
+        public ObjectBasedNeuralNetwork(IReadOnlyList<int> layerSizes)
         {
             if(layerSizes == null)
                 throw new ArgumentNullException(nameof(layerSizes));
@@ -84,7 +84,7 @@ namespace ml.AI
                 Layers[i].ForwardPass(Layers[i + 1]);
         }
 
-        internal double CalculateError(double[] expected)
+        public double CalculateError(double[] expected)
         {
             if(expected == null)
                 throw new ArgumentNullException(nameof(expected));
@@ -100,7 +100,7 @@ namespace ml.AI
         private double[][] _biasNudges;
         private double[][] _weightNudges;
 
-        internal void BackProp(double[] expected)
+        public void BackProp(double[] expected)
         {
             //output layer derivatives
             var outputLayer = Layers.Last();
@@ -109,7 +109,7 @@ namespace ml.AI
             for (int n = 0; n < outputLayer.Size; n++)
             {
                 double dA = outputLayer.Activations[n] - expected[n];
-                double dZ = ActivationFunctions.DSigmoidS(outputLayer.Activations[n]);
+                double dZ = ActivationFunctions.SigmoidDS(outputLayer.Activations[n]);
                 for (int j = 0; j < prevLayer.Size; j++)
                     outputLayer.Derivatives[n].dW[j] = dA * dZ * prevLayer.Activations[j];
 
@@ -137,7 +137,7 @@ namespace ml.AI
                         dA += nextDZ * nextDA * currentLayer.Weights[n * nextLayer.Size + j];
                     }
 
-                    double dZ = ActivationFunctions.DSigmoidS(currentLayer.Activations[n]);
+                    double dZ = ActivationFunctions.SigmoidDS(currentLayer.Activations[n]);
                     if(prevLayer != null)
                         for (int j = 0; j < prevLayer.Size; j++)
                             currentLayer.Derivatives[n].dW[j] = dA * dZ * prevLayer.Activations[j];
@@ -167,7 +167,7 @@ namespace ml.AI
             }
         }
 
-        internal void ApplyNudge(int count)
+        public void ApplyNudge(int count)
         {
             //apply the nudge
             for (int l = Layers.Count - 1; l >= 1; l--)

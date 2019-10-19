@@ -6,10 +6,11 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using ml.AI;
 
 namespace HWDRecognizer
 {
-    public class HWImage
+    public class HWImage : ITrainSample
     {
         public byte[] Data;
         public Size Size;

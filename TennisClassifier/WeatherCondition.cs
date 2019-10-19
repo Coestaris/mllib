@@ -1,4 +1,5 @@
 using System;
+using ml.AI;
 
 namespace TennisClassifier
 {
@@ -22,7 +23,7 @@ namespace TennisClassifier
         Normal
     }
 
-    public class WeatherCondition
+    public class WeatherCondition : ITrainSample
     {
         private static Random _random = new Random((int)DateTime.Now.TimeOfDay.TotalMilliseconds);
 

@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Threading;
 using ml.AI;
+using ml.AI.OBNN;
 using OpenTK;
 using OpenTK.Graphics.ES11;
 using XORCalculator.Objects;
@@ -28,7 +29,7 @@ namespace XORCalculator
         private const int ErrorResetFactor = 0;
         private const int StepsDelay = 0;
 
-        private readonly NeuralNetwork _network;
+        private readonly ObjectBasedNeuralNetwork _network;
         private readonly Teacher _teacher;
 
         //Scene objects
@@ -45,7 +46,7 @@ namespace XORCalculator
         private bool _working;
         private Action _resetFunc;
 
-        public NNVisualizer(Window window, NeuralNetwork network, Teacher teacher, Action ResetFunc) : base(window)
+        public NNVisualizer(Window window, ObjectBasedNeuralNetwork network, Teacher teacher, Action ResetFunc) : base(window)
         {
             _resetFunc = ResetFunc;
             _network = network;

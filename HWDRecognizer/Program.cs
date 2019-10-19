@@ -3,12 +3,13 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Threading;
 using ml.AI;
+using ml.AI.OBNN;
 
 namespace HWDRecognizer
 {
     internal class Program
     {
-        private static void DoTest(NeuralNetwork network, Dataset set, int index)
+        private static void DoTest(ObjectBasedNeuralNetwork network, Dataset set, int index)
         {
             HWImage image = set.DatasetImages[index];
             var input = image.ToTrainData();
@@ -49,18 +50,13 @@ namespace HWDRecognizer
                 dataset.DatasetImages.Count + dataset.TestImages.Count);
 
             var inputLayerSize = dataset.ImageSize.Width * dataset.ImageSize.Height;
-            var network = new NeuralNetwork(new[] { inputLayerSize, 4, 4, 4, 4, 10 });
+            var network = new ObjectBasedNeuralNetwork(new[] { inputLayerSize, 4, 4, 4, 4, 10 });
 
             network.Fill();
             network.LearningRate = 100;
 
-            var teacher = new Teacher(dataset.DatasetImages.Count, i =>
-            {
-                var input = dataset.DatasetImages[i].ToTrainData();
-                var expected = dataset.DatasetImages[i].ToExpected();
-
-                return new TeacherTask(input, expected);
-            });
+            var teacher = new Teacher(dataset.DatasetImages.Count,
+                dataset.DatasetImages.Cast<ITrainSample>().ToList());
 
             Console.WriteLine("Loaded network in {0} ms.", teacher.SetupTime);
             const int count = 10;
