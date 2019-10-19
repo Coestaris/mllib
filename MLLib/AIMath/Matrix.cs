@@ -205,7 +205,7 @@ namespace ml.AIMath
 
         public static Matrix operator*(Matrix a, Matrix b)
         {
-            if(a.Columns != b.Rows)
+            if(a.Rows != b.Columns)
                 throw new ArgumentException("Matrices should have same size");
 
             var matrix = new Matrix(a.Rows, b.Columns);

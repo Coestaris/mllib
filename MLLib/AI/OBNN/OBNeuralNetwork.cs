@@ -5,11 +5,11 @@ using ml.AIMath;
 
 namespace ml.AI.OBNN
 {
-    public class ObjectBasedNeuralNetwork : INetwork
+    public class OBNeuralNetwork : INetwork
     {
         public readonly List<NNLayer> Layers;
 
-        public ObjectBasedNeuralNetwork(IReadOnlyList<int> layerSizes)
+        public OBNeuralNetwork(IReadOnlyList<int> layerSizes)
         {
             if(layerSizes == null)
                 throw new ArgumentNullException(nameof(layerSizes));

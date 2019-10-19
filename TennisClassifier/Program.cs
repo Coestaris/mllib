@@ -13,7 +13,7 @@ namespace TennisClassifier
         private const int DataCount = 500000;
         private const int TestsCount = 100;
 
-        private static void DoTest(ObjectBasedNeuralNetwork network)
+        private static void DoTest(OBNeuralNetwork network)
         {
             int wrong = 0;
             for (int i = DataCount; i < DataCount + TestsCount; i++)
@@ -81,7 +81,7 @@ namespace TennisClassifier
                     outlook, humidity, windy, temperature));*/
             }
 
-            var network = new ObjectBasedNeuralNetwork(new[] { 4, 16, 16, 1 });
+            var network = new OBNeuralNetwork(new[] { 4, 16, 16, 1 });
             network.LearningRate = 1;
 
             network.Fill();

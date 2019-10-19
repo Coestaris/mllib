@@ -29,7 +29,7 @@ namespace XORCalculator
         private const int ErrorResetFactor = 0;
         private const int StepsDelay = 0;
 
-        private readonly ObjectBasedNeuralNetwork _network;
+        private readonly OBNeuralNetwork _network;
         private readonly Teacher _teacher;
 
         //Scene objects
@@ -46,7 +46,7 @@ namespace XORCalculator
         private bool _working;
         private Action _resetFunc;
 
-        public NNVisualizer(Window window, ObjectBasedNeuralNetwork network, Teacher teacher, Action ResetFunc) : base(window)
+        public NNVisualizer(Window window, OBNeuralNetwork network, Teacher teacher, Action ResetFunc) : base(window)
         {
             _resetFunc = ResetFunc;
             _network = network;
