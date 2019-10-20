@@ -14,6 +14,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TennisClassifier", "TennisC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{C133C8FF-3306-4039-B758-67AAF1A11E9B}"
 EndProject
+
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{10869229-52EA-4846-8EB0-528F7AC2482B}"
+ProjectSection(SolutionItems) = preProject
+	LICENSE = LICENSE
+	.gitignore = .gitignore
+        README.md = README.md
+EndProjectSection
+EndProject
+
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

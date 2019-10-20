@@ -43,9 +43,9 @@
     <Compile Include="AIMath\ActivationFunctions.cs" />
     <Compile Include="AIMath\Matrix.cs" />
     <Compile Include="AI\INetwork.cs" />
-    <Compile Include="AI\MBNN\MBNeuralNetwork.cs" />
+    <Compile Include="AI\MBNN\NeuralNetwork.cs" />
     <Compile Include="AI\OBNN\DerivativePack.cs" />
-    <Compile Include="AI\OBNN\OBNeuralNetwork.cs" />
+    <Compile Include="AI\OBNN\NeuralNetwork.cs" />
     <Compile Include="AI\OBNN\OBNNLayer.cs" />
     <Compile Include="AI\Teacher.cs" />
     <Compile Include="AIMath\GaussianRandom.cs" />

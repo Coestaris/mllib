@@ -1,26 +1,24 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using ml.AIMath;
 
 namespace ml.AI.MBNN
 {
-    public class MBNeuralNetwork : INetwork
+    public class NeuralNetwork : INetwork
     {
-        internal Matrix[] Activations;
-        private Matrix[] _Zs;
+        private readonly Matrix[] _Zs;
 
-        private Matrix[] _nablaW;
-        private Matrix[] _nablaB;
+        private readonly Matrix[] _nablaW;
+        private readonly Matrix[] _nablaB;
+        internal readonly Matrix[] Activations;
 
-        public Matrix[] Biases;
-        public Matrix[] Weights;
+        public readonly Matrix[] Biases;
+        public readonly Matrix[] Weights;
 
-        public int LayersCount;
-        public int[] LayerSizes;
+        public readonly int LayersCount;
+        public readonly int[] LayerSizes;
 
-
-        public MBNeuralNetwork(int[] sizes)
+        public NeuralNetwork(int[] sizes)
         {
             Biases = new Matrix[sizes.Length - 1];
             for (int i = 1; i < sizes.Length; i++)
@@ -45,22 +43,6 @@ namespace ml.AI.MBNN
             }
         }
 
-        public void FillRandom()
-        {
-            foreach (var matrix in Weights)
-                matrix.FillRandom();
-            foreach (var matrix in Biases)
-                matrix.FillRandom();
-        }
-
-        public void FillGaussianRandom()
-        {
-            foreach (var matrix in Weights)
-                matrix.FillGaussianRandom(0, Math.Sqrt(2.0 / LayerSizes[0]));
-            foreach (var matrix in Biases)
-                matrix.FillGaussianRandom(0, 0.001);
-        }
-
         public void Print()
         {
             foreach (var str in Weights.Zip(Biases, (a, b) => new { a, b }))
@@ -68,6 +50,22 @@ namespace ml.AI.MBNN
                 str.a.Print();
                 str.b.Print();
             }
+        }
+
+        public void FillRandom(Random random = null)
+        {
+            foreach (var matrix in Weights)
+                matrix.FillRandom(random);
+            foreach (var matrix in Biases)
+                matrix.FillRandom(random);
+        }
+
+        public void FillGaussianRandom(GaussianRandom gaussianRandom = null)
+        {
+            foreach (var matrix in Weights)
+                matrix.FillGaussianRandom(0, Math.Sqrt(2.0 / LayerSizes[0]), gaussianRandom);
+            foreach (var matrix in Biases)
+                matrix.FillGaussianRandom(0, 0.001, gaussianRandom);
         }
 
         public double[] ForwardPass(double[] input)

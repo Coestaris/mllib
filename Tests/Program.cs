@@ -20,7 +20,7 @@ namespace Tests
                 return new TeacherTask(input, expected);
             });
 
-            var network = new MBNeuralNetwork(new[] {2, 5, 2});
+            var network = new NeuralNetwork(new[] {2, 5, 2});
 
             network.FillGaussianRandom();
             network.Print();

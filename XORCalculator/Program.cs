@@ -12,13 +12,6 @@ namespace XORCalculator
         private static Random _random = new Random();
         private static OBNeuralNetwork _network;
 
-        public static void Reset()
-        {
-            _network.Fill(
-                (i, j) => 3 - _random.NextDouble() * 6,
-                (i, j) => 3 - _random.NextDouble() * 6,
-                (i, j) => 0);
-        }
 
         public static void Main(string[] args)
         {
@@ -36,7 +29,7 @@ namespace XORCalculator
                 return new TeacherTask(input, expected);
             });
 
-            var handler = new NNVisualizer(win, _network, teacher, Reset);
+            var handler = new NNVisualizer(win, _network, teacher, () => _network.FillGaussianRandom());
             handler.OnStart();
         }
     }

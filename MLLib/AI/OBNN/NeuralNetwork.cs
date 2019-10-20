@@ -30,45 +30,22 @@ namespace ml.AI.OBNN
             }
         }
 
-        //Fill random
-        public void Fill()
-        {
-            foreach (var layer in Layers) layer.Fill();
-        }
-
-        //Fill random and set bias
-        public void Fill(double bias)
-        {
-            foreach (var layer in Layers) layer.Fill(bias);
-        }
-
-        //Fill random and set bias with weight
-        public void Fill(double bias, double weight)
-        {
-            foreach (var layer in Layers) layer.Fill(bias, weight);
-        }
-
-        //Fill random and set bias, activation with weight
-        public void Fill(double bias, double weight, double activation)
-        {
-            foreach (var layer in Layers) layer.Fill(bias, weight, activation);
-        }
-
-        //Fill with custom function
-        public void Fill(Func<int, int, double> bias, Func<int, int, double> weight, Func<int, int, double> activation)
-        {
-            if(bias == null) throw new ArgumentNullException(nameof(bias));
-            if(weight == null) throw new ArgumentNullException(nameof(weight));
-            if(activation == null) throw new ArgumentNullException(nameof(activation));
-
-            for(var i = 0; i < Layers.Count; i++)
-                Layers[i].Fill(bias, weight, activation, i);
-        }
-
         public void Print()
         {
             for(var i = 0; i < Layers.Count; i++)
                 Layers[i].Print(i);
+        }
+
+        public void FillRandom(Random random = null)
+        {
+            foreach (var layer in Layers)
+                layer.FillRandom(random);
+        }
+
+        public void FillGaussianRandom(GaussianRandom gaussianRandom = null)
+        {
+            foreach (var layer in Layers)
+                layer.FillGaussianRandom(Layers[0].Size, gaussianRandom);
         }
 
         public double[] ForwardPass(double[] input)

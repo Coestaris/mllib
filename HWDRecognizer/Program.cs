@@ -52,8 +52,8 @@ namespace HWDRecognizer
             var inputLayerSize = dataset.ImageSize.Width * dataset.ImageSize.Height;
             var network = new OBNeuralNetwork(new[] { inputLayerSize, 4, 4, 4, 4, 10 });
 
-            network.Fill();
-            network.LearningRate = 100;
+            network.FillGaussianRandom();
+            network.LearningRate = 1;
 
             var teacher = new Teacher(dataset.DatasetImages.Count,
                 dataset.DatasetImages.Cast<ITrainSample>().ToList());

@@ -155,8 +155,8 @@ namespace XORCalculator
             foreach (var layer in _network.Layers)
             {
                 _neurons[layerCount] = new Neuron[layer.Size];
-                if(layer.WeightsNudge != null)
-                    _axons[layerCount] = new Axon[layer.WeightsNudge.Length];
+                if(layer.Weights != null)
+                    _axons[layerCount] = new Axon[layer.Weights.Length];
 
                 var yStep = Window.Height / (float) (layer.Size + 1);
                 var y = yStep;

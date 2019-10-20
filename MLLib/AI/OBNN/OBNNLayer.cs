@@ -7,7 +7,8 @@ namespace ml.AI.OBNN
 {
     public class NNLayer
     {
-        private Random _random = new Random((int)DateTime.Now.ToBinary());
+        private static Random _random = new Random((int)DateTime.Now.ToBinary());
+        private static GaussianRandom _gaussianRandom = new GaussianRandom(_random);
 
         public int Size;
         public int NextLayerSize;
@@ -16,13 +17,9 @@ namespace ml.AI.OBNN
         public double[] Biases;
 
         public double[] Weights; //to right
-
         internal DerivativePack[] Derivatives;
 
-        public double[] WeightsNudge;
-        public double[] BiasNudge;
-
-        public NNLayer(int size, int nextLayerSize, int prevLayerSize)
+        internal NNLayer(int size, int nextLayerSize, int prevLayerSize)
         {
             Size = size;
             NextLayerSize = nextLayerSize;
@@ -38,51 +35,30 @@ namespace ml.AI.OBNN
                 Derivatives[i] = new DerivativePack() {
                     dW = new double[prevLayerSize]
                 };
-
-            if(Weights != null)
-                WeightsNudge = new double[Weights.Length];
-            BiasNudge = new double[Biases.Length];
         }
 
-        public void Fill()
+        internal void FillRandom(Random random)
         {
-            for (var i = 0; i < Activations.Length; i++) Activations[i] = _random.NextDouble();
-            for (var i = 0; i < Biases.Length; i++) Biases[i] = _random.NextDouble();
-            if (Weights!=null)
-                for (var i = 0; i < Weights.Length; i++) Weights[i] = _random.NextDouble();
-        }
+            if (random == null) random = _random;
 
-        public void Fill(double bias)
-        {
-            for (var i = 0; i < Activations.Length; i++) Activations[i] = _random.NextDouble();
-            for (var i = 0; i < Biases.Length; i++) Biases[i] = bias;
-            if (Weights!=null)
-                for (var i = 0; i < Weights.Length; i++) Weights[i] = _random.NextDouble();
-        }
+            for (var i = 0; i < Biases.Length; i++)
+                Biases[i] = random.NextDouble();
 
-        public void Fill(double bias, double weight)
-        {
-            for (var i = 0; i < Activations.Length; i++) Activations[i] = _random.NextDouble();
-            for (var i = 0; i < Biases.Length; i++) Biases[i] = bias;
-            if (Weights!=null)
-                for (var i = 0; i < Weights.Length; i++) Weights[i] = weight;
-        }
-
-        public void Fill(double bias, double weight, double activation)
-        {
-            for (var i = 0; i < Activations.Length; i++) Activations[i] = activation;
-            for (var i = 0; i < Biases.Length; i++) Biases[i] = bias;
-            if (Weights!=null)
-                for (var i = 0; i < Weights.Length; i++) Weights[i] = weight;
-        }
-
-        public void Fill(Func<int, int, double> bias, Func<int, int, double> weight, Func<int, int, double> activation,
-            int index)
-        {
-            for (var i = 0; i < Activations.Length; i++) Activations[i] = activation(index, i);
-            for (var i = 0; i < Biases.Length; i++) Biases[i] =  bias(index, i);
             if (Weights != null)
-                for (var i = 0; i < Weights.Length; i++) Weights[i] = weight(index, i);
+                for (var i = 0; i < Weights.Length; i++)
+                    Weights[i] = random.NextDouble();
+        }
+
+        internal void FillGaussianRandom(int firstLayerSize, GaussianRandom random)
+        {
+            if (random == null) random = _gaussianRandom;
+
+            for (var i = 0; i < Biases.Length; i++)
+                Biases[i] = random.Next(0, 0.001);
+
+            if (Weights!=null)
+                for (var i = 0; i < Weights.Length; i++)
+                    Weights[i] = random.Next(0, Math.Sqrt(2.0 / firstLayerSize));
         }
 
         public void Print(int index)
@@ -116,7 +92,7 @@ namespace ml.AI.OBNN
             Array.Copy(input, Activations, input.Length);
         }
 
-        public void ForwardPass(NNLayer nextLayer)
+        internal void ForwardPass(NNLayer nextLayer)
         {
             for (var next = 0; next < nextLayer.Size; next++)
             {

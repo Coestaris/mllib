@@ -1,6 +1,6 @@
 namespace ml.AI.OBNN
 {
-    struct DerivativePack
+    internal struct DerivativePack
     {
         public double   dA;
         public double   dZ;

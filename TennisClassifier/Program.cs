@@ -84,8 +84,7 @@ namespace TennisClassifier
 
             var network = new OBNeuralNetwork(new[] { 4, 16, 16, 1 });
             network.LearningRate = 1;
-
-            network.Fill();
+            network.FillGaussianRandom();
 
             var teacher = new Teacher(DataCount, _weatherConditions.Cast<ITrainSample>().ToList());
 
