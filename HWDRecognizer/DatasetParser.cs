@@ -104,9 +104,11 @@ namespace HWDRecognizer
 
             var startTime = DateTime.Now;
             ReadDataset(DatasetImages, datasetFilename, false);
-            //ReadDataset(TestImages, testFilename, false);
+            ReadDataset(TestImages, testFilename, true);
+
             ReadLabels(DatasetImages, datasetLabelsFilename);
-            //ReadLabels(TestImages, testLabelsFilename);
+            ReadLabels(TestImages, testLabelsFilename);
+
             _loadTime = TimeSpan.FromMilliseconds((DateTime.Now - startTime).TotalMilliseconds);
         }
 

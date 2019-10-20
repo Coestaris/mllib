@@ -45,6 +45,7 @@
     <Compile Include="AI\INetwork.cs" />
     <Compile Include="AI\MBNN\NeuralNetwork.cs" />
     <Compile Include="AI\OBNN\DerivativePack.cs" />
+    <Compile Include="AI\OBNN\ImprovedNeuralNetwork.cs" />
     <Compile Include="AI\OBNN\NeuralNetwork.cs" />
     <Compile Include="AI\OBNN\OBNNLayer.cs" />
     <Compile Include="AI\Teacher.cs" />

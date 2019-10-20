@@ -3,6 +3,7 @@ using ml.AI;
 using ml.AI.MBNN;
 using ml.AI.OBNN;
 using ml.AIMath;
+using NeuralNetwork = ml.AI.MBNN.NeuralNetwork;
 
 namespace Tests
 {

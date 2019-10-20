@@ -4,6 +4,7 @@ using System.Linq;
 using ml.AI;
 using ml.AI.MBNN;
 using ml.AI.OBNN;
+using NeuralNetwork = ml.AI.OBNN.NeuralNetwork;
 
 namespace TennisClassifier
 {
@@ -82,7 +83,7 @@ namespace TennisClassifier
                     outlook, humidity, windy, temperature));*/
             }
 
-            var network = new OBNeuralNetwork(new[] { 4, 16, 16, 1 });
+            var network = new NeuralNetwork(new[] { 4, 16, 16, 1 });
             network.LearningRate = 1;
             network.FillGaussianRandom();
 

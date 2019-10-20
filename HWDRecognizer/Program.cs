@@ -9,31 +9,50 @@ namespace HWDRecognizer
 {
     internal class Program
     {
-        private static void DoTest(OBNeuralNetwork network, Dataset set, int index)
+        private static int CountCorrect(INetwork network, Dataset set)
+        {
+            var count = 0;
+            for(var i = 0; i < set.TestImages.Count; i++)
+                if (DoTest(network, set, i, false))
+                    count++;
+
+            return count;
+        }
+
+        private static bool DoTest(INetwork network, Dataset set, int index, bool outputResult)
         {
             HWImage image = set.DatasetImages[index];
             var input = image.ToTrainData();
             var output = network.ForwardPass(input);
 
             var counter = 0;
-            var sortedOutput = output.Select(p => new double[] { p, counter++ }).OrderBy(p => p[0]).ToArray();
+            var sortedOutput = output.Select(p => new { value = p, index = counter++ }).OrderByDescending(p => p.value).ToArray();
 
-            var nearestSuggestions = string.Join(", ", sortedOutput.Take(3)
-                .Select(p => $"{(int) p[1]} ({p[0]})"));
-
-            if ((int) sortedOutput[0][1] == image.Number)
+            if (sortedOutput[0].index == image.Number)
             {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write("Suggestion is correct! ");
+                if (outputResult)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write("Suggestion is correct! ");
+                }
+                else return true;
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write("Suggestion is wrong! ");
+                if (outputResult)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("Suggestion is wrong! ");
+                }
+                else return false;
             }
+
+            var nearestSuggestions = string.Join(", ", sortedOutput.Take(3)
+                .Select(p => $"{p.index} ({p.value})"));
 
             Console.ForegroundColor = ConsoleColor.Black;
             Console.WriteLine("Nearest suggestions: {0}", nearestSuggestions);
+            return false;
         }
 
         public static void Main(string[] args)
@@ -42,7 +61,7 @@ namespace HWDRecognizer
                     "data/dataset.data",
                     "data/datasetLabels.data",
                     "data/test.data",
-                    "data/test.data"
+                    "data/testLabels.data"
                 );
 
             Console.WriteLine("Loaded database ({1} images) in {0} ms.",
@@ -50,26 +69,32 @@ namespace HWDRecognizer
                 dataset.DatasetImages.Count + dataset.TestImages.Count);
 
             var inputLayerSize = dataset.ImageSize.Width * dataset.ImageSize.Height;
-            var network = new OBNeuralNetwork(new[] { inputLayerSize, 4, 4, 4, 4, 10 });
+            var network = new NeuralNetwork(new[] { inputLayerSize, 16, 10 });
 
             network.FillGaussianRandom();
-            network.LearningRate = 1;
+            network.LearningRate = 3;
 
-            var teacher = new Teacher(dataset.DatasetImages.Count,
+            var teacher = new Teacher(dataset.DatasetImages.Count, 30,
                 dataset.DatasetImages.Cast<ITrainSample>().ToList());
+
+            //network.Print();
 
             Console.WriteLine("Loaded network in {0} ms.", teacher.SetupTime);
             const int count = 10;
             for (int i = 0; i < count; i++)
             {
                 teacher.Teach(network);
-                Console.WriteLine("[{0}/{1}]. Error: {2}", i + 1, count, teacher.Error);
+                Console.WriteLine("Epoch: {0}/{1}. Error: {2}. Recognized: {3}",
+                    i + 1, count, teacher.Error, CountCorrect(network , dataset));
+
+               // network.Print();
+
                 teacher.ResetError();
             }
 
             var rng = new Random((int)DateTime.Now.TimeOfDay.TotalMilliseconds);
             for (int i = 0; i < 15; i++)
-                DoTest(network, dataset, rng.Next(0, dataset.DatasetImages.Count));
+                DoTest(network, dataset, rng.Next(0, dataset.DatasetImages.Count), true);
         }
     }
 }

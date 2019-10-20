@@ -5,11 +5,15 @@ using ml.AIMath;
 
 namespace ml.AI.OBNN
 {
-    public class OBNeuralNetwork : INetwork
+    public class NeuralNetwork : INetwork
     {
         public readonly List<NNLayer> Layers;
+        public double LearningRate = 0.5;
 
-        public OBNeuralNetwork(IReadOnlyList<int> layerSizes)
+        protected double[][] _biasNudges;
+        protected double[][] _weightNudges;
+
+        public NeuralNetwork(IReadOnlyList<int> layerSizes)
         {
             if(layerSizes == null)
                 throw new ArgumentNullException(nameof(layerSizes));
@@ -48,7 +52,7 @@ namespace ml.AI.OBNN
                 layer.FillGaussianRandom(Layers[0].Size, gaussianRandom);
         }
 
-        public double[] ForwardPass(double[] input)
+        public virtual double[] ForwardPass(double[] input)
         {
             if(input == null)
                 throw new ArgumentNullException(nameof(input));
@@ -63,23 +67,7 @@ namespace ml.AI.OBNN
             return Layers[Layers.Count - 1].Activations;
         }
 
-        public double CalculateError(double[] expected)
-        {
-            if(expected == null)
-                throw new ArgumentNullException(nameof(expected));
-
-            if(expected.Length != Layers.Last().Size)
-                throw new ArgumentException("Sizes of input and input layer doesn't match", nameof(expected));
-
-            return Layers.Last().CalculateError(expected);
-        }
-
-        public double LearningRate = 0.5;
-
-        private double[][] _biasNudges;
-        private double[][] _weightNudges;
-
-        public void BackProp(double[] expected)
+        public virtual void BackProp(double[] expected)
         {
             //output layer derivatives
             var outputLayer = Layers.Last();
@@ -170,5 +158,17 @@ namespace ml.AI.OBNN
                 }
             }
         }
+
+        public double CalculateError(double[] expected)
+        {
+            if(expected == null)
+                throw new ArgumentNullException(nameof(expected));
+
+            if(expected.Length != Layers.Last().Size)
+                throw new ArgumentException("Sizes of input and input layer doesn't match", nameof(expected));
+
+            return Layers.Last().CalculateError(expected);
+        }
+
     }
 }
