@@ -9,40 +9,38 @@ namespace ml.AIMath
 
         private readonly double[,] _data;
 
-        private Random _random;
-        private GaussianRandom _gaussianRandom;
+        private static Random _random = new Random();
+        private static GaussianRandom _gaussianRandom = new GaussianRandom(_random);
 
-        public Matrix(double[] array, bool fillRows = true)
+        public Matrix(double[] array, int rows, int columns, bool flip = false)
         {
-            if (fillRows)
-            {
-                Rows = array.Length;
-                Columns = 1;
-                _data = new double[Rows, Columns];
-                for (int i = 0; i < array.Length; i++)
-                    _data[i, 0] = array[i];
-            }
-            else
-            {
-                Rows = 1;
-                Columns = array.Length;
-                _data = new double[Rows, Columns];
-                for (int i = 0; i < array.Length; i++)
-                    _data[0, i] = array[i];
-            }
+            if(array.Length != rows * columns)
+                throw new ArgumentException();
 
-            _random = new Random();
-            _gaussianRandom = new GaussianRandom(_random);
+            _data = new double[rows, columns];
+            for (var r = 0; r < rows; r++)
+                for (var c = 0; c < columns; c++)
+                    if (flip)
+                    {
+                        _data[r, c] = array[c * rows + r];
+                    }
+                    else
+                    {
+                        _data[r, c] = array[r * columns + c];
+                    }
+
+            Rows = rows;
+            Columns = columns;
         }
+
+        public Matrix(double[] array, bool fillRows = true) : this(array, fillRows ? array.Length : 1, fillRows ? 1 : array.Length)
+        { }
 
         public Matrix(int rows, int columns)
         {
             Rows = rows;
             Columns = columns;
             _data = new double[rows, columns];
-
-            _random = new Random();
-            _gaussianRandom = new GaussianRandom(_random);
         }
 
         public Matrix(int rows, int columns, params double[] values)
@@ -54,9 +52,6 @@ namespace ml.AIMath
             for (int r = 0; r < Rows; r++)
                 for (int c = 0; c < Columns; c++)
                     _data[r, c] = values[r * Columns + c];
-
-            _random = new Random();
-            _gaussianRandom = new GaussianRandom(_random);
         }
 
         public Matrix(Matrix matrix)
@@ -64,9 +59,6 @@ namespace ml.AIMath
             _data = (double[,])matrix._data.Clone();
             Columns = matrix.Columns;
             Rows = matrix.Rows;
-
-            _random = new Random();
-            _gaussianRandom = new GaussianRandom(_random);
         }
 
         public void Print()

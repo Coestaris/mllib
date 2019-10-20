@@ -13,8 +13,8 @@ namespace ml.AI.MBNN
         private Matrix[] _nablaW;
         private Matrix[] _nablaB;
 
-        internal Matrix[] Biases;
-        internal Matrix[] Weights;
+        public Matrix[] Biases;
+        public Matrix[] Weights;
 
         public int LayersCount;
         public int[] LayerSizes;
@@ -95,34 +95,33 @@ namespace ml.AI.MBNN
 
         public void BackProp(double[] expected)
         {
-            var delta = (Activations[LayersCount - 1] - new Matrix(expected)) *
+            var dA = (Activations[LayersCount - 1] - new Matrix(expected)) *
                         ActivationFunctions.SigmoidD(_Zs[LayersCount - 1]);
 
-            _nablaW[_nablaW.Length - 1] += delta.Dot(Activations[LayersCount - 2].Transpose());
-            _nablaB[_nablaB.Length - 1] += delta;
+            _nablaW[_nablaW.Length - 1] += dA.Dot(Activations[LayersCount - 2].Transpose());
+            _nablaB[_nablaB.Length - 1] += dA;
 
-            for (int i = LayersCount - 1; i >= 2; i--)
+            for (int i = 2; i < LayersCount; i++)
             {
-                var z = _Zs[i - 1];
-                var dZ = ActivationFunctions.SigmoidD(z);
+                var dZ = ActivationFunctions.SigmoidD(_Zs[LayersCount - i]);
 
-                delta = Weights[i - 1].Transpose().Dot(delta) * dZ;
+                dA = Weights[Weights.Length - i + 1].Transpose().Dot(dA) * dZ;
 
-                _nablaW[i - 2] += delta.Dot(Activations[i - 1].Transpose());
-                _nablaB[i - 2] += delta;
+                _nablaW[Weights.Length - i] += dA.Dot(Activations[LayersCount - i - 1].Transpose());
+                _nablaB[Weights.Length - i] += dA;
             }
         }
 
-        public double LearningRate = 1;
+        public double LearningRate = 0.5;
 
         public void ApplyNudge(int count)
         {
             for (int i = 0; i < Weights.Length; i++)
             {
-                Weights[i] = Weights[i] - _nablaW[i] * (LearningRate / count);
+                Weights[i] = Weights[i] - (_nablaW[i] * (LearningRate / (double)count));
                 _nablaW[i].Fill(0);
 
-                Biases[i] = Biases[i] - _nablaB[i] * (LearningRate / count);
+                Biases[i] = Biases[i] - (_nablaB[i] * (LearningRate / count));
                 _nablaB[i].Fill(0);
             }
         }

@@ -5,20 +5,22 @@ The repository where I learn artificial neural networks and AI
 ##### Some useful resources
 Neural network stuff:
  * [Backpropagation example](https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/)
- * [Dal9's Neural Network library](https://github.com/h0tw4t3r/JSML)
- * [3Blue1Brown NN explanation Videos](https://www.youtube.com/watch?v=aircAruvnKk&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi)
- * [CodingTrain NN explanation Videos](https://www.youtube.com/watch?v=XJ7HLz9VYz0&list=PLRqwX-V7Uu6Y7MdSCaIfsxc561QI0U0Tb)
+ * [Dal9's Feedforward Neural Network library](https://github.com/h0tw4t3r/JSML)
+ * [3Blue1Brown FNN explanation Videos](https://www.youtube.com/watch?v=aircAruvnKk&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi)
+ * [CodingTrain FNN explanation Videos](https://www.youtube.com/watch?v=XJ7HLz9VYz0&list=PLRqwX-V7Uu6Y7MdSCaIfsxc561QI0U0Tb)
  * [Examples of ML tasks](https://web.cs.ucdavis.edu/~vemuri/classes/ecs271/lecture3.pdf)
  * http://neuralnetworksanddeeplearning.com
- * [Great videos about NN](https://www.youtube.com/watch?v=8bNIkfRJZpo)
- * [A lot of tricks to improve NN](http://cs231n.github.io/neural-networks-2)
+ * [Great videos about FNN](https://www.youtube.com/watch?v=8bNIkfRJZpo)
+ * [A lot of tricks to improve FNN](http://cs231n.github.io/neural-networks-2)
 
 Math stuff:
  * [Gaussian distribution explanation](https://habr.com/ru/post/208684/)
  * [List of activation functions](https://en.wikipedia.org/wiki/Activation_function)
 
 TODO list:
- * Neural network using Matrices
+ * [**DONE**] Feedforward Neural network using Objects
+ * [**DONE**] Feedforward Neural network using Matrices
+ * Feedforward Neural network using Regularization and Dropouts 
  * Convolutional neural network (CNN)
  * Recursive neural network (RNN)
  * Some genetic algorithms

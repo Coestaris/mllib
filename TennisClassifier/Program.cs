@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ml.AI;
+using ml.AI.MBNN;
 using ml.AI.OBNN;
 
 namespace TennisClassifier
@@ -10,10 +11,10 @@ namespace TennisClassifier
     {
         private static Random _random = new Random((int)DateTime.Now.TimeOfDay.TotalMilliseconds);
         private static List<WeatherCondition> _weatherConditions;
-        private const int DataCount = 500000;
+        private const int DataCount = 50000;
         private const int TestsCount = 100;
 
-        private static void DoTest(OBNeuralNetwork network)
+        private static void DoTest(INetwork network)
         {
             int wrong = 0;
             for (int i = DataCount; i < DataCount + TestsCount; i++)
