@@ -13,7 +13,7 @@ namespace TennisClassifier
         private static Random _random = new Random((int)DateTime.Now.TimeOfDay.TotalMilliseconds);
         private static List<WeatherCondition> _weatherConditions;
         private const int DataCount = 50000;
-        private const int TestsCount = 100;
+        private const int TestsCount = 1000;
 
         private static void DoTest(INetwork network)
         {
@@ -83,8 +83,8 @@ namespace TennisClassifier
                     outlook, humidity, windy, temperature));*/
             }
 
-            var network = new NeuralNetwork(new[] { 4, 16, 16, 1 });
-            network.LearningRate = 1;
+            var network = new ImprovedNeuralNetwork(new[] { 4, 16, 16, 1 }, new QuadraticCostFunction());
+            network.LearningRate = 3;
             network.FillGaussianRandom();
 
             var teacher = new Teacher(DataCount, _weatherConditions.Cast<ITrainSample>().ToList());

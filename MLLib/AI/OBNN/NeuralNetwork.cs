@@ -83,7 +83,7 @@ namespace ml.AI.OBNN
                     outputLayer.Derivatives[n].dW[j] = delta * prevLayer.Activations[j];
 
                 outputLayer.Derivatives[n].Delta = delta;
-                outputLayer.Derivatives[n].dB = dA * dZ;
+                outputLayer.Derivatives[n].dB = delta;
             }
 
             //other layers derivatives

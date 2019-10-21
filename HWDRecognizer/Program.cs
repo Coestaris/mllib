@@ -69,7 +69,8 @@ namespace HWDRecognizer
                 dataset.DatasetImages.Count + dataset.TestImages.Count);
 
             var inputLayerSize = dataset.ImageSize.Width * dataset.ImageSize.Height;
-            var network = new NeuralNetwork(new[] { inputLayerSize, 16, 10 });
+            var network = new ImprovedNeuralNetwork(new[] { inputLayerSize, 16, 10 },
+                new CrossEntropyCostFunction());
 
             network.FillGaussianRandom();
             network.LearningRate = 3;

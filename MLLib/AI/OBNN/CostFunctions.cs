@@ -11,6 +11,8 @@ namespace ml.AI.OBNN
 
     public class QuadraticCostFunction : CostFunction
     {
+        public bool UseNorm = false;
+
         public override double GetCost(double[] a, double[] y)
         {
             if(a.Length != y.Length)
@@ -18,9 +20,17 @@ namespace ml.AI.OBNN
 
             //Frobenius norm of vector
             var sum = 0.0;
-            for (var i = 0; i < a.Length; i++)
-                sum += (a[i] - y[i]) * (a[i] - y[i]);
-            sum = Math.Sqrt(sum);
+            if (UseNorm)
+            {
+                for (var i = 0; i < a.Length; i++)
+                    sum += (a[i] - y[i]) * (a[i] - y[i]);
+                sum = Math.Sqrt(sum);
+            }
+            else
+            {
+                for (var i = 0; i < a.Length; i++)
+                    sum += a[i] - y[i];
+            }
 
             return .5 * Math.Pow(sum, 2);
         }

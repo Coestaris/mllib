@@ -22,7 +22,7 @@ Math stuff:
 TODO list:
  * [**DONE**] Feedforward Neural network using Objects
  * [**DONE**] Feedforward Neural network using Matrices
- * Feedforward Neural network using Regularization and Dropouts 
+ * Feedforward Neural network using Regularization, Cross entropy cost function
  * Convolutional neural network (CNN)
  * Recursive neural network (RNN)
  * Some genetic algorithms

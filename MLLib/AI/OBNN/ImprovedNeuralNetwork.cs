@@ -7,12 +7,13 @@ namespace ml.AI.OBNN
 {
     public class ImprovedNeuralNetwork : NeuralNetwork
     {
-        public CostFunction CostFunction;
+        public readonly CostFunction CostFunction;
 
         public ImprovedNeuralNetwork(IReadOnlyList<int> layerSizes,
             CostFunction costFunction = null) : base(layerSizes)
         {
             if (costFunction == null) costFunction = new CrossEntropyCostFunction();
+            CostFunction = costFunction;
         }
 
          public virtual void BackProp(double[] expected)
@@ -23,15 +24,13 @@ namespace ml.AI.OBNN
 
             for (int n = 0; n < outputLayer.Size; n++)
             {
-                double dA = outputLayer.Activations[n] - expected[n];
-                double dZ = ActivationFunctions.SigmoidDS(outputLayer.Activations[n]);
-                double delta = dA * dZ;
+                double delta = CostFunction.Delta(outputLayer._Zs[n], outputLayer.Activations[n], expected[n]);
 
                 for (int j = 0; j < prevLayer.Size; j++)
                     outputLayer.Derivatives[n].dW[j] = delta * prevLayer.Activations[j];
 
                 outputLayer.Derivatives[n].Delta = delta;
-                outputLayer.Derivatives[n].dB = dA * dZ;
+                outputLayer.Derivatives[n].dB = delta;
             }
 
             //other layers derivatives
