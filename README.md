@@ -16,6 +16,8 @@ Neural network stuff:
 Math stuff:
  * [Gaussian distribution explanation](https://habr.com/ru/post/208684/)
  * [List of activation functions](https://en.wikipedia.org/wiki/Activation_function)
+ * [Article about cross-Entropy function](https://machinelearningmastery.com/loss-and-loss-functions-for-training-deep-learning-neural-networks/)
+ * [Article about Matrix Norm](https://en.wikipedia.org/wiki/Matrix_norm)
 
 TODO list:
  * [**DONE**] Feedforward Neural network using Objects

@@ -7,7 +7,7 @@ using ml.AI.OBNN;
 
 namespace HWDRecognizer
 {
-    internal class Program
+    internal static class Program
     {
         private static int CountCorrect(INetwork network, Dataset set)
         {

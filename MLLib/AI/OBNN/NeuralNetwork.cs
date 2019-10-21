@@ -77,11 +77,12 @@ namespace ml.AI.OBNN
             {
                 double dA = outputLayer.Activations[n] - expected[n];
                 double dZ = ActivationFunctions.SigmoidDS(outputLayer.Activations[n]);
-                for (int j = 0; j < prevLayer.Size; j++)
-                    outputLayer.Derivatives[n].dW[j] = dA * dZ * prevLayer.Activations[j];
+                double delta = dA * dZ;
 
-                outputLayer.Derivatives[n].dA = dA;
-                outputLayer.Derivatives[n].dZ = dZ;
+                for (int j = 0; j < prevLayer.Size; j++)
+                    outputLayer.Derivatives[n].dW[j] = delta * prevLayer.Activations[j];
+
+                outputLayer.Derivatives[n].Delta = delta;
                 outputLayer.Derivatives[n].dB = dA * dZ;
             }
 
@@ -99,19 +100,19 @@ namespace ml.AI.OBNN
                     //next layer`s neurons loop
                     for (int j = 0; j < nextLayer.Size; j++)
                     {
-                        double nextDA = nextLayer.Derivatives[j].dA;
-                        double nextDZ = nextLayer.Derivatives[j].dZ;
-                        dA += nextDZ * nextDA * currentLayer.Weights[n * nextLayer.Size + j];
+                        double nextDelta = nextLayer.Derivatives[j].Delta;
+                        dA += nextDelta * currentLayer.Weights[n * nextLayer.Size + j];
                     }
 
                     double dZ = ActivationFunctions.SigmoidDS(currentLayer.Activations[n]);
+                    double delta = dA * dZ;
+
                     if(prevLayer != null)
                         for (int j = 0; j < prevLayer.Size; j++)
-                            currentLayer.Derivatives[n].dW[j] = dA * dZ * prevLayer.Activations[j];
+                            currentLayer.Derivatives[n].dW[j] = delta * prevLayer.Activations[j];
 
-                    currentLayer.Derivatives[n].dA = dA;
-                    currentLayer.Derivatives[n].dZ = dZ;
-                    currentLayer.Derivatives[n].dB = dA * dZ;
+                    currentLayer.Derivatives[n].Delta = delta;
+                    currentLayer.Derivatives[n].dB = delta;
                 }
             }
 
@@ -159,7 +160,7 @@ namespace ml.AI.OBNN
             }
         }
 
-        public double CalculateError(double[] expected)
+        public virtual double CalculateError(double[] expected)
         {
             if(expected == null)
                 throw new ArgumentNullException(nameof(expected));
@@ -169,6 +170,5 @@ namespace ml.AI.OBNN
 
             return Layers.Last().CalculateError(expected);
         }
-
     }
 }

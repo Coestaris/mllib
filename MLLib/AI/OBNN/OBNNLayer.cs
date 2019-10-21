@@ -12,12 +12,11 @@ namespace ml.AI.OBNN
 
         public int Size;
         public int NextLayerSize;
-
-        public double[] Activations;
-        public double[] Biases;
-
-        public double[] Weights; //to right
-        internal DerivativePack[] Derivatives;
+        public   readonly double[] Activations;
+        public   readonly double[] Biases;
+        public   readonly double[] Weights; //to right
+        internal readonly double[] _Zs;
+        internal readonly DerivativePack[] Derivatives;
 
         internal NNLayer(int size, int nextLayerSize, int prevLayerSize)
         {
@@ -25,6 +24,8 @@ namespace ml.AI.OBNN
             NextLayerSize = nextLayerSize;
 
             Activations = new double[size];
+            _Zs = new double[size];
+
             Biases = new double[size];
 
             if(nextLayerSize != -1)
@@ -99,6 +100,8 @@ namespace ml.AI.OBNN
                 var acc = nextLayer.Biases[next];
                 for (var curr = 0; curr < Size; curr++)
                     acc += Activations[curr] * Weights[next + nextLayer.Size * curr];
+
+                nextLayer._Zs[next] = acc;
                 nextLayer.Activations[next] = ActivationFunctions.Sigmoid(acc);
             }
         }

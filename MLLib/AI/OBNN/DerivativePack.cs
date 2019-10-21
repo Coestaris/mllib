@@ -2,15 +2,13 @@ namespace ml.AI.OBNN
 {
     internal struct DerivativePack
     {
-        public double   dA;
-        public double   dZ;
+        public double   Delta;
         public double[] dW;
         public double   dB;
 
-        public DerivativePack(double dA, double dZ, double[] dW, double dB)
+        public DerivativePack(double delta, double[] dW, double dB)
         {
-            this.dA = dA;
-            this.dZ = dZ;
+            this.Delta = delta;
             this.dW = dW;
             this.dB = dB;
         }

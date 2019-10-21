@@ -20,7 +20,7 @@ namespace XORCalculator
                 BackgroundColor = new Color4(94f / 255f, 91f / 255f, 102f / 255f, 0)
             };
 
-            _network = new NeuralNetwork(new []{ 2, 5, 2, 5, 2} );
+            _network = new NeuralNetwork(new []{ 2, 5, 5, 2} );
             var teacher = new Teacher(10000, 100, i =>
             {
                 var input = new double[] {_random.Next() % 2, _random.Next() % 2};
