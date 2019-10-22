@@ -7,7 +7,7 @@ namespace ml.AI
     {
         double[] ForwardPass(double[] input);
         void BackProp(double[] expected);
-        void ApplyNudge(int count);
+        void ApplyNudge(int count, int totalCount);
         double CalculateError(double[] expected);
 
         void Print();

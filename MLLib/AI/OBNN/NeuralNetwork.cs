@@ -135,7 +135,7 @@ namespace ml.AI.OBNN
             }
         }
 
-        public void ApplyNudge(int count)
+        public virtual void ApplyNudge(int count, int totalCount)
         {
             //apply the nudge
             for (int l = Layers.Count - 1; l >= 1; l--)

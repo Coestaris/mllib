@@ -83,20 +83,25 @@ namespace TennisClassifier
                     outlook, humidity, windy, temperature));*/
             }
 
-            var network = new ImprovedNeuralNetwork(new[] { 4, 16, 16, 1 }, new QuadraticCostFunction());
-            network.LearningRate = 3;
+            var network = new ImprovedNeuralNetwork(new[] {4, 16, 16, 1}, new CrossEntropyCostFunction())
+            {
+                LearningRate = .5,
+                RegularizationLambda = .1
+            };
             network.FillGaussianRandom();
 
             var teacher = new Teacher(DataCount, _weatherConditions.Cast<ITrainSample>().ToList());
 
             Console.WriteLine("Loaded network in {0} ms.", teacher.SetupTime);
 
-            for (int i = 0; i < 20; i++)
+            const int epochCount = 20;
+            for (int i = 0; i < epochCount; i++)
             {
                 teacher.Teach(network);
-                Console.WriteLine("{0}. Error: {1}", i, teacher.Error);
+                Console.WriteLine("Epoch: {0}/{1}. Error: {2}", i + 1, epochCount, teacher.Error);
             }
 
+            network.Print();
             teacher.ResetError();
 
             DoTest(network);

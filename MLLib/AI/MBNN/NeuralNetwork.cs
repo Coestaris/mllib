@@ -112,7 +112,7 @@ namespace ml.AI.MBNN
 
         public double LearningRate = 0.5;
 
-        public void ApplyNudge(int count)
+        public void ApplyNudge(int count, int totalCount)
         {
             for (int i = 0; i < Weights.Length; i++)
             {

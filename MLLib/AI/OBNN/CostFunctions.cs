@@ -5,12 +5,15 @@ namespace ml.AI.OBNN
 {
     public abstract class CostFunction
     {
+        internal virtual bool ActivationDerivative => false;
+
         public abstract double GetCost(double[] a, double[] y);
         public abstract double Delta(double z, double a, double y);
     }
 
     public class QuadraticCostFunction : CostFunction
     {
+        internal override bool ActivationDerivative => false;
         public bool UseNorm = false;
 
         public override double GetCost(double[] a, double[] y)
@@ -37,12 +40,14 @@ namespace ml.AI.OBNN
 
         public override double Delta(double z, double a, double y)
         {
-            return (a - y) * ActivationFunctions.SigmoidDS(z);
+            return (a - y) * ActivationFunctions.SigmoidD(z);
         }
     }
 
     public class CrossEntropyCostFunction : CostFunction
     {
+        internal override bool ActivationDerivative => false;
+
         public override double GetCost(double[] a, double[] y)
         {
             if(a.Length != y.Length)

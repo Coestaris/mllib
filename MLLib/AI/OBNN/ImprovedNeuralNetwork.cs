@@ -8,6 +8,7 @@ namespace ml.AI.OBNN
     public class ImprovedNeuralNetwork : NeuralNetwork
     {
         public readonly CostFunction CostFunction;
+        public double RegularizationLambda = 1;
 
         public ImprovedNeuralNetwork(IReadOnlyList<int> layerSizes,
             CostFunction costFunction = null) : base(layerSizes)
@@ -16,7 +17,7 @@ namespace ml.AI.OBNN
             CostFunction = costFunction;
         }
 
-         public virtual void BackProp(double[] expected)
+        public override void BackProp(double[] expected)
         {
             //output layer derivatives
             var outputLayer = Layers.Last();
@@ -24,7 +25,11 @@ namespace ml.AI.OBNN
 
             for (int n = 0; n < outputLayer.Size; n++)
             {
-                double delta = CostFunction.Delta(outputLayer._Zs[n], outputLayer.Activations[n], expected[n]);
+                double delta = 0;
+                delta = CostFunction.Delta(
+                    !CostFunction.ActivationDerivative ? outputLayer._Zs[n] : outputLayer.Activations[n],
+                    outputLayer.Activations[n],
+                    expected[n]);
 
                 for (int j = 0; j < prevLayer.Size; j++)
                     outputLayer.Derivatives[n].dW[j] = delta * prevLayer.Activations[j];
@@ -91,6 +96,33 @@ namespace ml.AI.OBNN
                 throw new ArgumentException("Sizes of input and input layer doesn't match", nameof(expected));
 
             return CostFunction.GetCost(Layers.Last().Activations, expected);
+        }
+
+        public override void ApplyNudge(int count, int totalCount)
+        {
+            //apply the nudge
+            for (int l = Layers.Count - 1; l >= 1; l--)
+            {
+                var currentLayer = Layers[l];
+                var prevLayer = Layers[l - 1];
+                for (int n = 0; n < currentLayer.Size; n++)
+                {
+                    //bias
+                    currentLayer.Biases[n] -= LearningRate * _biasNudges[l][n] / count;
+                    _biasNudges[l][n] = 0;
+
+                    //weight
+                    for (int p = 0; p < prevLayer.Size; p++)
+                    {
+                        prevLayer.Weights[p * currentLayer.Size + n] =
+                            (1 - LearningRate * RegularizationLambda / totalCount) * prevLayer.Weights[p * currentLayer.Size + n] -
+                            LearningRate * _weightNudges[l - 1][p * currentLayer.Size + n] / count;
+
+                        _weightNudges[l - 1][p * currentLayer.Size + n] = 0;
+                    }
+
+                }
+            }
         }
     }
 }

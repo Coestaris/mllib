@@ -65,21 +65,24 @@ namespace ml.AI
 
         public void Teach(INetwork network)
         {
+            var index = 0;
             if (TasksDivision == Tasks.Count)
             {
                 foreach (var task in Tasks.Shuffle(Shuffler))
                 {
                     network.ForwardPass(task.Input);
                     network.BackProp(task.Expected);
-                    network.ApplyNudge(1);
+                    network.ApplyNudge(1, Tasks.Count);
 
-                    _errorSum += network.CalculateError(task.Expected);
-                    _n++;
+                    if (index++ % 50 == 0)
+                    {
+                        _errorSum += network.CalculateError(task.Expected);
+                        _n++;
+                    }
                 }
             }
             else
             {
-                var index = 0;
                 foreach (var batch in Tasks.Shuffle(Shuffler).ToArray().Split(TasksDivision))
                 {
                     var batchArray = batch.ToArray();
@@ -88,11 +91,14 @@ namespace ml.AI
                         network.ForwardPass(task.Input);
                         network.BackProp(task.Expected);
 
-                        _errorSum += network.CalculateError(task.Expected);
-                        _n++;
+                        if (index++ % 50 == 0)
+                        {
+                            _errorSum += network.CalculateError(task.Expected);
+                            _n++;
+                        }
                     }
 
-                    network.ApplyNudge(batchArray.Length);
+                    network.ApplyNudge(batchArray.Length, Tasks.Count);
                     BatchCallback?.Invoke(index++);
                 }
             }
