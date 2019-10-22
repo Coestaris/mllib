@@ -21,8 +21,10 @@ Math stuff:
 
 TODO list:
  * [**DONE**] Feedforward Neural network using Objects
+ * [**DONE**] Neural network visualization
  * [**DONE**] Feedforward Neural network using Matrices
- * Feedforward Neural network using Regularization, Cross entropy cost function
+ * [**DONE**] Feedforward Neural network using Regularization, Cross entropy cost function
+ * Handwritten digit recognition visualization
  * Convolutional neural network (CNN)
  * Recursive neural network (RNN)
  * Some genetic algorithms
