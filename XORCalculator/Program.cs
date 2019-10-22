@@ -1,17 +1,50 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using ml.AI;
 using ml.AI.OBNN;
 using OpenTK.Graphics;
+using OpenTK.Graphics.ES11;
 using WindowHandler;
 
 namespace XORCalculator
 {
     internal class Program
     {
-        private static Random _random = new Random();
         private static NeuralNetwork _network;
 
+        public class XORTask : TrainSample
+        {
+            private static Random _random = new Random();
+            private double[] _trainData;
+            private double[] _expected;
+
+            public override double[] ToTrainData()
+            {
+                return _trainData;
+            }
+
+            public override double[] ToExpected()
+            {
+                return _expected;
+            }
+
+            public override bool CheckAssumption(double[] output)
+            {
+                var a = Math.Abs(_expected[0] - 1) < 0.01;
+                return a
+                    ? output[0] > .90 && output[1] < 0.10
+                    : output[1] > .90 && output[0] < 0.10;
+            }
+
+            public XORTask()
+            {
+                _trainData = new double[] {_random.Next() % 2, _random.Next() % 2};
+                var result = ((int) _trainData [0] ^ (int) _trainData [1]) == 1;
+                _expected = new double[] {result ? 1 : 0, result ? 0 : 1};
+            }
+        }
 
         public static void Main(string[] args)
         {
@@ -20,16 +53,19 @@ namespace XORCalculator
                 BackgroundColor = new Color4(94f / 255f, 91f / 255f, 102f / 255f, 0)
             };
 
+            var tasks = new List<XORTask>();
+            for(int i = 0; i < 1000; i++)
+                tasks.Add(new XORTask());
+
             _network = new NeuralNetwork(new []{ 2, 5, 5, 2} );
-            var teacher = new Teacher(10000, 100, i =>
+            _network.FillGaussianRandom();
+            var teacher = new Teacher(_network, 1, 1, tasks.Cast<TrainSample>().ToList())
             {
-                var input = new double[] {_random.Next() % 2, _random.Next() % 2};
-                var result = ((int) input[0] ^ (int) input[1]) == 1;
-                var expected = new double[] {result ? 1 : 0, result ? 0 : 1};
-                return new TeacherTask(input, expected);
-            });
+                SilentMode = true
+            };
 
             var handler = new NNVisualizer(win, _network, teacher, () => _network.FillGaussianRandom());
+
             handler.OnStart();
         }
     }

@@ -5,7 +5,7 @@ using ml.AIMath;
 
 namespace ml.AI.OBNN
 {
-    public class NeuralNetwork : INetwork
+    public class NeuralNetwork : Network
     {
         public readonly List<NNLayer> Layers;
         public double LearningRate = 0.5;
@@ -34,25 +34,25 @@ namespace ml.AI.OBNN
             }
         }
 
-        public void Print()
+        public override void Print()
         {
             for(var i = 0; i < Layers.Count; i++)
                 Layers[i].Print(i);
         }
 
-        public void FillRandom(Random random = null)
+        public override void FillRandom(Random random = null)
         {
             foreach (var layer in Layers)
                 layer.FillRandom(random);
         }
 
-        public void FillGaussianRandom(GaussianRandom gaussianRandom = null)
+        public override void FillGaussianRandom(GaussianRandom gaussianRandom = null)
         {
             foreach (var layer in Layers)
                 layer.FillGaussianRandom(Layers[0].Size, gaussianRandom);
         }
 
-        public virtual double[] ForwardPass(double[] input)
+        public override double[] ForwardPass(double[] input)
         {
             if(input == null)
                 throw new ArgumentNullException(nameof(input));
@@ -67,7 +67,7 @@ namespace ml.AI.OBNN
             return Layers[Layers.Count - 1].Activations;
         }
 
-        public virtual void BackProp(double[] expected)
+        public override void BackProp(double[] expected)
         {
             //output layer derivatives
             var outputLayer = Layers.Last();
@@ -135,7 +135,7 @@ namespace ml.AI.OBNN
             }
         }
 
-        public virtual void ApplyNudge(int count, int totalCount)
+        public override void ApplyNudge(int count, int totalCount)
         {
             //apply the nudge
             for (int l = Layers.Count - 1; l >= 1; l--)
@@ -160,7 +160,7 @@ namespace ml.AI.OBNN
             }
         }
 
-        public virtual double CalculateError(double[] expected)
+        public override double CalculateError(double[] expected)
         {
             if(expected == null)
                 throw new ArgumentNullException(nameof(expected));

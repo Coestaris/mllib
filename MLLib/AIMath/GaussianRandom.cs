@@ -38,11 +38,13 @@ namespace ml.AIMath
 				u = 2.0 * _random.NextDouble() - 1.0;
 				v = 2.0 * _random.NextDouble() - 1.0;
 				s = u * u + v * v;
-			} while (s > 1.0 || Math.Abs(s) < 0.0001);
+			}
+			while (s > 1.0 || Math.Abs(s) < 0.0001);
 
 			var r = Math.Sqrt(-2.0 * Math.Log(s) / s);
 			_calculated = r * u;
 			_ready = true;
+
 			return r * v * dev + mean;
 		}
 	}

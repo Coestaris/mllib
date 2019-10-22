@@ -65,7 +65,7 @@ namespace XORCalculator
 
         private void Step()
         {
-            _teacher.Teach(_network);
+            _teacher.Teach();
 
             DisplayValues();
 

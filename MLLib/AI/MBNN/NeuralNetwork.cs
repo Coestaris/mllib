@@ -4,8 +4,10 @@ using ml.AIMath;
 
 namespace ml.AI.MBNN
 {
-    public class NeuralNetwork : INetwork
+    public class NeuralNetwork : Network
     {
+        public double LearningRate = 0.5;
+
         private readonly Matrix[] _Zs;
 
         private readonly Matrix[] _nablaW;
@@ -43,7 +45,7 @@ namespace ml.AI.MBNN
             }
         }
 
-        public void Print()
+        public override void Print()
         {
             foreach (var str in Weights.Zip(Biases, (a, b) => new { a, b }))
             {
@@ -52,7 +54,7 @@ namespace ml.AI.MBNN
             }
         }
 
-        public void FillRandom(Random random = null)
+        public override void FillRandom(Random random = null)
         {
             foreach (var matrix in Weights)
                 matrix.FillRandom(random);
@@ -60,7 +62,7 @@ namespace ml.AI.MBNN
                 matrix.FillRandom(random);
         }
 
-        public void FillGaussianRandom(GaussianRandom gaussianRandom = null)
+        public override void FillGaussianRandom(GaussianRandom gaussianRandom = null)
         {
             foreach (var matrix in Weights)
                 matrix.FillGaussianRandom(0, Math.Sqrt(2.0 / LayerSizes[0]), gaussianRandom);
@@ -68,7 +70,7 @@ namespace ml.AI.MBNN
                 matrix.FillGaussianRandom(0, 0.001, gaussianRandom);
         }
 
-        public double[] ForwardPass(double[] input)
+        public override double[] ForwardPass(double[] input)
         {
             if(input.Length != LayerSizes[0])
                 throw new ArgumentException();
@@ -91,7 +93,7 @@ namespace ml.AI.MBNN
             }
         }
 
-        public void BackProp(double[] expected)
+        public override void BackProp(double[] expected)
         {
             var dA = (Activations[LayersCount - 1] - new Matrix(expected)) *
                         ActivationFunctions.SigmoidD(_Zs[LayersCount - 1]);
@@ -110,9 +112,7 @@ namespace ml.AI.MBNN
             }
         }
 
-        public double LearningRate = 0.5;
-
-        public void ApplyNudge(int count, int totalCount)
+        public override void ApplyNudge(int count, int totalCount)
         {
             for (int i = 0; i < Weights.Length; i++)
             {
@@ -124,7 +124,7 @@ namespace ml.AI.MBNN
             }
         }
 
-        public double CalculateError(double[] expected)
+        public override double CalculateError(double[] expected)
         {
             var diff = new Matrix(expected) - Activations[LayersCount - 1];
             return (diff * diff).ToArray().Sum();

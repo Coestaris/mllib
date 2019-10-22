@@ -23,7 +23,7 @@ namespace TennisClassifier
         Normal
     }
 
-    public class WeatherCondition : ITrainSample
+    public class WeatherCondition : TrainSample
     {
         private static Random _random = new Random((int)DateTime.Now.TimeOfDay.TotalMilliseconds);
 
@@ -162,15 +162,34 @@ namespace TennisClassifier
             return false;
         }
 
-        public double[] ToTrainData()
+        private double[] _trainData;
+        private double[] _expectedData;
+
+        public override double[] ToTrainData()
         {
-            return new[] {Outlook, Humidity, Windy, Temperature};
+            if(_trainData == null)
+                _trainData = new[] {Outlook, Humidity, Windy, Temperature};
+
+            return _trainData;
         }
 
-        public double[] ToExpected()
+        public override double[] ToExpected()
         {
-            var s = ShouldPlay();
-            return new double[] { s ? 1 : 0 };
+            if (_expectedData == null)
+            {
+                var s = ShouldPlay();
+                _expectedData = new double[] {s ? 1 : 0};
+            }
+
+            return _expectedData;
+        }
+
+        public override bool CheckAssumption(double[] output)
+        {
+            if (ShouldPlay())
+                return output[0] > 0.85;
+
+            return output[0] < 0.15;
         }
     }
 }

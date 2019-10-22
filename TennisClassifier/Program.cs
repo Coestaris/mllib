@@ -12,42 +12,14 @@ namespace TennisClassifier
     {
         private static Random _random = new Random((int)DateTime.Now.TimeOfDay.TotalMilliseconds);
         private static List<WeatherCondition> _weatherConditions;
-        private const int DataCount = 50000;
-        private const int TestsCount = 1000;
-
-        private static void DoTest(INetwork network)
-        {
-            int wrong = 0;
-            for (int i = DataCount; i < DataCount + TestsCount; i++)
-            {
-                var input = _weatherConditions[i].ToTrainData();
-                var output = network.ForwardPass(input);
-                var result = _weatherConditions[i].ShouldPlay();
-
-                if (output[0] > .9 && result ||
-                    output[0] < .1 && !result)
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.Write("Suggestion is correct! ");
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Write("Suggestion is wrong! ");
-                    wrong++;
-                }
-
-                Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine("Diff: {0:F4}", output[0] - (result ? 1 : 0));
-            }
-
-            Console.WriteLine("{0} of {1} ({2:F4}%) were wrong!", wrong, TestsCount, wrong / (double)TestsCount * 100);
-        }
+        private const int DataCount  = 50000;
+        private const int TestsCount = 10000;
+        private const int ValidationCount = 10000;
 
         public static void Main(string[] args)
         {
             _weatherConditions = new List<WeatherCondition>();
-            for (int i = 0; i < DataCount + TestsCount; i++)
+            for (int i = 0; i < DataCount + TestsCount + ValidationCount; i++)
             {
                 _weatherConditions.Add(new WeatherCondition(
                     _random.NextDouble(),
@@ -86,25 +58,27 @@ namespace TennisClassifier
             var network = new ImprovedNeuralNetwork(new[] {4, 16, 16, 1}, new CrossEntropyCostFunction())
             {
                 LearningRate = .5,
-                RegularizationLambda = .1
+                RegularizationLambda = 0.1
             };
             network.FillGaussianRandom();
 
-            var teacher = new Teacher(DataCount, _weatherConditions.Cast<ITrainSample>().ToList());
-
-            Console.WriteLine("Loaded network in {0} ms.", teacher.SetupTime);
-
-            const int epochCount = 20;
-            for (int i = 0; i < epochCount; i++)
+            var teacher = new Teacher(
+                network,
+                30, 4,
+                _weatherConditions.Take(DataCount).Cast<TrainSample>().ToList(),
+                _weatherConditions.Skip(DataCount).Take(ValidationCount).Cast<TrainSample>().ToList(),
+                _weatherConditions.Skip(DataCount + ValidationCount).Cast<TrainSample>().ToList())
             {
-                teacher.Teach(network);
-                Console.WriteLine("Epoch: {0}/{1}. Error: {2}", i + 1, epochCount, teacher.Error);
-            }
+                MonitorTrainingCost = true,
+                MonitorTrainingAccuracy = true,
+                MonitorValidationAccuracy = true
+            };
 
-            network.Print();
-            teacher.ResetError();
-
-            DoTest(network);
+            teacher.Teach();
+            teacher.Test(20, true);
+            Console.WriteLine("Test data cost: {0:F3}, Test data accuracy: {1:F3}",
+                teacher.TestDataCost,
+                teacher.TestDataAccuracy * 100);
         }
     }
 }

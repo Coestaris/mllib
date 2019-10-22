@@ -42,7 +42,7 @@
   <ItemGroup>
     <Compile Include="AIMath\ActivationFunctions.cs" />
     <Compile Include="AIMath\Matrix.cs" />
-    <Compile Include="AI\INetwork.cs" />
+    <Compile Include="AI\Network.cs" />
     <Compile Include="AI\MBNN\NeuralNetwork.cs" />
     <Compile Include="AI\OBNN\CostFunctions.cs" />
     <Compile Include="AI\OBNN\DerivativePack.cs" />
@@ -51,7 +51,7 @@
     <Compile Include="AI\OBNN\OBNNLayer.cs" />
     <Compile Include="AI\Teacher.cs" />
     <Compile Include="AIMath\GaussianRandom.cs" />
-    <Compile Include="AI\ITrainSample.cs" />
+    <Compile Include="AI\TrainSample.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

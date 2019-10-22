@@ -10,13 +10,16 @@ using ml.AI;
 
 namespace HWDRecognizer
 {
-    public class HWImage : ITrainSample
+    public class HWImage : TrainSample
     {
         public byte[] Data;
         public Size Size;
         public int Index;
         public bool IsTest;
         public int Number;
+
+        private double[] _expectedData;
+        private double[] _trainData;
 
         internal HWImage(byte[] data, Size size, int index, bool isTest, int number)
         {
@@ -27,19 +30,37 @@ namespace HWDRecognizer
             Number = number;
         }
 
-        public double[] ToExpected()
+        public override double[] ToExpected()
         {
-            var result = new double[10];
-            result[Number] = 1;
-            return result;
+            if (_expectedData == null)
+            {
+                _expectedData = new double[10];
+                _expectedData [Number] = 1;
+            }
+            return _expectedData;
         }
 
-        public double[] ToTrainData()
+        public override bool CheckAssumption(double[] output)
         {
-            var result = new double[Data.Length];
-            for (var i = 0; i < Data.Length; i++)
-                result[i] = Data[i] / 256.0;
-            return result;
+            var counter = 0;
+            var sortedOutput = output
+                .Select(p => new { value = p, index = counter++ })
+                .OrderByDescending(p => p.value)
+                .ToArray();
+
+            return sortedOutput[0].index == Number;
+        }
+
+        public override double[] ToTrainData()
+        {
+            if (_trainData == null)
+            {
+                _trainData = new double[Data.Length];
+                for (var i = 0; i < Data.Length; i++)
+                    _trainData[i] = Data[i] / 256.0;
+            }
+
+            return _trainData;
         }
 
         public Bitmap ToBitmap()

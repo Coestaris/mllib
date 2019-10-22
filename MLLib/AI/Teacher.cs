@@ -1,107 +1,205 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
+using System.Text;
 
 namespace ml.AI
 {
-    public class TeacherTask
+    public struct TeacherMonitorInfo
     {
-        public readonly double[] Input;
-        public readonly double[] Expected;
-
-        public TeacherTask(double[] input, double[] expected)
-        {
-            Input = input;
-            Expected = expected;
-        }
+        public double TrainingCost;
+        public double ValidationCost;
+        public double TrainingAccuracy;
+        public double ValidationAccuracy;
     }
 
     public class Teacher
     {
-        public int TasksDivision;
-        public List<TeacherTask> Tasks;
-        public Random Shuffler = new Random();
-        public double SetupTime => _setupTime.TotalMilliseconds;
+        public readonly List<TrainSample> TrainingTasks;
+        public readonly List<TrainSample> TestTasks;
+        public readonly List<TrainSample> ValidationTasks;
 
-        private TimeSpan _setupTime;
+        public int BatchSize;
+        public int TotalEpochCount;
+        public int ErrorCalcFactor = 50;
+        public Network Network;
+
+        public bool MonitorTrainingCost = true;
+        public bool MonitorValidationCost = false;
+        public bool MonitorTrainingAccuracy = false;
+        public bool MonitorValidationAccuracy = false;
+        public bool SilentMode = false;
+
+        public readonly List<TeacherMonitorInfo> MonitorInfos;
+        public readonly Random Shuffler = new Random();
+
         public Action<int> BatchCallback;
+        public Action<int> EpochCallback;
 
+        public double Error => _errorSum / _n;
+        public double TestDataAccuracy => CalculateAccuracy(TestTasks);
+        public double TestDataCost => CalculateError(TestTasks);
+
+        private readonly  TimeSpan _setupTime;
         private double _errorSum;
         private int _n;
 
-        public Teacher(int tasksCount, List<ITrainSample> trainSamples)
-            : this(tasksCount, tasksCount, trainSamples) {}
+        public Teacher(Network network,
+            int totalEpochCount,
+            List<TrainSample> trainSamples,
+            List<TrainSample> testSamples = null,
+            List<TrainSample> validataionSamples = null)
+            : this(network, totalEpochCount, 0, trainSamples) {}
 
-        public Teacher(int tasksCount, int tasksDivision, List<ITrainSample> trainSamples)
+        public Teacher(Network network,
+            int totalEpochCount, int batchSize,
+            List<TrainSample> trainSamples,
+            List<TrainSample> testSamples = null,
+            List<TrainSample> validationSamples = null)
         {
-            var start = DateTime.Now;
-            TasksDivision = tasksDivision;
-            Tasks = new List<TeacherTask>();
-            for(var i = 0; i < tasksCount; i++)
-                Tasks.Add(new TeacherTask(trainSamples[i].ToTrainData(), trainSamples[i].ToExpected()));
-
-            _setupTime = TimeSpan.FromMilliseconds((DateTime.Now - start).TotalMilliseconds);
+            TotalEpochCount = totalEpochCount;
+            BatchSize = batchSize;
             _errorSum = 0;
             _n = 0;
+
+            TrainingTasks = trainSamples;
+            TestTasks = testSamples;
+            ValidationTasks = validationSamples;
+
+            Network = network;
+            MonitorInfos = new List<TeacherMonitorInfo>();
+            if (BatchSize == 0) BatchSize = TrainingTasks.Count;
         }
 
-        public Teacher(int tasksCount, Func<int, TeacherTask> taskCreatorFunc)
-            : this(tasksCount, tasksCount, taskCreatorFunc) {}
-
-        public Teacher(int tasksCount, int tasksDivision, Func<int, TeacherTask> taskCreatorFunc)
+        public void Teach()
         {
-            var start = DateTime.Now;
-            TasksDivision = tasksDivision;
-            Tasks = new List<TeacherTask>();
-            for(var i = 0; i < tasksCount; i++)
-                Tasks.Add(taskCreatorFunc(i));
-
-            _setupTime = TimeSpan.FromMilliseconds((DateTime.Now - start).TotalMilliseconds);
-            _errorSum = 0;
-            _n = 0;
-        }
-
-        public double Error => _errorSum / _n;
-
-        public void Teach(INetwork network)
-        {
-            var index = 0;
-            if (TasksDivision == Tasks.Count)
+            for (var epoch = 0; epoch < TotalEpochCount; epoch++)
             {
-                foreach (var task in Tasks.Shuffle(Shuffler))
-                {
-                    network.ForwardPass(task.Input);
-                    network.BackProp(task.Expected);
-                    network.ApplyNudge(1, Tasks.Count);
-
-                    if (index++ % 50 == 0)
-                    {
-                        _errorSum += network.CalculateError(task.Expected);
-                        _n++;
-                    }
-                }
-            }
-            else
-            {
-                foreach (var batch in Tasks.Shuffle(Shuffler).ToArray().Split(TasksDivision))
+                var index = 0;
+                foreach (var batch in TrainingTasks.Shuffle(Shuffler).ToArray().Split(BatchSize))
                 {
                     var batchArray = batch.ToArray();
                     foreach (var task in batchArray)
                     {
-                        network.ForwardPass(task.Input);
-                        network.BackProp(task.Expected);
+                        Network.ForwardPass(task.ToTrainData());
+                        Network.BackProp(task.ToExpected());
 
-                        if (index++ % 50 == 0)
+                        if (index++ % ErrorCalcFactor == 0)
                         {
-                            _errorSum += network.CalculateError(task.Expected);
+                            _errorSum += Network.CalculateError(task.ToExpected());
                             _n++;
                         }
                     }
 
-                    network.ApplyNudge(batchArray.Length, Tasks.Count);
+                    Network.ApplyNudge(batchArray.Length, TrainingTasks.Count);
                     BatchCallback?.Invoke(index++);
                 }
+
+                var sb = new StringBuilder();
+                var info = new TeacherMonitorInfo();
+                if(!SilentMode) sb.AppendFormat("Epoch: {0}/{1}", epoch + 1, TotalEpochCount);
+                if (MonitorTrainingCost)
+                {
+                    var error = Error;
+                    if(!SilentMode) sb.AppendFormat(", Training cost: {0:F4}", error);
+                    info.TrainingCost = epoch;
+                }
+
+                if (MonitorValidationCost && ValidationTasks != null)
+                {
+                    var error = CalculateError(ValidationTasks);
+                    if(!SilentMode) sb.AppendFormat(", Validation cost: {0:F4}", error);
+                    info.ValidationCost = epoch;
+                }
+
+                if (MonitorTrainingAccuracy)
+                {
+                    var accuracy = CalculateAccuracy(TrainingTasks);
+                    if(!SilentMode) sb.AppendFormat(", Training Accuracy: {0:F4}%", accuracy * 100);
+                    info.TrainingAccuracy = accuracy;
+                }
+
+                if (MonitorValidationAccuracy && ValidationTasks != null)
+                {
+                    var accuracy = CalculateAccuracy(ValidationTasks);
+                    if(!SilentMode) sb.AppendFormat(", Validation Accuracy: {0:F4}%", accuracy * 100);
+                    info.ValidationAccuracy = accuracy;
+                }
+                MonitorInfos.Add(info);
+                if(!SilentMode) Console.WriteLine(sb);
+                ResetError();
             }
+        }
+
+        public void Test(int count, bool shuffle)
+        {
+            if(TestTasks == null) return;
+
+            var testDataCopy = TestTasks.Select(p => p).ToList();
+            if (shuffle) testDataCopy = testDataCopy.Shuffle(Shuffler).ToList();
+
+            for (int i = 0; i < count; i++)
+            {
+                var task = testDataCopy[i];
+                var output = Network.ForwardPass(task.ToTrainData());
+
+                var expected = "[" + string.Join(",", task.ToExpected().Select(p => p.ToString("F2"))) + "]";
+                var got = "[" +  string.Join(",", output.Select(p => p.ToString("F2"))) + "]";
+
+                if (task.CheckAssumption(output))
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write("Suggestion is correct! ");
+
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.Write("Expected and got: ");
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine(expected);
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write("Suggestion is wrong! ");
+
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.Write("Expected ");
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write(expected);
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.Write(" but got ");
+                    Console.ForegroundColor = ConsoleColor.DarkCyan;
+                    Console.WriteLine(got);
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+            }
+        }
+
+        public double CalculateAccuracy(List<TrainSample> samples)
+        {
+            var n = 0;
+            foreach (var sample in samples)
+            {
+                if (sample.CheckAssumption(Network.ForwardPass(sample.ToTrainData())))
+                    n++;
+            }
+
+            return n / (double) samples.Count;
+        }
+
+        public double CalculateError(IEnumerable<TrainSample> samples)
+        {
+            var n = 0;
+            var sum = 0.0;
+            foreach (var sample in samples)
+            {
+                Network.ForwardPass(sample.ToTrainData());
+                sum += Network.CalculateError(sample.ToExpected());
+                n++;
+            }
+
+            return sum / n;
         }
 
         public void ResetError()
@@ -115,6 +213,12 @@ namespace ml.AI
     {
         public static IEnumerable<IEnumerable<T>> Split<T>(this T[] array, int size)
         {
+            if (size == array.Length)
+            {
+                yield return array;
+                yield break;
+            }
+
             for (var i = 0; i < (float)array.Length / size; i++)
             {
                 yield return array.Skip(i * size).Take(size);
@@ -123,33 +227,13 @@ namespace ml.AI
 
         public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source, Random rng)
         {
-            T[] elements = source.ToArray();
-            for (int i = elements.Length - 1; i >= 0; i--)
+            var elements = source.ToArray();
+            for (var i = elements.Length - 1; i >= 0; i--)
             {
-                int swapIndex = rng.Next(i + 1);
+                var swapIndex = rng.Next(i + 1);
                 yield return elements[swapIndex];
                 elements[swapIndex] = elements[i];
             }
-        }
-
-        public static List<T> ShuffleList<T>(this Random r, IEnumerable<T> source)
-        {
-            var list = new List<T>();
-            foreach (var item in source)
-            {
-                var i = r.Next(list.Count + 1);
-                if (i == list.Count)
-                {
-                    list.Add(item);
-                }
-                else
-                {
-                    var temp = list[i];
-                    list[i] = item;
-                    list.Add(temp);
-                }
-            }
-            return list;
         }
     }
 }
