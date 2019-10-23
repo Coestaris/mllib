@@ -19,6 +19,35 @@ namespace ml.AI.CNN.Layers
                 (int)Math.Floor(matrix.Size.Height / 2.0));
         }
 
+        public static Volume BitmapToVolume(Bitmap bitmap, bool grayscale)
+        {
+            Volume volume;
+            if (grayscale)
+            {
+                volume = new Volume(bitmap.Width, bitmap.Height, 1, 0);
+                for (var x = 0; x < bitmap.Width; x++)
+                for (var y = 0; y < bitmap.Height; y++)
+                    volume.Set(x, y, 0, NormalizeColor(bitmap.GetPixel(x, y)));
+            }
+            else
+            {
+                volume = new Volume(bitmap.Width, bitmap.Height, 3, 0);
+                for(var d = 0; d < 3; d++)
+                for (var x = 0; x < bitmap.Width; x++)
+                for (var y = 0; y < bitmap.Height; y++)
+                {
+                    var c = bitmap.GetPixel(x, y);
+                    var value = 0;
+                    if (d == 0) value = c.R;
+                    else if (d == 1) value = c.G;
+                    else value = c.B;
+                    volume.Set(x, y, d, value);
+                }
+            }
+
+            return volume;
+        }
+
         private void Pad(int xpad, int ypad)
         {
             PaddedLayerSize = new Size(
@@ -59,18 +88,6 @@ namespace ml.AI.CNN.Layers
             return bmp;
         }
 
-        public override void ForwardPass(double[,] data)
-        {
-            throw new NotSupportedException();
-        }
-
-        public void ForwardPass(Bitmap bitmap)
-        {
-            for (var x = 0; x < Size.Width; x++)
-            for (var y = 0; y < Size.Height; y++)
-                Data[x + PadSize.Width, y + PadSize.Height] = NormalizeColor(bitmap.GetPixel(x, y));
-
-            NextLayer.ForwardPass(Data);
-        }
+        public override Volume ForwardPass(Volume volume) { return new Volume(); }
     }
 }

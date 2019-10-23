@@ -12,16 +12,13 @@ namespace ml.AI.CNN
     {
         public Size LayerSize;
         public Size Stride;
-
-        public int Depth;
-        public double[][,] Data;
         public Size KernelSize;
 
         public double[] Biases;
         public List<Matrix> Kernels;
         public Size PrevPad;
 
-        public override void ForwardPass(double[,] data)
+        public override Volume ForwardPass(Volume volume)
         {
             for (var d = 0; d < Depth; d++)
             {

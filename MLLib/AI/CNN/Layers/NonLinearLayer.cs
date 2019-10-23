@@ -1,7 +1,8 @@
 namespace ml.AI.CNN.Layers
 {
-    public class SubsamplingLayer : CNNLayer
+    public class NonLinearLayer : CNNLayer
     {
         public override Volume ForwardPass(Volume volume) { return new Volume(); }
+
     }
 }

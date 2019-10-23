@@ -4,6 +4,6 @@ namespace ml.AI.CNN.Layers
 {
     public class FullyConnectedLayer : CNNLayer
     {
-        public override void ForwardPass(double[,] data) {}
+        public override Volume ForwardPass(Volume volume) { return new Volume(); }
     }
 }

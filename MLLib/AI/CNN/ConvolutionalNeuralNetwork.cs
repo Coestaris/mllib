@@ -36,9 +36,9 @@ namespace ml.AI.CNN
             Layers.Add(layer);
         }
 
-        public void ForwardPass(Bitmap bitmap)
+        public void ForwardPass(Volume volume)
         {
-            InputLayer.ForwardPass(bitmap);
+            InputLayer.ForwardPass(volume);
         }
     }
 }

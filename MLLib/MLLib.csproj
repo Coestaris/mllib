@@ -44,10 +44,12 @@
     <Compile Include="AIMath\ActivationFunctions.cs" />
     <Compile Include="AIMath\Matrix.cs" />
     <Compile Include="AI\CNN\ConvolutionalNeuralNetwork.cs" />
+    <Compile Include="AI\CNN\Kernel.cs" />
     <Compile Include="AI\CNN\Layers\CNNLayer.cs" />
     <Compile Include="AI\CNN\Layers\ConvolutionalLayer.cs" />
     <Compile Include="AI\CNN\Layers\FullyConnectedLayer.cs" />
     <Compile Include="AI\CNN\Layers\InputLayer.cs" />
+    <Compile Include="AI\CNN\Layers\NonLinearLayer.cs" />
     <Compile Include="AI\CNN\Layers\SoftmaxLayer.cs" />
     <Compile Include="AI\CNN\Layers\SubsamplingLayer.cs" />
     <Compile Include="AI\Network.cs" />
@@ -60,6 +62,7 @@
     <Compile Include="AI\Teacher.cs" />
     <Compile Include="AIMath\GaussianRandom.cs" />
     <Compile Include="AI\TrainSample.cs" />
+    <Compile Include="AI\Volume.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
