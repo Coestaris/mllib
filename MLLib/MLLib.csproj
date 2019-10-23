@@ -43,7 +43,6 @@
   <ItemGroup>
     <Compile Include="AIMath\ActivationFunctions.cs" />
     <Compile Include="AIMath\Matrix.cs" />
-    <Compile Include="AIMath\Size.cs" />
     <Compile Include="AI\CNN\ConvolutionalNeuralNetwork.cs" />
     <Compile Include="AI\CNN\InputData.cs" />
     <Compile Include="AI\CNN\Layers\CNNLayer.cs" />
