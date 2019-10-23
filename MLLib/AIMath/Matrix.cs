@@ -9,7 +9,7 @@ namespace ml.AIMath
         public readonly int Columns;
 
         public Size Size => new Size(Columns, Rows);
-        private readonly double[,] _data;
+        public double[,] Data;
 
         private static Random _random = new Random();
         private static GaussianRandom _gaussianRandom = new GaussianRandom(_random);
@@ -19,16 +19,16 @@ namespace ml.AIMath
             if(array.Length != rows * columns)
                 throw new ArgumentException();
 
-            _data = new double[rows, columns];
+            Data = new double[rows, columns];
             for (var r = 0; r < rows; r++)
                 for (var c = 0; c < columns; c++)
                     if (flip)
                     {
-                        _data[r, c] = array[c * rows + r];
+                        Data[r, c] = array[c * rows + r];
                     }
                     else
                     {
-                        _data[r, c] = array[r * columns + c];
+                        Data[r, c] = array[r * columns + c];
                     }
 
             Rows = rows;
@@ -42,23 +42,23 @@ namespace ml.AIMath
         {
             Rows = rows;
             Columns = columns;
-            _data = new double[rows, columns];
+            Data = new double[rows, columns];
         }
 
         public Matrix(int rows, int columns, params double[] values)
         {
             Rows = rows;
             Columns = columns;
-            _data = new double[rows, columns];
+            Data = new double[rows, columns];
 
             for (int r = 0; r < Rows; r++)
                 for (int c = 0; c < Columns; c++)
-                    _data[r, c] = values[r * Columns + c];
+                    Data[r, c] = values[r * Columns + c];
         }
 
         public Matrix(Matrix matrix)
         {
-            _data = (double[,])matrix._data.Clone();
+            Data = (double[,])matrix.Data.Clone();
             Columns = matrix.Columns;
             Rows = matrix.Rows;
         }
@@ -76,8 +76,8 @@ namespace ml.AIMath
                 for (int c = 0; c < Columns; c++)
                 {
                     Console.Write("{1}{0:F4}{2}",
-                        Math.Abs(_data[r,c]),
-                        _data[r, c] < 0 ? "-" : " ",
+                        Math.Abs(Data[r,c]),
+                        Data[r, c] < 0 ? "-" : " ",
                         (r == Rows - 1 && c == Columns - 1) ? "]" : (c == Columns - 1 ? "],\n" : ", "));
                 }
             }
@@ -88,14 +88,14 @@ namespace ml.AIMath
         {
             for (int r = 0; r < Rows; r++)
                 for (int c = 0; c < Columns; c++)
-                    _data[r, c] = fillFunc(r, c);
+                    Data[r, c] = fillFunc(r, c);
         }
 
         public void Fill(double x)
         {
             for (int r = 0; r < Rows; r++)
                 for (int c = 0; c < Columns; c++)
-                    _data[r, c] = x;
+                    Data[r, c] = x;
         }
 
         public void FillRandom(Random random = null)
@@ -104,7 +104,7 @@ namespace ml.AIMath
             for (int r = 0; r < Rows; r++)
                 for (int c = 0; c < Columns; c++)
                 {
-                    _data[r, c] = random.NextDouble();
+                    Data[r, c] = random.NextDouble();
                 }
         }
 
@@ -121,7 +121,7 @@ namespace ml.AIMath
             for (int r = 0; r < Rows; r++)
                 for (int c = 0; c < Columns; c++)
                 {
-                    _data[r, c] = Math.Abs(random.NextDouble()) * (max - min) + min;
+                    Data[r, c] = Math.Abs(random.NextDouble()) * (max - min) + min;
                 }
         }
 
@@ -132,7 +132,7 @@ namespace ml.AIMath
             for (int r = 0; r < Rows; r++)
                 for (int c = 0; c < Columns; c++)
                 {
-                    _data[r, c] = random.Next();
+                    Data[r, c] = random.Next();
                 }
         }
 
@@ -142,7 +142,7 @@ namespace ml.AIMath
             for (int r = 0; r < Rows; r++)
                 for (int c = 0; c < Columns; c++)
                 {
-                    _data[r, c] = random.Next(mean, dev);
+                    Data[r, c] = random.Next(mean, dev);
                 }
         }
 
@@ -150,7 +150,7 @@ namespace ml.AIMath
         {
             for (int r = 0; r < Rows; r++)
                 for (int c = 0; c < Columns; c++)
-                    _data[r, c] = func(_data[r, c]);
+                    Data[r, c] = func(Data[r, c]);
         }
 
         public static Matrix operator+(Matrix a, Matrix b)
@@ -161,7 +161,7 @@ namespace ml.AIMath
             var result = new Matrix(a);
             for (int r = 0; r < result.Rows; r++)
                 for (int c = 0; c < result.Columns; c++)
-                    result._data[r, c] += b._data[r, c];
+                    result.Data[r, c] += b.Data[r, c];
             return result;
         }
 
@@ -170,7 +170,7 @@ namespace ml.AIMath
             var result = new Matrix(a);
             for (int r = 0; r < result.Rows; r++)
                 for (int c = 0; c < result.Columns; c++)
-                    result._data[r, c] += v;
+                    result.Data[r, c] += v;
 
             return result;
         }
@@ -183,7 +183,7 @@ namespace ml.AIMath
             var result = new Matrix(a);
             for (int r = 0; r < result.Rows; r++)
                 for (int c = 0; c < result.Columns; c++)
-                    result._data[r, c] -= b._data[r, c];
+                    result.Data[r, c] -= b.Data[r, c];
             return result;
         }
 
@@ -192,7 +192,7 @@ namespace ml.AIMath
             var result = new Matrix(a);
             for (int r = 0; r < result.Rows; r++)
                 for (int c = 0; c < result.Columns; c++)
-                    result._data[r, c] -= v;
+                    result.Data[r, c] -= v;
 
             return result;
         }
@@ -205,7 +205,7 @@ namespace ml.AIMath
             var result = new Matrix(a);
             for (int r = 0; r < result.Rows; r++)
                 for (int c = 0; c < result.Columns; c++)
-                    result._data[r, c] *= b._data[r, c];
+                    result.Data[r, c] *= b.Data[r, c];
 
             return result;
         }
@@ -215,7 +215,7 @@ namespace ml.AIMath
             var result = new Matrix(a);
             for (int r = 0; r < result.Rows; r++)
                 for (int c = 0; c < result.Columns; c++)
-                    result._data[r, c] *= v;
+                    result.Data[r, c] *= v;
 
             return result;
         }
@@ -225,7 +225,7 @@ namespace ml.AIMath
             var result = new Matrix(a);
             for (int r = 0; r < result.Rows; r++)
                for (int c = 0; c < result.Columns; c++)
-                   result._data[r, c] /= v;
+                   result.Data[r, c] /= v;
 
             return result;
         }
@@ -235,10 +235,10 @@ namespace ml.AIMath
             var result = new double[rows ? Rows : Columns];
             if (rows)
                 for (var i = 0; i < Rows; i++)
-                    result[i] = _data[i, 0];
+                    result[i] = Data[i, 0];
             else
                 for (var i = 0; i < Columns; i++)
-                    result[i] = _data[0, i];
+                    result[i] = Data[0, i];
 
             return result;
         }
@@ -252,7 +252,7 @@ namespace ml.AIMath
 
             for (var i = 0; i < w; i++)
                 for (var j = 0; j < h; j++)
-                    result._data[j, i] = _data[i, j];
+                    result.Data[j, i] = Data[i, j];
 
             return result;
         }
@@ -269,7 +269,7 @@ namespace ml.AIMath
                 for (int j = 0; j < matrix.Columns; j++)
                 {
                     for (int k = 0; k < a.Columns; k++)
-                        matrix._data[i, j] = matrix._data[i, j] + a._data[i, k] * b._data[k, j];
+                        matrix.Data[i, j] = matrix.Data[i, j] + a.Data[i, k] * b.Data[k, j];
                 }
             }
             return matrix;
