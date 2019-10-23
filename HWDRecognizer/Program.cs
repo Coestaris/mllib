@@ -47,6 +47,9 @@ namespace HWDRecognizer
 
             teacher.Teach();
             teacher.Test(100, true);
+            Console.WriteLine("Test data cost: {0:F3}, Test data accuracy: {1:F3}",
+                teacher.TestDataCost,
+                teacher.TestDataAccuracy * 100);
         }
     }
 }

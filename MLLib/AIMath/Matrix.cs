@@ -7,6 +7,7 @@ namespace ml.AIMath
         public readonly int Rows;
         public readonly int Columns;
 
+        public Size Size => new Size(Columns, Rows);
         private readonly double[,] _data;
 
         private static Random _random = new Random();

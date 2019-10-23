@@ -37,11 +37,20 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AIMath\ActivationFunctions.cs" />
     <Compile Include="AIMath\Matrix.cs" />
+    <Compile Include="AIMath\Size.cs" />
+    <Compile Include="AI\CNN\ConvolutionalNeuralNetwork.cs" />
+    <Compile Include="AI\CNN\InputData.cs" />
+    <Compile Include="AI\CNN\Layers\CNNLayer.cs" />
+    <Compile Include="AI\CNN\Layers\ConvolutionalLayer.cs" />
+    <Compile Include="AI\CNN\Layers\FullyConnectedLayer.cs" />
+    <Compile Include="AI\CNN\Layers\SoftmaxLayer.cs" />
+    <Compile Include="AI\CNN\Layers\SubsamplingLayer.cs" />
     <Compile Include="AI\Network.cs" />
     <Compile Include="AI\MBNN\NeuralNetwork.cs" />
     <Compile Include="AI\OBNN\CostFunctions.cs" />

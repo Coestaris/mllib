@@ -1,9 +1,5 @@
 ﻿using System;
-using ml.AI;
-using ml.AI.MBNN;
-using ml.AI.OBNN;
-using ml.AIMath;
-using NeuralNetwork = ml.AI.MBNN.NeuralNetwork;
+using ml.AI.CNN;
 
 namespace Tests
 {
@@ -13,7 +9,8 @@ namespace Tests
 
         public static void Main(string[] args)
         {
-
+            var network = new ConvolutionalNeuralNetwork();
+            network.Layers.Add(new ConvolutionalLayer());
         }
     }
 }
