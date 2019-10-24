@@ -21,6 +21,8 @@ namespace ml.AI.CNN
             if (Layers.Count != 0)
             {
                 layer.PrevLayer = Layers.Last();
+                layer.InSize = Layers.Last().OutSize;
+                layer.InDepth = Layers.Last().OutDepth;
                 Layers.Last().NextLayer = layer;
 
                 if(layer is InputLayer)
@@ -34,11 +36,14 @@ namespace ml.AI.CNN
             }
 
             Layers.Add(layer);
+            layer.Setup();
         }
 
         public void ForwardPass(Volume volume)
         {
-            InputLayer.ForwardPass(volume);
+            var v = InputLayer.ForwardPass(volume);
+            for (var i = 1; i < Layers.Count; i++)
+                v = Layers[i].ForwardPass(v);
         }
     }
 }

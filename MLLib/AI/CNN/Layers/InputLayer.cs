@@ -6,11 +6,6 @@ namespace ml.AI.CNN.Layers
 {
     public class InputLayer : CNNLayer
     {
-        public Size Size;
-        public Size PaddedLayerSize;
-        public Size PadSize;
-
-        public double[,] Data;
 
         public static Size PadSizeFromKernelSize(Matrix matrix)
         {
@@ -41,20 +36,11 @@ namespace ml.AI.CNN.Layers
                     if (d == 0) value = c.R;
                     else if (d == 1) value = c.G;
                     else value = c.B;
-                    volume.Set(x, y, d, value);
+                    volume.Set(x, y, d, value / 256.0);
                 }
             }
 
             return volume;
-        }
-
-        private void Pad(int xpad, int ypad)
-        {
-            PaddedLayerSize = new Size(
-                Size.Width + xpad * 2,
-                Size.Height + ypad * 2);
-
-            Data = new double[PaddedLayerSize.Width, PaddedLayerSize.Height];
         }
 
         public static double NormalizeColor(Color color)
@@ -62,32 +48,13 @@ namespace ml.AI.CNN.Layers
             return (color.R + color.B + color.G) / (3.0 * 256);
         }
 
-        public InputLayer(Size size, Size padSize)
+        public InputLayer(Size size, bool rgb = false)
         {
-            Size = new Size(size.Width, size.Height);
-
-            Data = new double[Size .Width, Size .Height];
-            Pad(padSize.Width, padSize.Height);
-            PadSize = padSize;
+            OutSize = size;
+            if (rgb) OutDepth = 3;
+            else OutDepth = 1;
         }
-
-        public Bitmap ToBitmap()
-        {
-            var size = Size;
-            if (!PaddedLayerSize.IsEmpty)
-                size = PaddedLayerSize;
-
-            var bmp = new Bitmap(size.Width, size.Height);
-            for(var x = 0; x < bmp.Width; x++)
-            for(var y = 0; y < bmp.Height; y++)
-                bmp.SetPixel(x ,y, Color.FromArgb(
-                    (int)(Data[x, y] * 256),
-                    (int)(Data[x, y] * 256),
-                    (int)(Data[x, y] * 256)));
-
-            return bmp;
-        }
-
-        public override Volume ForwardPass(Volume volume) { return new Volume(); }
+        public override void Setup() {}
+        public override Volume ForwardPass(Volume volume) { return _returnVolume = volume; }
     }
 }
