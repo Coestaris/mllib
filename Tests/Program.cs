@@ -14,12 +14,12 @@ namespace Tests
 
         public static void Main(string[] args)
         {
-            var bitmap = new Bitmap("img.png");
+            var bitmap = new Bitmap("img1.png");
             var volume = InputLayer.BitmapToVolume(bitmap, false);
 
             var network = new ConvolutionalNeuralNetwork();
-            var layer1 = new InputLayer(bitmap.Size, true);
-            var layer2 = new ConvolutionalLayer(3, 5, new Size(2, 2), new Size(1, 1));
+            var layer1 = new InputLayer(bitmap.Size, false);
+            var layer2 = new ConvolutionalLayer(2, 3, 1, 1);
 
             network.PushLayer(layer1);
             network.PushLayer(layer2);

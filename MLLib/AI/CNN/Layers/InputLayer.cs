@@ -14,10 +14,10 @@ namespace ml.AI.CNN.Layers
                 (int)Math.Floor(matrix.Size.Height / 2.0));
         }
 
-        public static Volume BitmapToVolume(Bitmap bitmap, bool grayscale)
+        public static Volume BitmapToVolume(Bitmap bitmap, bool grb = false)
         {
             Volume volume;
-            if (grayscale)
+            if (!grb)
             {
                 volume = new Volume(bitmap.Width, bitmap.Height, 1, 0);
                 for (var x = 0; x < bitmap.Width; x++)

@@ -99,5 +99,16 @@ namespace ml.AI
             for (int i = 0; i < Weights.Length; i++)
                 Weights[i] = c;
         }
+
+        public void Print(int depth)
+        {
+            for (var y = 0; y < SY; y++)
+            {
+                for (var x = 0; x < SX; x++)
+                {
+                    Console.Write("{0}{1}", Get(x, y, depth), x == SX - 1 ? "\n" : ", ");
+                }
+            }
+        }
     }
 }

@@ -47,5 +47,11 @@ namespace ml.AIMath
 
 			return r * v * dev + mean;
 		}
+
+		public void Fill(double[] array, double mean = 0, double dev = 1)
+		{
+			for (int i = 0; i < array.Length; i++)
+				array[i] = Next(mean, dev);
+		}
 	}
 }
