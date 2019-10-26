@@ -22,10 +22,10 @@ namespace ml.AI.CNN.Layers
             {
                 var kernel = Kernels[d];
                 var x = -Pad;
-                for (var ax = 0; ax < OutSize.Width; x += Stride, ax += Stride)
+                for (var ax = 0; ax < OutSize.Width; x += Stride, ax++)
                 {
                     var y = -Pad;
-                    for (var ay = 0; ay < OutSize.Height; y += Stride, ay += Stride)
+                    for (var ay = 0; ay < OutSize.Height; y += Stride, ay++)
                     {
                         var sum = 0.0;
 
@@ -35,8 +35,8 @@ namespace ml.AI.CNN.Layers
                             for (var filterY = 0; filterY < FilterSize; filterY++)
                             {
                                 var outY = y + filterY;
-                                if (outX >= 0 && outX < OutSize.Width &&
-                                    outY >= 0 && outY < OutSize.Height)
+                                if (outX >= 0 && outX < InSize.Width &&
+                                    outY >= 0 && outY < InSize.Height)
                                 {
                                     for (var fd = 0; fd < kernel.Depth; fd++)
                                     {
@@ -48,11 +48,11 @@ namespace ml.AI.CNN.Layers
                         }
 
                         sum += Biases[d];
-                        _returnVolume.Set(ax, ay, d, sum);
+                        OutVolume.Set(ax, ay, d, sum);
                     }
                 }
             }
-            return _returnVolume;
+            return OutVolume;
         }
 
         public ConvolutionalLayer(
@@ -64,7 +64,7 @@ namespace ml.AI.CNN.Layers
             Kernels = new Volume[filtersCount];
 
             Biases = new double[filtersCount];
-            //_random.Fill(Biases);
+            _random.Fill(Biases);
 
             OutDepth = filtersCount;
 
@@ -84,16 +84,13 @@ namespace ml.AI.CNN.Layers
                 Kernels[i] = new Volume(FilterSize, FilterSize, InDepth);
             }
 
-            Kernels[0].Weights = new double[] { 1, 0, -1, 2, 0, -2, -1, 0, -1 };
-            Kernels[1].Weights = new double[] { 1, 2, 1, 0, 0, 0, -1, -2, 1, };
-
-            Console.WriteLine("1");
+/*            Console.WriteLine("1");
             Kernels[0].Print(0);
 
             Console.WriteLine("2");
-            Kernels[1].Print(0);
+            Kernels[1].Print(0);*/
 
-            _returnVolume = new Volume(OutSize.Width, OutSize.Height, OutDepth, 0);
+            base.Setup();
         }
     }
 }

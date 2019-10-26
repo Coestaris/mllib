@@ -15,6 +15,11 @@ namespace ml.AI
         public double[] Weights;
         public double[] dWeights;
 
+        public int WeightsRawLen => Weights.Length;
+        public double[] WeightsRaw => Weights;
+        public int dWeightsRawLen => dWeights.Length;
+        public double[] dWeightsRaw => dWeights;
+
         public Volume(int length, double c = Double.NaN, bool gaussianRandom = true)
         {
             SX = 0;
@@ -109,6 +114,23 @@ namespace ml.AI
                     Console.Write("{0}{1}", Get(x, y, depth), x == SX - 1 ? "\n" : ", ");
                 }
             }
+        }
+
+        public Volume Clone()
+        {
+            var v = new Volume
+            {
+                SX = SX,
+                SY = SY,
+                Depth = Depth,
+                Weights = new double[SX * SY * Depth],
+                dWeights = new double[SX * SY * Depth]
+            };
+
+            Weights.CopyTo(v.Weights, 0);
+            dWeights.CopyTo(v.dWeights, 0);
+
+            return v;
         }
     }
 }

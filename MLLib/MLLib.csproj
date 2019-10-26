@@ -49,7 +49,7 @@
     <Compile Include="AI\CNN\Layers\ConvolutionalLayer.cs" />
     <Compile Include="AI\CNN\Layers\FullyConnectedLayer.cs" />
     <Compile Include="AI\CNN\Layers\InputLayer.cs" />
-    <Compile Include="AI\CNN\Layers\NonLinearLayer.cs" />
+    <Compile Include="AI\CNN\Layers\NonlinearLayer.cs" />
     <Compile Include="AI\CNN\Layers\SoftmaxLayer.cs" />
     <Compile Include="AI\CNN\Layers\SubsamplingLayer.cs" />
     <Compile Include="AI\Network.cs" />

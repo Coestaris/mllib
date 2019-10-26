@@ -5,7 +5,8 @@ namespace ml.AI.CNN
 {
     public abstract class CNNLayer
     {
-        protected Volume _returnVolume;
+        protected internal Volume OutVolume;
+        protected internal Volume InVolume;
 
         public int OutDepth;
         public int InDepth;
@@ -17,7 +18,11 @@ namespace ml.AI.CNN
         public CNNLayer NextLayer;
 
         public abstract Volume ForwardPass(Volume data);
-        public abstract void Setup();
+
+        public virtual void Setup()
+        {
+            OutVolume = new Volume(OutSize.Width, OutSize.Height, OutDepth, 0);
+        }
 
         public virtual Bitmap ToBitmap(int depth)
         {
@@ -27,7 +32,7 @@ namespace ml.AI.CNN
             for (var x = 0; x < OutSize.Width; x++)
             for (var y = 0; y < OutSize.Height; y++)
             {
-                var v = _returnVolume.Get(x, y, depth);
+                var v = OutVolume.Get(x, y, depth);
                 if (v > max) max = v;
                 if (v < min) min = v;
             }
@@ -36,7 +41,7 @@ namespace ml.AI.CNN
             for (var x = 0; x < OutSize.Width; x++)
             for (var y = 0; y < OutSize.Height; y++)
             {
-                var v = _returnVolume.Get(x, y, depth);
+                var v = OutVolume.Get(x, y, depth);
                 var delta = max - min;
                 if (Math.Abs(delta) <= 1) v -= min;
                 else v = (v - min) / delta;

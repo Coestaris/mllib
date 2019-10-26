@@ -54,7 +54,7 @@ namespace ml.AI.CNN.Layers
             if (rgb) OutDepth = 3;
             else OutDepth = 1;
         }
-        public override void Setup() {}
-        public override Volume ForwardPass(Volume volume) { return _returnVolume = volume; }
+
+        public override Volume ForwardPass(Volume volume) { return OutVolume = volume; }
     }
 }

@@ -4,6 +4,12 @@ namespace ml.AIMath
 {
     public static class ActivationFunctions
     {
+        public static double TanH(double x)
+        {
+            var y = Math.Exp(2 * x);
+            return (y - 1) / (y + 1);
+        }
+
         public static Matrix Sigmoid(Matrix m)
         {
             m = new Matrix(m);

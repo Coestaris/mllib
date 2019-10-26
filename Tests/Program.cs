@@ -18,12 +18,19 @@ namespace Tests
             var volume = InputLayer.BitmapToVolume(bitmap, false);
 
             var network = new ConvolutionalNeuralNetwork();
-            var layer1 = new InputLayer(bitmap.Size, false);
-            var layer2 = new ConvolutionalLayer(2, 3, 1, 1);
 
-            network.PushLayer(layer1);
-            network.PushLayer(layer2);
+            var layers = new List<CNNLayer>()
+            {
+                new InputLayer(bitmap.Size, false),
+                new ConvolutionalLayer(2, 5, 2, 1),
+                new ReLuLayer(),
+                new SubsamplingLayer(2, 2, 0),
+                new ConvolutionalLayer(2, 5, 2, 1),
+                new ReLuLayer(),
+                new SubsamplingLayer(2, 2, 0),
+            };
 
+            network.PushLayers(layers);
             network.ForwardPass(volume);
 
             for (var i = 0; i < network.Layers.Count; i++)
