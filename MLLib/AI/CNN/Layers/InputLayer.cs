@@ -48,6 +48,8 @@ namespace ml.AI.CNN.Layers
             return (color.R + color.B + color.G) / (3.0 * 256);
         }
 
+        internal InputLayer() {}
+
         public InputLayer(Size size, bool rgb = false)
         {
             OutSize = size;

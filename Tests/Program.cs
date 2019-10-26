@@ -12,30 +12,45 @@ namespace Tests
     {
         private static Random _random = new Random();
 
+        private static ConvolutionalNeuralNetwork LoadNetwork(string filename)
+        {
+            return JSONParser.Parse(filename);
+        }
+
+        private static ConvolutionalNeuralNetwork InitNetwork(Size size)
+        {
+            var network = new ConvolutionalNeuralNetwork();
+            var layers = new List<CNNLayer>()
+            {
+                new InputLayer(size, false),
+                new ConvolutionalLayer(2, 5, 2, 1),
+                new ReLuLayer(),
+                new SubsamplingLayer(2, 2, 0),
+                new ConvolutionalLayer(2, 5, 2, 1),
+                new ReLuLayer(),
+                new SubsamplingLayer(2, 2, 0),
+                new FullyConnectedLayer(10),
+                new SoftmaxLayer(),
+            };
+
+            network.PushLayers(layers);
+            return network;
+        }
+
         public static void Main(string[] args)
         {
             var bitmap = new Bitmap("img1.png");
             var volume = InputLayer.BitmapToVolume(bitmap, false);
 
-            var network = new ConvolutionalNeuralNetwork();
-
-            var layers = new List<CNNLayer>()
-            {
-                new InputLayer(bitmap.Size, false),
-                new ConvolutionalLayer(2, 5, 2, 1),
-                new ReLuLayer(),
-                new SubsamplingLayer(2, 2, 0),
-                new ConvolutionalLayer(2, 5, 2, 1),
-                new ReLuLayer(),
-                new SubsamplingLayer(2, 2, 0),
-            };
-
-            network.PushLayers(layers);
-            network.ForwardPass(volume);
+            //var network = InitNetwork(bitmap.Size);
+            var network = LoadNetwork("net.json");
 
             for (var i = 0; i < network.Layers.Count; i++)
             {
                 var l = network.Layers[i];
+                if(l.OutSize.Width == 1 && l.OutSize.Height == 0)
+                    continue; //vector
+
                 for(var d = 0; d < l.OutDepth; d++)
                     l.ToBitmap(d).Save($"{i}_{d}.png");
             }

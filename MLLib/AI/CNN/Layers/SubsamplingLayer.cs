@@ -12,6 +12,8 @@ namespace ml.AI.CNN.Layers
         private int[] _oldX;
         private int[] _oldY;
 
+        internal SubsamplingLayer() {}
+
         public SubsamplingLayer(int filterSize, int stride, int pad)
         {
             FilterSize = filterSize;

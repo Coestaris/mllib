@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using ml.AIMath;
+using Newtonsoft.Json.Linq;
 
 namespace ml.AI
 {
@@ -131,6 +134,30 @@ namespace ml.AI
             dWeights.CopyTo(v.dWeights, 0);
 
             return v;
+        }
+
+        public static Volume ParseJSON(JToken jToken)
+        {
+            var v = new Volume
+            {
+                SX = jToken["sx"].ToObject<int>(),
+                SY = jToken["sy"].ToObject<int>(),
+                Depth = jToken["depth"].ToObject<int>()
+            };
+            v.Weights = new double[v.SX * v.SX * v.Depth];
+            v.dWeights = new double[v.SX * v.SX * v.Depth];
+            var array = jToken["w"];
+            var i = 0;
+            foreach (var child in array.Children())
+            {
+                v.Weights[i++] = child.Value<double>();
+            }
+            return v;
+        }
+
+        public static Volume[] ArrayParseJSON(JToken jToken)
+        {
+            return jToken.ToArray().Select(ParseJSON).ToArray();
         }
     }
 }

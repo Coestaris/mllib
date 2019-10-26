@@ -34,6 +34,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3-beta2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -45,6 +49,7 @@
     <Compile Include="AIMath\Matrix.cs" />
     <Compile Include="AI\CNN\CNNLayer.cs" />
     <Compile Include="AI\CNN\ConvolutionalNeuralNetwork.cs" />
+    <Compile Include="AI\CNN\JSONParser.cs" />
     <Compile Include="AI\CNN\Kernel.cs" />
     <Compile Include="AI\CNN\Layers\ConvolutionalLayer.cs" />
     <Compile Include="AI\CNN\Layers\FullyConnectedLayer.cs" />

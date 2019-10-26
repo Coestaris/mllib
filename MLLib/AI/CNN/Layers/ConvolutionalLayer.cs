@@ -8,16 +8,20 @@ namespace ml.AI.CNN.Layers
     {
         private static GaussianRandom _random = new GaussianRandom();
 
+        public double L1Decay;
+        public double L2Decay;
+
         public int FilterSize;
         public int FiltersCount;
         public int Pad;
         public int Stride;
 
-        public double[] Biases;
+        public Volume   Biases;
         public Volume[] Kernels;
 
         public override Volume ForwardPass(Volume volume)
         {
+            var rawBiases = Biases.WeightsRaw;
             for (var d = 0; d < OutDepth; d++)
             {
                 var kernel = Kernels[d];
@@ -47,13 +51,15 @@ namespace ml.AI.CNN.Layers
                             }
                         }
 
-                        sum += Biases[d];
+                        sum += rawBiases[d];
                         OutVolume.Set(ax, ay, d, sum);
                     }
                 }
             }
             return OutVolume;
         }
+
+        internal ConvolutionalLayer() {}
 
         public ConvolutionalLayer(
             int filtersCount,
@@ -63,9 +69,7 @@ namespace ml.AI.CNN.Layers
         {
             Kernels = new Volume[filtersCount];
 
-            Biases = new double[filtersCount];
-            _random.Fill(Biases);
-
+            Biases = new Volume(1, 1, filtersCount);
             OutDepth = filtersCount;
 
             FilterSize = filterSize;
