@@ -44,10 +44,13 @@ namespace ml.AI.CNN
                 switch (type)
                 {
                     case "input":
-                        layer = new InputLayer(); break;
+                        layer = new InputLayer();
+                        break;
+
                     case "conv":
                         layer = new ConvolutionalLayer
                         {
+                            FilterSize = jsonLayer["sx"].ToObject<int>(),
                             Stride = jsonLayer["stride"].ToObject<int>(),
                             L1Decay = jsonLayer["l1_decay_mul"].ToObject<double>(),
                             L2Decay = jsonLayer["l2_decay_mul"].ToObject<double>(),
@@ -57,29 +60,58 @@ namespace ml.AI.CNN
                         };
                         break;
 
-                    case "relu": layer = new ReLuLayer(); break;
-                    case "pool": layer = new SubsamplingLayer(); break;
-                    case "fc": layer = new FullyConnectedLayer(); break;
-                    case "softmax": layer = new SoftmaxLayer(); break;
+                    case "relu":
+                        layer = new ReLuLayer();
+                        break;
+
+                    case "pool":
+                        layer = new SubsamplingLayer
+                        {
+                            FilterSize = jsonLayer["sx"].ToObject<int>(),
+                            Stride = jsonLayer["stride"].ToObject<int>(),
+                            Pad = jsonLayer["pad"].ToObject<int>(),
+                        };
+                        (layer as SubsamplingLayer)._oldX = new int[layer.OutSize.Width * layer.OutSize.Height * layer.OutDepth];
+                        (layer as SubsamplingLayer)._oldY = new int[layer.OutSize.Width * layer.OutSize.Height * layer.OutDepth];
+                        break;
+
+                    case "fc":
+                        layer = new FullyConnectedLayer
+                        {
+                            L1Decay = jsonLayer["l1_decay_mul"].ToObject<double>(),
+                            L2Decay = jsonLayer["l2_decay_mul"].ToObject<double>(),
+                            NeuronsCount = jsonLayer["num_inputs"].ToObject<int>(),
+                            Biases = Volume.ParseJSON(jsonLayer["biases"]),
+                            Weights = Volume.ArrayParseJSON(jsonLayer["filters"])
+                        };
+                        break;
+
+                    case "softmax":
+                        layer = new SoftmaxLayer();
+                        break;
+
                     default:
                         throw new ArgumentException("Unknown layer type");
                 }
 
-                if (type != "input")
+                if (netLayers.Count != 0)
                 {
-                    layer.InDepth = jsonLayer["in_depth"].ToObject<int>();
-                    layer.InSize =  new Size(
-                        jsonLayer["sx"].ToObject<int>(),
-                        jsonLayer["sy"].ToObject<int>());
+                    layer.InSize  = netLayers.Last().OutSize;
+                    layer.InDepth = netLayers.Last().OutDepth;
                 }
 
-                layer.OutDepth = (int)jsonLayer["out_depth"].ToObject<int>();
+                layer.OutDepth = jsonLayer["out_depth"].ToObject<int>();
                 layer.OutSize = new Size(
                     jsonLayer["out_sx"].ToObject<int>(),
                     jsonLayer["out_sy"].ToObject<int>());
+
+                (layer as CNNLayer).Setup();
+                netLayers.Add(layer);
             }
 
-            return null;
+            network.Layers = netLayers;
+            network.InputLayer = (InputLayer)netLayers.First();
+            return network;
         }
     }
 }

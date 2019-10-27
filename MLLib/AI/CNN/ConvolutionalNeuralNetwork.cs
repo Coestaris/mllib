@@ -8,7 +8,7 @@ namespace ml.AI.CNN
 {
     public class ConvolutionalNeuralNetwork
     {
-        public readonly List<CNNLayer> Layers;
+        public List<CNNLayer> Layers { internal set; get; }
         public InputLayer InputLayer;
 
         public ConvolutionalNeuralNetwork()

@@ -150,7 +150,7 @@ namespace ml.AI
             var i = 0;
             foreach (var child in array.Children())
             {
-                v.Weights[i++] = child.Value<double>();
+                v.Weights[i++] = child.ToObject<double>();
             }
             return v;
         }

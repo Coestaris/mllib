@@ -9,8 +9,8 @@ namespace ml.AI.CNN.Layers
         public int Stride;
         public int Pad;
 
-        private int[] _oldX;
-        private int[] _oldY;
+        internal int[] _oldX;
+        internal int[] _oldY;
 
         internal SubsamplingLayer() {}
 
