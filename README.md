@@ -13,6 +13,11 @@ Neural network stuff:
  * [Great videos about FNN](https://www.youtube.com/watch?v=8bNIkfRJZpo)
  * [A lot of tricks to improve FNN](http://cs231n.github.io/neural-networks-2)
 
+CNN stuff:
+ * [Great visualizations of CNN](https://cs.stanford.edu/people/karpathy/convnetjs)
+ * [JS Convolutional neural network Library](https://github.com/karpathy/convnetjs)
+ * [Another awesome CNN visualization](http://scs.ryerson.ca/~aharley/vis/conv/flat.html)
+
 Math stuff:
  * [Gaussian distribution explanation](https://habr.com/ru/post/208684/)
  * [List of activation functions](https://en.wikipedia.org/wiki/Activation_function)
