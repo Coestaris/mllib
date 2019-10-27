@@ -49,9 +49,9 @@ namespace ml.AI
                 double.IsNaN(c) && gaussianRandom ? Math.Sqrt(1.0 / n) : 0);
         }
 
-        public Volume(Bitmap bitmap, bool grb = false) : this(bitmap.Width, bitmap.Height, 1, 0)
+        public Volume(Bitmap bitmap, bool rgb = false) : this(bitmap.Width, bitmap.Height, rgb ? 3 : 1, 0)
         {
-            if (!grb)
+            if (!rgb)
             {
                 for (var x = 0; x < bitmap.Width; x++)
                 for (var y = 0; y < bitmap.Height; y++)

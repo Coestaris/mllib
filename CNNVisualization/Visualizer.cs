@@ -17,6 +17,7 @@ namespace CNNVisualization
         public Texture GlobalTexture;
 
         public const float DefaultScale = 2.5f;
+        public const float IconSize = 24f;
 
         public Visualizer(Window window, ConvolutionalNeuralNetwork network) : base(window)
         {
@@ -39,14 +40,15 @@ namespace CNNVisualization
                 new Font("DejaVu Sans Mono", 12, FontStyle.Regular),
                 Brushes.Black));
 
-            var input = new Bitmap("img1.png");
-            var inputVolume = new Volume(input);
+            var input = new Bitmap("cat.png");
+            var inputVolume = new Volume(input, true);
             var output = Network.ForwardPass(inputVolume);
 
             var globalBitmap = new Bitmap(Window.Width, Window.Height);
             var ax = Window.Width / Network.Layers.Count;
             var dx = ax - ax / (float)Network.Layers.Count;
             var id = 0;
+
             Textures = new Picture[Network.Layers.Count][];
             for (var i = 0; i < Network.Layers.Count; i++)
             {
@@ -55,11 +57,11 @@ namespace CNNVisualization
                 float scale;
                 if (Network.Layers[i].OutSize.Width == 1 &&
                     Network.Layers[i].OutSize.Height == 1) scale = DefaultScale * 2;
-                else scale = DefaultScale;
+                else scale = IconSize / Network.Layers[0].OutSize.Width * DefaultScale;
 
                 var dy = Window.Height / 2.0f -
                          (Network.Layers[i].OutSize.Height * scale / 2) / Network.Layers[i].OutDepth;
-                for (int j = 0; j < Network.Layers[i].OutDepth; j++)
+                for (var j = 0; j < Network.Layers[i].OutDepth; j++)
                 {
                     var bmp = Network.Layers[i].ToBitmap(j, Color.AntiqueWhite, Color.Black);
                     var tex = new Texture(bmp);
@@ -80,12 +82,21 @@ namespace CNNVisualization
             {
                 gr.FillRegion(new SolidBrush(Color.FromArgb(255, 94, 91,102)),
                     new Region(new Rectangle(0, 0, Window.Width, Window.Height)));
-                gr.SmoothingMode =
-                    System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+                gr.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
                 var drawPen = new Pen(new SolidBrush(Color.FromArgb(255, 30, 25, 30)));
+                float prevScale = 0;
 
                 for (var i = 0; i < Textures.Length; i++)
                 {
+                    float scale;
+
+                    if (Network.Layers[i].OutSize.Width == 1 &&
+                        Network.Layers[i].OutSize.Height == 1) scale = DefaultScale * 2;
+                    else scale = IconSize / Network.Layers[0].OutSize.Width * DefaultScale;
+
+
                     var tex = Textures[i];
                     var prevTex = i != 0 ?Textures[i - 1] : null;
 
@@ -93,18 +104,17 @@ namespace CNNVisualization
                     {
                         if (Network.Layers[i] is FullyConnectedLayer ||
                             Network.Layers[i] is ConvolutionalLayer ||
-                            Network.Layers[i] is InputLayer ||
-                            Network.Layers[i] is SoftmaxLayer)
+                            Network.Layers[i] is InputLayer)
                         {
                             for (var cur = 0; cur < tex.Length; cur++)
                             for (var prev = 0; prev < prevTex.Length; prev++)
                                 gr.DrawLine(drawPen,
                                     new PointF(
-                                        tex[cur].Position.X + Network.Layers[i].OutSize.Height * 1.25f,
-                                        tex[cur].Position.Y + Network.Layers[i].OutSize.Width * 1.25f),
+                                        tex[cur].Position.X + Network.Layers[i].OutSize.Height * 1.25f * scale / 2,
+                                        tex[cur].Position.Y + Network.Layers[i].OutSize.Width * 1.25f * scale / 2),
                                     new PointF(
-                                        prevTex[prev].Position.X + Network.Layers[i - 1].OutSize.Height * 1.25f,
-                                        prevTex[prev].Position.Y + Network.Layers[i - 1].OutSize.Width * 1.25f));
+                                        prevTex[prev].Position.X + Network.Layers[i - 1].OutSize.Height * 1.25f * prevScale / 2,
+                                        prevTex[prev].Position.Y + Network.Layers[i - 1].OutSize.Width * 1.25f * prevScale / 2));
                         }
                         else
                         {
@@ -112,14 +122,16 @@ namespace CNNVisualization
                             {
                                 gr.DrawLine(drawPen,
                                     new PointF(
-                                        tex[cur].Position.X + Network.Layers[i].OutSize.Height * 1.25f,
-                                        tex[cur].Position.Y + Network.Layers[i].OutSize.Width * 1.25f),
+                                        tex[cur].Position.X + Network.Layers[i].OutSize.Height * 1.25f * scale / 2,
+                                        tex[cur].Position.Y + Network.Layers[i].OutSize.Width * 1.25f * scale / 2),
                                     new PointF(
-                                        prevTex[cur].Position.X + Network.Layers[i - 1].OutSize.Height * 1.25f,
-                                        prevTex[cur].Position.Y + Network.Layers[i - 1].OutSize.Width * 1.25f));
+                                        prevTex[cur].Position.X + Network.Layers[i - 1].OutSize.Height * 1.25f * prevScale / 2,
+                                        prevTex[cur].Position.Y + Network.Layers[i - 1].OutSize.Width * 1.25f * prevScale / 2));
                             }
                         }
                     }
+
+                    prevScale = scale;
                 }
             }
 

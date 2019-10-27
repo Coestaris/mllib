@@ -29,7 +29,6 @@ namespace WindowHandler
             var input = Keyboard.GetState();
             if (input.IsKeyDown(Key.Escape))
             {
-                CloseFunc();
                 Exit();
             }
 
@@ -38,6 +37,18 @@ namespace WindowHandler
 
             UpdateFunc();
             base.OnUpdateFrame(e);
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            CloseFunc();
+            base.OnClosed(e);
+        }
+
+        public override void Exit()
+        {
+            CloseFunc();
+            base.Exit();
         }
 
         protected override void OnLoad(EventArgs e)
