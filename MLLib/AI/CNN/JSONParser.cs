@@ -114,6 +114,11 @@ namespace ml.AI.CNN
                     (layer as SubsamplingLayer)._oldX = new int[layer.OutSize.Width * layer.OutSize.Height * layer.OutDepth];
                     (layer as SubsamplingLayer)._oldY = new int[layer.OutSize.Width * layer.OutSize.Height * layer.OutDepth];
                 }
+                else if (type == "softmax")
+                {
+                    (layer as SoftmaxLayer)._es = new double[layer.OutDepth];
+
+                }
 
                 layer.OutVolume = new Volume(layer.OutSize.Width, layer.OutSize.Height, layer.OutDepth, 0);
                 netLayers.Add(layer);

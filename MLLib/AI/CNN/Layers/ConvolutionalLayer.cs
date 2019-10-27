@@ -19,6 +19,8 @@ namespace ml.AI.CNN.Layers
         public Volume   Biases;
         public Volume[] Kernels;
 
+        public override void BackwardPass() { }
+
         public override Volume ForwardPass(Volume volume)
         {
             var rawBiases = Biases.WeightsRaw;

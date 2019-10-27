@@ -37,6 +37,8 @@ namespace ml.AI.CNN.Layers
             base.Setup();
         }
 
+        public override void BackwardPass() { }
+
         public override Volume ForwardPass(Volume volume)
         {
             var rawInput = volume.WeightsRaw;

@@ -10,13 +10,14 @@ namespace ml.AI.CNN
     {
         public List<CNNLayer> Layers { internal set; get; }
         public InputLayer InputLayer;
+        public OutputLayer OutputLayer;
 
         public ConvolutionalNeuralNetwork()
         {
             Layers = new List<CNNLayer>();
         }
 
-        public void PushLayer(CNNLayer layer)
+        private void PushLayer(CNNLayer layer)
         {
             if (Layers.Count != 0)
             {
@@ -27,6 +28,13 @@ namespace ml.AI.CNN
 
                 if(layer is InputLayer)
                     throw new ArgumentException("You can't use more than 1 input layer");
+
+                if(layer is OutputLayer)
+                {
+                    if(OutputLayer != null)
+                        throw new ArgumentException("You can't use more than 1 output layer");
+                    OutputLayer = (OutputLayer)layer;
+                }
             }
             else
             {
@@ -39,12 +47,20 @@ namespace ml.AI.CNN
             layer.Setup();
         }
 
+        public double BackwardPass(int correctIndex)
+        {
+            var loss = OutputLayer.BackwardPassLoss(correctIndex);
+            for(var i = Layers.Count - 2; i >= 0; i--)
+                Layers[i].BackwardPass();
+            return loss;
+        }
+
         public Volume ForwardPass(Volume volume)
         {
             var v = InputLayer.ForwardPass(volume);
             for (var i = 1; i < Layers.Count; i++)
             {
-                Layers[i].InVolume = v.Clone();
+                Layers[i].InVolume = v;
                 v = Layers[i].ForwardPass(v);
             }
 
@@ -55,6 +71,11 @@ namespace ml.AI.CNN
         {
             foreach (var layer in layers)
                 PushLayer(layer);
+
+            if(!(layers.Last() is OutputLayer))
+                throw new ArgumentException("Last layer should be Output layer");
+
+
         }
     }
 }

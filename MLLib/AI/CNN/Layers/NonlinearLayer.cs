@@ -23,6 +23,8 @@ namespace ml.AI.CNN.Layers
 
             base.Setup();
         }
+
+        public override void BackwardPass() { }
     }
 
     public class SigmoidLayer : CNNLayer
@@ -45,5 +47,7 @@ namespace ml.AI.CNN.Layers
 
             base.Setup();
         }
+
+        public override void BackwardPass() { }
     }
 }

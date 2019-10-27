@@ -21,6 +21,8 @@ namespace ml.AI.CNN.Layers
             Pad = pad;
         }
 
+        public override void BackwardPass() { }
+
         public override void Setup()
         {
             OutDepth = InDepth;

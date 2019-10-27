@@ -11,8 +11,8 @@ namespace CNNVisualization
     {
         public static void Main(string[] args)
         {
-            //var network = JSONParser.Parse("net.json");
-            var network = new ConvolutionalNeuralNetwork();
+            var network = JSONParser.Parse("net.json");
+            /*var network = new ConvolutionalNeuralNetwork();
             var layers = new List<CNNLayer>
             {
                 new InputLayer(new Size(128, 128), true),
@@ -26,6 +26,7 @@ namespace CNNVisualization
                 new SoftmaxLayer(),
             };
             network.PushLayers(layers);
+*/
 
             var window = new Window(1000, 700, "CNNVisualization");
             var handler = new Visualizer(window, network);

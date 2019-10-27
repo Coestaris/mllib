@@ -16,5 +16,6 @@ namespace ml.AI.CNN.Layers
         }
 
         public override Volume ForwardPass(Volume volume) { return OutVolume = volume; }
+        public override void BackwardPass() { }
     }
 }

@@ -19,6 +19,7 @@ namespace ml.AI.CNN
         public CNNLayer NextLayer;
 
         public abstract Volume ForwardPass(Volume data);
+        public abstract void BackwardPass();
 
         public virtual void Setup()
         {

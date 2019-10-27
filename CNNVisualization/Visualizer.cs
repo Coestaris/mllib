@@ -40,7 +40,7 @@ namespace CNNVisualization
                 new Font("DejaVu Sans Mono", 12, FontStyle.Regular),
                 Brushes.Black));
 
-            var input = new Bitmap("cat.png");
+            var input = new Bitmap("img3.png");
             var inputVolume = new Volume(input, true);
             var output = Network.ForwardPass(inputVolume);
 
