@@ -39,7 +39,7 @@ namespace ml.AI.CNN
             layer.Setup();
         }
 
-        public void ForwardPass(Volume volume)
+        public Volume ForwardPass(Volume volume)
         {
             var v = InputLayer.ForwardPass(volume);
             for (var i = 1; i < Layers.Count; i++)
@@ -47,6 +47,8 @@ namespace ml.AI.CNN
                 Layers[i].InVolume = v.Clone();
                 v = Layers[i].ForwardPass(v);
             }
+
+            return v;
         }
 
         public void PushLayers(IEnumerable<CNNLayer> layers)

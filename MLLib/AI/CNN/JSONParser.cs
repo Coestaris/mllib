@@ -71,8 +71,8 @@ namespace ml.AI.CNN
                             Stride = jsonLayer["stride"].ToObject<int>(),
                             Pad = jsonLayer["pad"].ToObject<int>(),
                         };
-                        (layer as SubsamplingLayer)._oldX = new int[layer.OutSize.Width * layer.OutSize.Height * layer.OutDepth];
-                        (layer as SubsamplingLayer)._oldY = new int[layer.OutSize.Width * layer.OutSize.Height * layer.OutDepth];
+                        //(layer as SubsamplingLayer)._oldX = new int[layer.OutSize.Width * layer.OutSize.Height * layer.OutDepth];
+                        //(layer as SubsamplingLayer)._oldY = new int[layer.OutSize.Width * layer.OutSize.Height * layer.OutDepth];
                         break;
 
                     case "fc":
@@ -80,7 +80,7 @@ namespace ml.AI.CNN
                         {
                             L1Decay = jsonLayer["l1_decay_mul"].ToObject<double>(),
                             L2Decay = jsonLayer["l2_decay_mul"].ToObject<double>(),
-                            NeuronsCount = jsonLayer["num_inputs"].ToObject<int>(),
+                            NeuronsCount = jsonLayer["out_depth"].ToObject<int>(),
                             Biases = Volume.ParseJSON(jsonLayer["biases"]),
                             Weights = Volume.ArrayParseJSON(jsonLayer["filters"])
                         };
@@ -104,6 +104,12 @@ namespace ml.AI.CNN
                 layer.OutSize = new Size(
                     jsonLayer["out_sx"].ToObject<int>(),
                     jsonLayer["out_sy"].ToObject<int>());
+
+                if (type == "fc")
+                {
+                    (layer as FullyConnectedLayer)._inputsCount =
+                        layer.InSize.Width * layer.InSize.Height * layer.InDepth;
+                }
 
                 (layer as CNNLayer).Setup();
                 netLayers.Add(layer);

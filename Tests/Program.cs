@@ -39,11 +39,15 @@ namespace Tests
 
         public static void Main(string[] args)
         {
-            var bitmap = new Bitmap("img1.png");
+            var bitmap = new Bitmap("img.png");
             var volume = InputLayer.BitmapToVolume(bitmap, false);
 
             //var network = InitNetwork(bitmap.Size);
             var network = LoadNetwork("net.json");
+            var result = network.ForwardPass(volume);
+
+            Console.WriteLine(string.Join(", ",
+                result.WeightsRaw.Select(p => p.ToString("F3"))));
 
             for (var i = 0; i < network.Layers.Count; i++)
             {

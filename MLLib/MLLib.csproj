@@ -50,7 +50,6 @@
     <Compile Include="AI\CNN\CNNLayer.cs" />
     <Compile Include="AI\CNN\ConvolutionalNeuralNetwork.cs" />
     <Compile Include="AI\CNN\JSONParser.cs" />
-    <Compile Include="AI\CNN\Kernel.cs" />
     <Compile Include="AI\CNN\Layers\ConvolutionalLayer.cs" />
     <Compile Include="AI\CNN\Layers\FullyConnectedLayer.cs" />
     <Compile Include="AI\CNN\Layers\InputLayer.cs" />

@@ -12,7 +12,7 @@ namespace ml.AI.CNN.Layers
         public Volume[] Weights;
         public Volume   Biases;
 
-        private int _inputsCount;
+        internal int _inputsCount;
 
         internal FullyConnectedLayer() {}
 
