@@ -5,6 +5,12 @@ namespace WindowHandler
         public Window Window;
         public ResourceManager ResourceManager;
 
+        protected void InsertObject(int index, DrawableObject obj)
+        {
+            obj.Parent = Window;
+            Window.Objects.Insert(index, obj);
+        }
+
         protected void AddObject(DrawableObject obj)
         {
             obj.Parent = Window;

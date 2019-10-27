@@ -1,7 +1,7 @@
 using OpenTK;
 using WindowHandler;
 
-namespace CNNVisualization
+namespace CNNVisualization.Objects
 {
     public class Picture : DrawableObject
     {
