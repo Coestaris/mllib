@@ -18,15 +18,18 @@ namespace WindowHandler
             Window = window;
         }
 
-        public virtual void OnUpdate() {}
+        protected virtual void OnUpdate() {}
 
-        public virtual void OnClose()
+        protected virtual void OnClose()
         {
             ResourceManager.FreeAll();
         }
 
-        public virtual void OnStart()
+        protected virtual void OnStart() { }
+
+        public void Start()
         {
+            OnStart();
             Window.UpdateFunc = OnUpdate;
             Window.CloseFunc = OnClose;
             Window.Run(60);

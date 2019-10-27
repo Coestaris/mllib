@@ -35,7 +35,7 @@ namespace XORCalculator.Objects
             }
             else
             {
-                GL.Color3(lerpColor(Color.Red, Color.Green, (float)Error));
+                GL.Color3(LerpColor(Color.Red, Color.Green, (float)Error));
                 _renderer.DrawString(Error.ToString("F4"), new Vector2(80, 72));
             }
         }

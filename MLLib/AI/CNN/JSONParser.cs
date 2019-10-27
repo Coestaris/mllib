@@ -71,8 +71,7 @@ namespace ml.AI.CNN
                             Stride = jsonLayer["stride"].ToObject<int>(),
                             Pad = jsonLayer["pad"].ToObject<int>(),
                         };
-                        //(layer as SubsamplingLayer)._oldX = new int[layer.OutSize.Width * layer.OutSize.Height * layer.OutDepth];
-                        //(layer as SubsamplingLayer)._oldY = new int[layer.OutSize.Width * layer.OutSize.Height * layer.OutDepth];
+
                         break;
 
                     case "fc":
@@ -110,8 +109,13 @@ namespace ml.AI.CNN
                     (layer as FullyConnectedLayer)._inputsCount =
                         layer.InSize.Width * layer.InSize.Height * layer.InDepth;
                 }
+                else if (type == "pool")
+                {
+                    (layer as SubsamplingLayer)._oldX = new int[layer.OutSize.Width * layer.OutSize.Height * layer.OutDepth];
+                    (layer as SubsamplingLayer)._oldY = new int[layer.OutSize.Width * layer.OutSize.Height * layer.OutDepth];
+                }
 
-                (layer as CNNLayer).Setup();
+                layer.OutVolume = new Volume(layer.OutSize.Width, layer.OutSize.Height, layer.OutDepth, 0);
                 netLayers.Add(layer);
             }
 

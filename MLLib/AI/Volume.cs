@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using ml.AIMath;
 using Newtonsoft.Json.Linq;
@@ -46,6 +47,35 @@ namespace ml.AI
             dWeights = new double[n];
             Fill(n, c, gaussianRandom,
                 double.IsNaN(c) && gaussianRandom ? Math.Sqrt(1.0 / n) : 0);
+        }
+
+        public Volume(Bitmap bitmap, bool grb = false) : this(bitmap.Width, bitmap.Height, 1, 0)
+        {
+            if (!grb)
+            {
+                for (var x = 0; x < bitmap.Width; x++)
+                for (var y = 0; y < bitmap.Height; y++)
+                    Set(x, y, 0, NormalizeColor(bitmap.GetPixel(x, y)));
+            }
+            else
+            {
+                for(var d = 0; d < 3; d++)
+                for (var x = 0; x < bitmap.Width; x++)
+                for (var y = 0; y < bitmap.Height; y++)
+                {
+                    var c = bitmap.GetPixel(x, y);
+                    var value = 0;
+                    if (d == 0) value = c.R;
+                    else if (d == 1) value = c.G;
+                    else value = c.B;
+                    Set(x, y, d, value / 256.0);
+                }
+            }
+        }
+
+        public static double NormalizeColor(Color color)
+        {
+            return (color.R + color.B + color.G) / (3.0 * 256);
         }
 
         private void Fill(int length, double c, bool gaussianRandom, double scale)

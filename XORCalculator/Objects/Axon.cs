@@ -24,9 +24,9 @@ namespace XORCalculator.Objects
         {
             GL.LineWidth(Weight * 2);
             if(Weight < 0)
-                GL.Color3(lerpColor(Color.Red, Color.Black, - Weight / scaleFactor));
+                GL.Color3(LerpColor(Color.Red, Color.Black, - Weight / scaleFactor));
             else
-                GL.Color3(lerpColor(Color.Green, Color.Black, Weight / scaleFactor));
+                GL.Color3(LerpColor(Color.Green, Color.Black, Weight / scaleFactor));
 
             GL.Begin(BeginMode.Lines);
 

@@ -33,8 +33,8 @@ namespace WindowHandler
                 Exit();
             }
 
-            foreach (var drawableObject in Objects)
-                drawableObject.Update();
+            for(var i = 0; i < Objects.Count; i++)
+                Objects[i].Update();
 
             UpdateFunc();
             base.OnUpdateFrame(e);
@@ -60,8 +60,8 @@ namespace WindowHandler
             GL.Clear(ClearBufferMask.ColorBufferBit);
             GL.ClearColor(BackgroundColor);
 
-            foreach (var obj in Objects)
-                obj.Draw();
+            for(var i = 0; i < Objects.Count; i++)
+                Objects[i].Draw();
 
             Context.SwapBuffers();
             base.OnRenderFrame(e);

@@ -53,7 +53,7 @@ namespace XORCalculator
             _teacher = teacher;
         }
 
-        public override void OnUpdate()
+        protected override void OnUpdate()
         {
             if (_working)
                 for (var i = 0; i < StepsPerFrame; i++)
@@ -119,7 +119,7 @@ namespace XORCalculator
             }
         }
 
-        public override void OnStart()
+        protected override void OnStart()
         {
             ResourceManager.PushTexture(TextureIds.Button, "button.png");
             ResourceManager.PushTexture(TextureIds.ButtonActive, "buttonActive.png");
@@ -251,7 +251,6 @@ namespace XORCalculator
             AddObject(_infoRenderer = new InfoRenderer(_textRenderer, Vector2.One));
 
             Reset();
-            base.OnStart();
         }
     }
 }

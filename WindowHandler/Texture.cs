@@ -14,10 +14,8 @@ namespace WindowHandler
 
         private bool _disposed;
 
-        public Texture(string fileName)
+        public Texture(Bitmap bitmap)
         {
-            var bitmap = new Bitmap(fileName);
-
             int tex;
             GL.GenTextures(1, out tex);
             GL.BindTexture(TextureTarget.Texture2D, tex);
@@ -36,6 +34,11 @@ namespace WindowHandler
 
             ID = tex;
             Size = bitmap.Size;
+        }
+
+        public Texture(string fileName) : this(new Bitmap(fileName))
+        {
+            FileName = fileName;
         }
 
         public void Dispose()

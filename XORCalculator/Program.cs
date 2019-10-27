@@ -66,7 +66,7 @@ namespace XORCalculator
 
             var handler = new NNVisualizer(win, _network, teacher, () => _network.FillGaussianRandom());
 
-            handler.OnStart();
+            handler.Start();
         }
     }
 }

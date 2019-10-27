@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using ml.AI;
 using ml.AI.CNN;
 using ml.AI.CNN.Layers;
 using ml.AIMath;
@@ -40,7 +41,7 @@ namespace Tests
         public static void Main(string[] args)
         {
             var bitmap = new Bitmap("img.png");
-            var volume = InputLayer.BitmapToVolume(bitmap, false);
+            var volume = new Volume(bitmap, false);
 
             //var network = InitNetwork(bitmap.Size);
             var network = LoadNetwork("net.json");

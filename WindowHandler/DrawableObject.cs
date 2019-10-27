@@ -108,7 +108,31 @@ namespace WindowHandler
             GL.Enable(EnableCap.Blend);
         }
 
-        private float clipValue(float v, float min, float max)
+        protected void DrawTexture(Texture texture, Vector2 vector, Vector2 scale)
+        {
+            GL.Disable(EnableCap.Blend);
+            GL.Color3(Color.White);
+            GL.BindTexture(TextureTarget.Texture2D, texture.ID);
+            GL.Begin(BeginMode.Quads);
+
+            GL.TexCoord2(0, 0);
+            GL.Vertex2(vector);
+
+            GL.TexCoord2(1, 0);
+            GL.Vertex2(vector.X + texture.Size.Width * scale.X, vector.Y);
+
+            GL.TexCoord2(1, 1);
+            GL.Vertex2(vector.X + texture.Size.Width * scale.X, vector.Y + texture.Size.Height * scale.Y);
+
+            GL.TexCoord2(0, 1);
+            GL.Vertex2(vector.X, vector.Y + texture.Size.Height * scale.Y);
+
+            GL.End();
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+            GL.Enable(EnableCap.Blend);
+        }
+
+        private static float clipValue(float v, float min, float max)
         {
             if (v < min) return min;
             if (v > max) return max;
@@ -116,7 +140,7 @@ namespace WindowHandler
             return v;
         }
 
-        protected Color lerpColor(Color a, Color b, float k)
+        protected Color LerpColor(Color a, Color b, float k)
         {
             //k = (float)MLLib.AI.NNLayer.Sigmoid(k);
             return Color.FromArgb(
