@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace ml.AI.CNN.Layers
 {
@@ -19,6 +20,13 @@ namespace ml.AI.CNN.Layers
             }
 
             return -Math.Log(_es[correctIndex]);
+        }
+
+        public override List<Volume> GetLearnableParams(out double L1Decay, out double L2Decay)
+        {
+            L1Decay = double.NaN;
+            L2Decay = double.NaN;
+            return new List<Volume>();
         }
 
         public override Volume ForwardPass(Volume volume)

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 
@@ -19,6 +20,7 @@ namespace ml.AI.CNN
         public CNNLayer NextLayer;
 
         public abstract Volume ForwardPass(Volume data);
+        public abstract List<Volume> GetLearnableParams(out double L1Decay, out double L2Decay);
         public abstract void BackwardPass();
 
         public virtual void Setup()

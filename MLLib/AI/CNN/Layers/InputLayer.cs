@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using ml.AIMath;
 
@@ -16,6 +17,14 @@ namespace ml.AI.CNN.Layers
         }
 
         public override Volume ForwardPass(Volume volume) { return OutVolume = volume; }
+
+        public override List<Volume> GetLearnableParams(out double L1Decay, out double L2Decay)
+        {
+            L1Decay = double.NaN;
+            L2Decay = double.NaN;
+            return new List<Volume>();
+        }
+
         public override void BackwardPass() { }
     }
 }

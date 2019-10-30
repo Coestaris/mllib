@@ -51,6 +51,11 @@ namespace HWDRecognizer
             return sortedOutput[0].index == Number;
         }
 
+        public Volume ToVolume()
+        {
+            return new Volume(ToBitmap(), false);
+        }
+
         public override double[] ToTrainData()
         {
             if (_trainData == null)

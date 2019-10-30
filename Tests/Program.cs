@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using HWDRecognizer;
 using ml.AI;
 using ml.AI.CNN;
 using ml.AI.CNN.Layers;
@@ -40,17 +41,32 @@ namespace Tests
 
         public static void Main(string[] args)
         {
-            var bitmap = new Bitmap("img.png");
-            var volume = new Volume(bitmap, false);
+            var dataset = new Dataset(
+                "data/dataset.data",
+                "data/datasetLabels.data",
+                "data/test.data",
+                "data/testLabels.data"
+            );
 
-            var network = InitNetwork(bitmap.Size);
-            //var network = LoadNetwork("net.json");
-            var result = network.ForwardPass(volume);
 
-            var loss = network.BackwardPass(3);
+            var testVolumes = dataset.TestImages.Select(p => new { volume = p.ToVolume(), label = p.Number }).ToList();
+            var trainVolumes = dataset.DatasetImages.Select(p => new { volume = p.ToVolume(), label = p.Number }).ToList();
 
-            Console.WriteLine(string.Join(", ",
-                result.WeightsRaw.Select(p => p.ToString("F3"))));
+            var network = InitNetwork(new Size(
+                testVolumes[0].volume.SX,
+                testVolumes[0].volume.SY));
+
+            var trainer = new Trainer(network, 0.4);
+            for (int i = 0; i < 10; i++)
+            {
+                double loss = 0;
+                foreach (var trainVolume in trainVolumes)
+                {
+                    loss += trainer.Train(trainVolume.volume, trainVolume.label);
+                }
+
+                Console.WriteLine("Epoch: {0}. Loss: {1:F5}", i, loss / trainVolumes.Count);
+            }
 
             for (var i = 0; i < network.Layers.Count; i++)
             {

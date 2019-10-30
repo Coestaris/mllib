@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Drawing;
 using ml.AI.CNN.Layers;
 
@@ -15,6 +16,17 @@ namespace ml.AI.CNN.Layers
         internal int _inputsCount;
 
         internal FullyConnectedLayer() {}
+
+        public override List<Volume> GetLearnableParams(out double L1Decay, out double L2Decay)
+        {
+            L1Decay = this.L1Decay;
+            L2Decay = this.L2Decay;
+
+            var list = new List<Volume>();
+            list.AddRange(Weights);
+            list.Add(Biases);
+            return list;
+        }
 
         public FullyConnectedLayer(int neuronsCount, int l1decay = 0, int l2decay = 1)
         {

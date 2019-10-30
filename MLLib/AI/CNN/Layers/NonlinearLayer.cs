@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ml.AIMath;
 
 namespace ml.AI.CNN.Layers
@@ -37,6 +38,13 @@ namespace ml.AI.CNN.Layers
                 else rawDIn[i] = rawDOut[i];
             }
         }
+
+        public override List<Volume> GetLearnableParams(out double L1Decay, out double L2Decay)
+        {
+            L1Decay = double.NaN;
+            L2Decay = double.NaN;
+            return new List<Volume>();
+        }
     }
 
     public class SigmoidLayer : CNNLayer
@@ -61,5 +69,12 @@ namespace ml.AI.CNN.Layers
         }
 
         public override void BackwardPass() { }
+
+        public override List<Volume> GetLearnableParams(out double L1Decay, out double L2Decay)
+        {
+            L1Decay = double.NaN;
+            L2Decay = double.NaN;
+            return new List<Volume>();
+        }
     }
 }

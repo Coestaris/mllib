@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using ml.AIMath;
 
@@ -95,6 +96,17 @@ namespace ml.AI.CNN.Layers
         }
 
         internal ConvolutionalLayer() {}
+
+        public override List<Volume> GetLearnableParams(out double L1Decay, out double L2Decay)
+        {
+            L1Decay = this.L1Decay;
+            L2Decay = this.L2Decay;
+
+            var list = new List<Volume>();
+            list.AddRange(Kernels);
+            list.Add(Biases);
+            return list;
+        }
 
         public ConvolutionalLayer(
             int filtersCount,

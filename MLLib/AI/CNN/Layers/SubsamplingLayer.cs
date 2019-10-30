@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace ml.AI.CNN.Layers
@@ -39,7 +40,6 @@ namespace ml.AI.CNN.Layers
                     }
                 }
             }
-
         }
 
         public override void Setup()
@@ -98,6 +98,13 @@ namespace ml.AI.CNN.Layers
                 }
             }
             return OutVolume;
+        }
+
+        public override List<Volume> GetLearnableParams(out double L1Decay, out double L2Decay)
+        {
+            L1Decay = double.NaN;
+            L2Decay = double.NaN;
+            return new List<Volume>();
         }
     }
 }
