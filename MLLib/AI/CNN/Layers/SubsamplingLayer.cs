@@ -80,7 +80,7 @@ namespace ml.AI.CNN.Layers
                                 if (outX >= 0 && outX < InSize.Width &&
                                     outY >= 0 && outY < InSize.Height)
                                 {
-                                    var v = volume.Get(outX, outY, d);
+                                    var v = volume.Weights[(outX * volume.SX + outY) + d];
                                     if (v > max)
                                     {
                                         max = v;

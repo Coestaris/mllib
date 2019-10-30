@@ -48,21 +48,24 @@ namespace Tests
                 "data/testLabels.data"
             );
 
+            Console.WriteLine("Loaded dataset!");
 
-            var testVolumes = dataset.TestImages.Select(p => new { volume = p.ToVolume(), label = p.Number }).ToList();
-            var trainVolumes = dataset.DatasetImages.Select(p => new { volume = p.ToVolume(), label = p.Number }).ToList();
+            var testVolumes = dataset.TestImages.Select(p => p.ToVolume()).ToList();
+            var trainVolumes = dataset.DatasetImages.Select(p => p.ToVolume()).ToList();
 
             var network = InitNetwork(new Size(
-                testVolumes[0].volume.SX,
-                testVolumes[0].volume.SY));
+                testVolumes[0].SX,
+                testVolumes[0].SY));
 
-            var trainer = new Trainer(network, 0.4);
+            var trainer = new Trainer(network, 0.01);
+
+            Console.WriteLine("Start training!");
             for (int i = 0; i < 10; i++)
             {
                 double loss = 0;
-                foreach (var trainVolume in trainVolumes)
+                for (var sample = 0; sample < trainVolumes.Count; sample++)
                 {
-                    loss += trainer.Train(trainVolume.volume, trainVolume.label);
+                    loss += trainer.Train(trainVolumes[sample], dataset.DatasetImages[sample].Number);
                 }
 
                 Console.WriteLine("Epoch: {0}. Loss: {1:F5}", i, loss / trainVolumes.Count);

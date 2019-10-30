@@ -53,7 +53,9 @@ namespace HWDRecognizer
 
         public Volume ToVolume()
         {
-            return new Volume(ToBitmap(), false);
+            var volume = new Volume(Size.Width, Size.Height, 1);
+            Data.CopyTo(volume.WeightsRaw, 0);
+            return volume;
         }
 
         public override double[] ToTrainData()
