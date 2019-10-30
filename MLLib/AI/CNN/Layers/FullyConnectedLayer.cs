@@ -37,7 +37,23 @@ namespace ml.AI.CNN.Layers
             base.Setup();
         }
 
-        public override void BackwardPass() { }
+        public override void BackwardPass()
+        {
+            InVolume.SetDConstant(0);
+            for (var i = 0; i < OutDepth; i++)
+            {
+                var filter = Weights[i];
+                var chain = OutVolume.dWeights[i];
+
+                for (var d = 0; d < _inputsCount; d++)
+                {
+                    InVolume.dWeights[d] += filter.Weights[d] * chain;
+                    filter.dWeights[d] += InVolume.Weights[d] * chain;
+                }
+                Biases.dWeights[i] += chain;
+            }
+
+        }
 
         public override Volume ForwardPass(Volume volume)
         {

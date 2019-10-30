@@ -128,13 +128,19 @@ namespace ml.AI
 
         public void AddVolume(Volume v, double scale = 1)
         {
-            for (int i = 0; i < v.Weights.Length; i++)
+            for (var i = 0; i < v.Weights.Length; i++)
                 Weights[i] += v.Weights[i] * scale;
+        }
+
+        public void SetDConstant(double c)
+        {
+            for (var i = 0; i < dWeights.Length; i++)
+                dWeights[i] = c;
         }
 
         public void SetConstant(double c)
         {
-            for (int i = 0; i < Weights.Length; i++)
+            for (var i = 0; i < Weights.Length; i++)
                 Weights[i] = c;
         }
 

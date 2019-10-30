@@ -21,7 +21,26 @@ namespace ml.AI.CNN.Layers
             Pad = pad;
         }
 
-        public override void BackwardPass() { }
+        public override void BackwardPass()
+        {
+            InVolume.SetDConstant(0);
+            var n = 0;
+            for (var d = 0; d < OutDepth; d++)
+            {
+                var x = -Pad;
+                for (var ax = 0; ax < OutSize.Width; ax++, x += Stride)
+                {
+                    var y = -Pad;
+                    for (var ay = 0; ay < OutSize.Height; ay++, y += Stride)
+                    {
+                        var chain = OutVolume.GetGrad(ax, ay, d);
+                        InVolume.AddGrad(_oldX[n], _oldY[n], d, chain);
+                        n++;
+                    }
+                }
+            }
+
+        }
 
         public override void Setup()
         {

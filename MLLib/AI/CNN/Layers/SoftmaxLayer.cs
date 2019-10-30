@@ -9,6 +9,7 @@ namespace ml.AI.CNN.Layers
         public override void BackwardPass() { }
         public override double BackwardPassLoss(int correctIndex)
         {
+            InVolume.SetDConstant(0);
             var rawIn = InVolume.dWeightsRaw;
             for (var i = 0; i < OutDepth; i++)
             {

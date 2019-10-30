@@ -43,9 +43,11 @@ namespace Tests
             var bitmap = new Bitmap("img.png");
             var volume = new Volume(bitmap, false);
 
-            //var network = InitNetwork(bitmap.Size);
-            var network = LoadNetwork("net.json");
+            var network = InitNetwork(bitmap.Size);
+            //var network = LoadNetwork("net.json");
             var result = network.ForwardPass(volume);
+
+            var loss = network.BackwardPass(3);
 
             Console.WriteLine(string.Join(", ",
                 result.WeightsRaw.Select(p => p.ToString("F3"))));

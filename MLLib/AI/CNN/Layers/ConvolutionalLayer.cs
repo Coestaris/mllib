@@ -19,7 +19,40 @@ namespace ml.AI.CNN.Layers
         public Volume   Biases;
         public Volume[] Kernels;
 
-        public override void BackwardPass() { }
+        public override void BackwardPass()
+        {
+            for (var d = 0; d < OutDepth; d++)
+            {
+                var filter = Kernels[d];
+                var y = -Pad;
+                for (var ay = 0; ay < OutSize.Height; y += Stride, ay++)
+                {
+                    var x = -Pad;
+                    for (var ax = 0; ax < OutSize.Width; x += Stride, ax++)
+                    {
+                        var chain = OutVolume.GetGrad(ax, ay, d);
+                        for (var fy = 0; fy < FilterSize; fy++)
+                        {
+                            var oy = y + fy;
+                            for (var fx = 0; fx < FilterSize; fx++)
+                            {
+                                var ox = x + fx;
+                                 if (oy < 0 || oy >= OutSize.Height || ox < 0 || ox >= OutSize.Width) continue;
+
+                                for (var fd = 0; fd < filter.Depth; fd++)
+                                {
+                                    var ix1 = ((OutSize.Width * oy) + ox) * InVolume.Depth + fd;
+                                    var ix2 = ((filter.SX * fy) + fx) * filter.Depth + fd;
+                                    filter.dWeights[ix2] += InVolume.Weights[ix1] * chain;
+                                    InVolume.dWeights[ix1] += filter.Weights[ix2] * chain;
+                                }
+                            }
+                        }
+                        Biases.dWeights[d] += chain;
+                    }
+                }
+            }
+        }
 
         public override Volume ForwardPass(Volume volume)
         {

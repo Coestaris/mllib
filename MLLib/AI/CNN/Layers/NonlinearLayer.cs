@@ -24,7 +24,19 @@ namespace ml.AI.CNN.Layers
             base.Setup();
         }
 
-        public override void BackwardPass() { }
+        public override void BackwardPass()
+        {
+            InVolume.SetDConstant(0);
+            var rawOut = OutVolume.WeightsRaw;
+            var rawDOut = OutVolume.dWeightsRaw;
+            var rawDIn = InVolume.WeightsRaw;
+
+            for (var i = 0; i < InVolume.dWeightsRawLen; i++)
+            {
+                if (rawOut[i] <= 0) rawDIn[i] = 0;
+                else rawDIn[i] = rawDOut[i];
+            }
+        }
     }
 
     public class SigmoidLayer : CNNLayer
