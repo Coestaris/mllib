@@ -28,7 +28,7 @@ namespace CNNVisualization
             network.PushLayers(layers);
 */
 
-            var window = new Window(1000, 700, "CNNVisualization");
+            var window = new Window(1400, 700, "CNNVisualization");
             var handler = new Visualizer(window, network);
             handler.Start();
 

@@ -7,6 +7,7 @@ using ml.AI.CNN.Layers;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using WindowHandler;
+using WindowHandler.Controls;
 
 namespace CNNVisualization
 {
@@ -18,6 +19,8 @@ namespace CNNVisualization
 
         public const float DefaultScale = 2.5f;
         public const float IconSize = 24f;
+
+        public const int DrawSize = 400;
 
         public Visualizer(Window window, ConvolutionalNeuralNetwork network) : base(window)
         {
@@ -45,8 +48,8 @@ namespace CNNVisualization
             var output = Network.ForwardPass(inputVolume);
 
             var globalBitmap = new Bitmap(Window.Width, Window.Height);
-            var ax = Window.Width / Network.Layers.Count;
-            var dx = ax - ax / (float)Network.Layers.Count;
+            var ax = DrawSize + Window.Width / Network.Layers.Count;
+            var dx = ax - ax / (float)Network.Layers.Count - DrawSize;
             var id = 0;
 
             Textures = new Picture[Network.Layers.Count][];
@@ -146,6 +149,12 @@ namespace CNNVisualization
 
             infoRenderer.Guesses     = sorted.Select(p => p.index).ToArray();
             infoRenderer.GuessValues = sorted.Select(p => p.value).ToArray();
+            AddObject(new Drawable(
+                new Vector2(
+                    DrawSize / 4.0f,
+                    Window.Height / 2.0f - DrawSize / 2.0f),
+                DrawSize));
+
             AddObject(infoRenderer);
         }
     }
