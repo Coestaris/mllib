@@ -17,6 +17,8 @@ CNN stuff:
  * [Great visualizations of CNN](https://cs.stanford.edu/people/karpathy/convnetjs)
  * [JS Convolutional neural network Library](https://github.com/karpathy/convnetjs)
  * [Another awesome CNN visualization](http://scs.ryerson.ca/~aharley/vis/conv/flat.html)
+ * [CNN Backprop example](https://pdfs.semanticscholar.org/5d79/11c93ddcb34cac088d99bd0cae9124e5dcd1.pdf)
+ * [Lectures about CNNs](https://youtu.be/bNb2fEVKeEo)
 
 Math stuff:
  * [Gaussian distribution explanation](https://habr.com/ru/post/208684/)
