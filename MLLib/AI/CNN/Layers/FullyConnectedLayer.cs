@@ -43,7 +43,7 @@ namespace ml.AI.CNN.Layers
             Weights = new Volume[NeuronsCount];
 
             _inputsCount = InSize.Width * InSize.Height * InDepth;
-            for(var i = 0; i < NeuronsCount; i++)
+            for(int i = 0; i < NeuronsCount; i++)
                 Weights[i] = new Volume(1, 1, _inputsCount);
 
             base.Setup();

@@ -80,8 +80,8 @@ namespace ml.AI.CNN.Layers
                                 {
                                     for (var fd = 0; fd < kernel.Depth; fd++)
                                     {
-                                        sum += kernel.Weights[(filterX * kernel.SX + filterY) * fd] *
-                                               volume.Weights[(outX * OutSize.Width + outY) * fd];
+                                        sum += kernel.Get(filterX, filterY, fd) *
+                                               volume.Get(outX, outY, fd);
                                     }
                                 }
                             }
