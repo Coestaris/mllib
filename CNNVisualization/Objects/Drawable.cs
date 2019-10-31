@@ -7,13 +7,50 @@ using WindowHandler;
 
 namespace CNNVisualization.Objects
 {
+    public class DrawableBrush
+    {
+        public double[,] Brush;
+        public    int BrushSize;
+        public double BrushFade;
+        public double BrushXFade;
+        public double BrushExpOffset;
+
+        public DrawableBrush(int brushSize, double brushFade, double brushXFade, double brushExpOffset)
+        {
+            BrushSize = brushSize;
+            BrushFade = brushFade;
+            BrushXFade = brushXFade;
+            BrushExpOffset = brushExpOffset;
+
+            Brush = new double[BrushSize, BrushSize];
+            for (var x = 0; x < BrushSize; x++)
+            for (var y = 0; y < BrushSize; y++)
+            {
+                var dist = Math.Sqrt(
+                    (BrushSize / 2.0 - x) * (BrushSize / 2.0 - x) +
+                    (BrushSize / 2.0 - y) * (BrushSize / 2.0 - y));
+                var k = Math.Exp((Math.Abs(dist - BrushSize / 2.0) - BrushSize / 2.0 + BrushExpOffset) * BrushXFade) * BrushFade;
+                Brush[x, y] = (dist > BrushSize / 2.0 ? 0 : 1) * k;
+            }
+        }
+
+        public static readonly DrawableBrush SuperGlowingBrush
+            = new DrawableBrush(120, .02, .05, 1.25);
+
+        public static readonly DrawableBrush GlowingBrush
+            = new DrawableBrush(40, .9, .25, 1.25);
+
+        public static readonly DrawableBrush DefaultBrush
+            = new DrawableBrush(40, 1.3, .15, -4);
+
+        public static readonly DrawableBrush SolidBrush
+            = new DrawableBrush(30, 13, 1, 100);
+    }
+
     public class Drawable : DrawableObject
     {
         public Texture Texture;
         public int Size;
-
-        private const int BrushSize = 20;
-        private const double BrashFade = 3;
 
         private double[,] _data;
         private int[] PBOs;
@@ -21,7 +58,8 @@ namespace CNNVisualization.Objects
         private readonly int dataSize;
         private Random _random = new Random();
         private int _frameCounter;
-        private double[,] _brush;
+        private DrawableBrush _brush = DrawableBrush.DefaultBrush;
+
         private PointF _lastImagePoint;
         private bool _lastPoint;
 
@@ -44,25 +82,6 @@ namespace CNNVisualization.Objects
             }
 
             GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
-
-            _brush = new double[BrushSize, BrushSize];
-            for (var x = 0; x < BrushSize; x++)
-            for (var y = 0; y < BrushSize; y++)
-            {
-                var dist = Math.Sqrt(
-                               (BrushSize / 2.0 - x) * (BrushSize / 2.0 - x) +
-                               (BrushSize / 2.0 - y) * (BrushSize / 2.0 - y));
-                var k = (Math.Log(-dist + BrushSize / 2.0 + 3) * (BrashFade / Math.E));
-                if (double.IsNaN(k)) k = 0;
-                if (k > 1) k = 1;
-                if (k < 0) k = 0;
-                //k = 1 - k;
-
-                _brush[x, y] = (dist > BrushSize / 2.0 ? 0 : 1) * k;
-
-                if (x == 10)
-                    Console.WriteLine("dist {0:F3} k {1:F3} r {1:F3}", dist, k, _brush[x, y]);
-            }
         }
 
         public override bool CheckMousePosition(Vector2 mouse)
@@ -75,15 +94,15 @@ namespace CNNVisualization.Objects
 
         private void Apply(PointF image)
         {
-            for (var brushX = 0; brushX < BrushSize; brushX++)
+            for (var brushX = 0; brushX < _brush.BrushSize; brushX++)
             {
-                var x = image.X + -BrushSize / 2.0 + brushX;
-                for (var brushY = 0; brushY < BrushSize; brushY++)
+                var x = image.X + -_brush.BrushSize / 2.0 + brushX;
+                for (var brushY = 0; brushY < _brush.BrushSize; brushY++)
                 {
-                    var y = image.Y + -BrushSize / 2.0 + brushY;
+                    var y = image.Y + -_brush.BrushSize / 2.0 + brushY;
                     if (x < 0 || y < 0 || x >= Size || y >= Size) continue;
 
-                    _data[(int) x, (int) y] += _brush[brushX, brushY];
+                    _data[(int) x, (int) y] += _brush.Brush[brushX, brushY];
                 }
             }
         }
