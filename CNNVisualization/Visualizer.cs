@@ -142,18 +142,29 @@ namespace CNNVisualization
             ResourceManager.PushTexture(id++, GlobalTexture);
 
             var infoRenderer = new InfoRenderer(renderer);
-            id = 0;
+            var index = 0;
 
-            var sorted = output.WeightsRaw.Select(p => new {index = id++, value = p})
+            var sorted = output.WeightsRaw.Select(p => new {index = index++, value = p})
                 .OrderByDescending(p => p.value).Take(3).ToList();
 
             infoRenderer.Guesses     = sorted.Select(p => p.index).ToArray();
             infoRenderer.GuessValues = sorted.Select(p => p.value).ToArray();
-            AddObject(new Drawable(
+            Drawable drawable;
+            AddObject(drawable = new Drawable(
                 new Vector2(
                     DrawSize / 4.0f,
                     Window.Height / 2.0f - DrawSize / 2.0f),
                 DrawSize));
+            ResourceManager.PushTexture(id++, drawable.Texture);
+
+            ResourceManager.PushTexture(id++, new Texture("button.png"));
+            ResourceManager.PushTexture(id++, new Texture("buttonActive.png"));
+
+            AddObject(new Button(
+                    id - 1, id - 2,
+                    drawable.Position + new Vector2(60, DrawSize + 30),
+                    drawable.Reset,
+                    renderer, "Reset"));
 
             AddObject(infoRenderer);
         }
