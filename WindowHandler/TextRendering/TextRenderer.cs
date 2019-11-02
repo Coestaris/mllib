@@ -5,13 +5,16 @@ using OpenTK.Graphics.OpenGL;
 
 namespace WindowHandler
 {
-    internal class TextRenderer : IDisposable
+    public class TextRenderer : IDisposable
     {
         private Bitmap bmp;
         private Graphics gfx;
         private int texture;
         private Rectangle dirty_region;
         private bool disposed;
+
+        public int Width;
+        public int Height;
 
         public TextRenderer(int width, int height)
         {
@@ -34,6 +37,9 @@ namespace WindowHandler
                 (int) TextureMagFilter.Linear);
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, width, height, 0,
                 PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
+
+            Width = width;
+            Height = height;
         }
 
         public void Clear(Color color)
@@ -67,6 +73,8 @@ namespace WindowHandler
                 return texture;
             }
         }
+
+        public Size Size => new Size(Width, Height);
 
         private void UploadBitmap()
         {

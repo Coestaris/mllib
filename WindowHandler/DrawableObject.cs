@@ -84,28 +84,33 @@ namespace WindowHandler
             DrawTexture(texture, Position - offsetPoint);
         }
 
-        protected void DrawTexture(Texture texture, Vector2 vector)
+        protected void DrawTexture(int texture, Vector2 vector, Size size)
         {
             GL.Disable(EnableCap.Blend);
             GL.Color3(Color.White);
-            GL.BindTexture(TextureTarget.Texture2D, texture.ID);
+            GL.BindTexture(TextureTarget.Texture2D, texture);
             GL.Begin(BeginMode.Quads);
 
             GL.TexCoord2(0, 0);
             GL.Vertex2(vector);
 
             GL.TexCoord2(1, 0);
-            GL.Vertex2(vector.X + texture.Size.Width, vector.Y);
+            GL.Vertex2(vector.X + size.Width, vector.Y);
 
             GL.TexCoord2(1, 1);
-            GL.Vertex2(vector.X + texture.Size.Width, vector.Y + texture.Size.Height);
+            GL.Vertex2(vector.X + size.Width, vector.Y + size.Height);
 
             GL.TexCoord2(0, 1);
-            GL.Vertex2(vector.X, vector.Y + texture.Size.Height);
+            GL.Vertex2(vector.X, vector.Y + size.Height);
 
             GL.End();
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.Enable(EnableCap.Blend);
+        }
+
+        protected void DrawTexture(Texture texture, Vector2 vector)
+        {
+            DrawTexture(texture.ID, vector, texture.Size);
         }
 
         protected void DrawTexture(Texture texture, Vector2 vector, Vector2 scale)

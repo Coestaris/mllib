@@ -16,7 +16,7 @@ namespace WindowHandler
         public Action UpdateFunc;
         public Action CloseFunc;
 
-        internal static ResourceManager ResourceManager;
+        public static ResourceManager ResourceManager;
 
         public Window(int width, int height, string title) : base(width, height,
             new GraphicsMode(32, 24, 0, 8), title)

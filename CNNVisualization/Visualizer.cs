@@ -15,7 +15,8 @@ namespace CNNVisualization
     {
         public ConvolutionalNeuralNetwork Network;
         public LayerThumb[][] LayerThumbs;
-        public Texture GlobalTexture;
+        public InfoRenderer InfoRenderer;
+        public Drawable Drawable;
 
         public const float DefaultScale = 2.5f;
         public const float IconSize = 24f;
@@ -27,9 +28,29 @@ namespace CNNVisualization
             Network = network;
         }
 
-        protected override void OnUpdate()
+        private void RebuildTextures()
         {
+            foreach (var array in LayerThumbs)
+            foreach (var layerThumb in array)
+                layerThumb.RebuildTexture();
+        }
 
+        private void UpdateInfoRenderer(Volume output)
+        {
+            var index = 0;
+            var sorted = output.WeightsRaw.Select(p => new {index = index++, value = p})
+                .OrderByDescending(p => p.value).Take(3).ToList();
+
+            InfoRenderer.Guesses     = sorted.Select(p => p.index).ToArray();
+            InfoRenderer.GuessValues = sorted.Select(p => p.value).ToArray();
+        }
+
+        public void DrawFunc()
+        {
+            var volume = Drawable.ToVolume(24);
+            var output = Network.ForwardPass(volume);
+            RebuildTextures();
+            UpdateInfoRenderer(output);
         }
 
         protected override void OnStart()
@@ -43,14 +64,9 @@ namespace CNNVisualization
                 new Font("DejaVu Sans Mono", 12, FontStyle.Regular),
                 Brushes.Black));
 
-            var input = new Bitmap("img3.png");
-            var inputVolume = new Volume(input, true);
-            var output = Network.ForwardPass(inputVolume);
-
             var globalBitmap = new Bitmap(Window.Width, Window.Height);
             var ax = DrawSize + Window.Width / Network.Layers.Count;
             var dx = ax - ax / (float)Network.Layers.Count - DrawSize;
-            var id = 0;
 
             LayerThumbs = new LayerThumb[Network.Layers.Count][];
             for (var i = 0; i < Network.Layers.Count; i++)
@@ -78,6 +94,15 @@ namespace CNNVisualization
 
                 }
             }
+
+            var texID = ResourceManager.TexturesCount;
+            AddObject(Drawable = new Drawable(
+                new Vector2(
+                    DrawSize / 4.0f,
+                    Window.Height / 2.0f - DrawSize / 2.0f),
+                DrawSize));
+            ResourceManager.PushTexture(texID++, Drawable.Texture);
+            Drawable.DrawCallback = DrawFunc;
 
             using (var gr = Graphics.FromImage(globalBitmap))
             {
@@ -132,51 +157,37 @@ namespace CNNVisualization
                         }
                     }
 
+
                     prevScale = scale;
                 }
+
+                var firstTex = LayerThumbs[0][0];
+                gr.DrawLine(drawPen,
+                        new PointF(Drawable.Position.X + DrawSize, Drawable.Position.Y),
+                        new PointF(firstTex.Position.X, firstTex.Position.Y));
+
+                gr.DrawLine(drawPen,
+                    new PointF(Drawable.Position.X + DrawSize, Drawable.Position.Y + DrawSize),
+                    new PointF(firstTex.Position.X, firstTex.Position.Y + firstTex.Texture.Size.Width * DefaultScale));
             }
 
-            InsertObject(0, new Picture(Vector2.Zero, GlobalTexture = new Texture(globalBitmap), Vector2.One));
-            ResourceManager.PushTexture(id++, GlobalTexture);
+            Texture globalTexture;
+            InsertObject(0, new Picture(Vector2.Zero, globalTexture = new Texture(globalBitmap), Vector2.One));
 
-            var infoRenderer = new InfoRenderer(renderer);
-            var index = 0;
+            ResourceManager.PushTexture(texID++, globalTexture);
 
-            var sorted = output.WeightsRaw.Select(p => new {index = index++, value = p})
-                .OrderByDescending(p => p.value).Take(3).ToList();
-
-            infoRenderer.Guesses     = sorted.Select(p => p.index).ToArray();
-            infoRenderer.GuessValues = sorted.Select(p => p.value).ToArray();
-            Drawable drawable;
-            AddObject(drawable = new Drawable(
-                new Vector2(
-                    DrawSize / 4.0f,
-                    Window.Height / 2.0f - DrawSize / 2.0f),
-                DrawSize));
-            ResourceManager.PushTexture(id++, drawable.Texture);
-
-            ResourceManager.PushTexture(id++, new Texture("button.png"));
-            ResourceManager.PushTexture(id++, new Texture("buttonActive.png"));
+            InfoRenderer = new InfoRenderer(renderer);
+            ResourceManager.PushTexture(texID++, new Texture("button.png"));
+            ResourceManager.PushTexture(texID++, new Texture("buttonActive.png"));
 
             AddObject(new Button(
-                    id - 1, id - 2,
-                    drawable.Position + new Vector2(60, DrawSize + 30),
-                    drawable.Reset,
+                    texID - 1, texID - 2,
+                    Drawable.Position + new Vector2(DrawSize / 2.0f - 5, DrawSize + 30),
+                    Drawable.Reset,
                     renderer, "Reset"));
 
-            AddObject(new Button(
-                id - 1, id - 2,
-                drawable.Position + new Vector2(200, DrawSize + 30),
-                () =>
-                {
-                    var volume = drawable.ToVolume(24);
-                    volume.Print(0);
-                    Network.ForwardPass(volume);
-                    Network.InputLayer.ToBitmap(0).Save("output.png");
-                },
-                renderer, "Render"));
-
-            AddObject(infoRenderer);
+            AddObject(InfoRenderer);
+            RebuildTextures();
         }
     }
 }

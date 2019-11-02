@@ -7,7 +7,7 @@ namespace ml.AI.CNN
 {
     public abstract class CNNLayer
     {
-        protected internal Volume OutVolume;
+        public Volume OutVolume;
         protected internal Volume InVolume;
 
         public int OutDepth;

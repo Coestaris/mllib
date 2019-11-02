@@ -13,9 +13,16 @@ namespace WindowHandler
             _stringRenderers = new List<StringRenderer>();
         }
 
+        public int TexturesCount => _textures.Count;
+
         public void PushRenderer(StringRenderer renderer)
         {
             _stringRenderers.Add(renderer);
+        }
+
+        public void PushTexture(Texture tex)
+        {
+            _textures.Add(_textures.Count, tex);
         }
 
         public void PushTexture(int id, Texture tex)

@@ -52,6 +52,7 @@ namespace CNNVisualization.Objects
     {
         public Texture Texture;
         public int Size;
+        public Action DrawCallback;
 
         private double[,] _data;
         private int[] PBOs;
@@ -129,7 +130,7 @@ namespace CNNVisualization.Objects
             }
 
             var numerator = longest * 2;
-            for (int i = 0; i <= longest; i++)
+            for (var i = 0; i <= longest; i++)
             {
                 Apply(new PointF((float)x, (float)y));
                 numerator += shortest;
@@ -159,6 +160,8 @@ namespace CNNVisualization.Objects
                     Interpolate(
                         _lastImagePoint.X, _lastImagePoint.Y,
                         image.X, image.Y);
+
+                    DrawCallback();
                 }
 
                 _lastImagePoint = image;
@@ -172,7 +175,7 @@ namespace CNNVisualization.Objects
             base.OnMouseHover(ms);
         }
 
-        private byte NormilizeColor(double d)
+        private static byte NormalizeColor(double d)
         {
             var b = d * 255;
             if (b > 255) return 255;
@@ -185,7 +188,7 @@ namespace CNNVisualization.Objects
             for (var i = 0; i < dataSize; i += 3)
             {
                 var index = i / 3;
-                var b = NormilizeColor(_data[index % Size, index / Size]);
+                var b = NormalizeColor(_data[index % Size, index / Size]);
                 ptr[i] = b;
                 ptr[i + 1] = b;
                 ptr[i + 2] = b;
@@ -218,7 +221,7 @@ namespace CNNVisualization.Objects
 
         public override void Draw()
         {
-            if (_frameCounter % 2 == 0)
+            //if (_frameCounter % 2 == 0)
                 UpdateTexture();
 
             DrawTexture(Texture, Position);
@@ -233,7 +236,7 @@ namespace CNNVisualization.Objects
                 _data[i, j] = 0;
         }
 
-        public Volume ToVolume(int destSize)
+        public Volume ToVolume(int destSize, double mult = 2)
         {
             var volume = new Volume(destSize, destSize, 1, 0);
 
@@ -251,8 +254,8 @@ namespace CNNVisualization.Objects
                     var sum = 0.0;
                     var xPortion = (sampleOffsetX - (int) sampleOffsetX);
                     var yPortion = (sampleOffsetY - (int) sampleOffsetY);
-                    /*sum += _data[(int) Math.Floor(sampleOffsetX), (int) Math.Floor(sampleOffsetY)]
-                           * (1 - xPortion) * (1 - yPortion);*/
+                    sum += _data[(int) Math.Floor(sampleOffsetX), (int) Math.Floor(sampleOffsetY)]
+                           * (1 - xPortion) * (1 - yPortion);
 
                     for (var dataX = (int)Math.Ceiling(sampleOffsetX); dataX < (int)Math.Floor(sampleOffsetX + intSamplePart); dataX++)
                     for (var dataY = (int)Math.Ceiling(sampleOffsetY); dataY < (int)Math.Floor(sampleOffsetY + intSamplePart); dataY++)
@@ -260,8 +263,10 @@ namespace CNNVisualization.Objects
                         sum += _data[dataX, dataY];
                     }
 
-                    /*sum += _data[(int) Math.Floor(sampleOffsetX), (int) Math.Floor(sampleOffsetY)]
-                           * xPortion * yPortion;*/
+                    var ceilX = (int) Math.Ceiling(sampleOffsetX + intSamplePart);
+                    var ceilY = (int) Math.Ceiling(sampleOffsetY + intSamplePart);
+                    if(ceilX < Size && ceilY < Size)
+                        sum += _data[ceilX, ceilY] * xPortion * yPortion;
 
                     volume.Set(x, y, 0, sum / squaredSampleSize);
 
@@ -277,9 +282,14 @@ namespace CNNVisualization.Objects
                 if (rawVolume[i] > maxValue) maxValue = rawVolume[i];
 
             if (Math.Abs(maxValue) > 1e-6)
+                maxValue = 1;
+
+            for (var i = 0; i < rawVolume.Length; i++)
             {
-                for (var i = 0; i < rawVolume.Length; i++)
-                    rawVolume[i] /= maxValue;
+                var v = rawVolume[i] / maxValue * mult;
+                if (v > 1) rawVolume[i] = 1;
+                else if (v < 0) rawVolume[i] = 0;
+                else rawVolume[i] = v;
             }
 
             return volume;

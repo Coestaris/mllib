@@ -24,6 +24,7 @@ namespace WindowHandler
 
         public readonly string CharSet;
         public readonly Font Font;
+        public readonly Brush Brush;
 
         public static string NumericCharSet = "0123456789.";
         public static string FullCharSet
@@ -46,6 +47,7 @@ namespace WindowHandler
 
             CharSet = charSet;
             Font = font;
+            Brush = brush;
 
             var charSetSize = TextRenderer.MeasureString(charSet, font);
             _renderer = new TextRenderer((int)charSetSize.Width, (int)charSetSize.Height);
