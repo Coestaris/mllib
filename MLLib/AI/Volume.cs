@@ -150,7 +150,7 @@ namespace ml.AI
             {
                 for (var x = 0; x < SX; x++)
                 {
-                    Console.Write("{0}{1}", Get(x, y, depth), x == SX - 1 ? "\n" : ", ");
+                    Console.Write("{0:F3}{1}", Get(x, y, depth), x == SX - 1 ? "\n" : ", ");
                 }
             }
         }

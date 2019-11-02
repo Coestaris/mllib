@@ -1,3 +1,4 @@
+using ml.AI.OBNN;
 using OpenTK;
 using WindowHandler;
 
@@ -7,6 +8,14 @@ namespace CNNVisualization.Objects
     {
         public Texture Texture;
         public Vector2 Scale;
+
+        public NNLayer Layer;
+        public int Depth;
+
+        public void RebuildTexture()
+        {
+
+        }
 
         public Picture(Vector2 position, Texture texture, Vector2 scale) : base(position)
         {

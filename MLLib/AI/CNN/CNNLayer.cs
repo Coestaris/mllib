@@ -51,7 +51,7 @@ namespace ml.AI.CNN
 
         public virtual Bitmap ToBitmap(int depth, Color a, Color b)
         {
-            Bitmap bmp = new Bitmap(OutSize.Width, OutSize.Height, PixelFormat.Format32bppArgb);
+            var bmp = new Bitmap(OutSize.Width, OutSize.Height, PixelFormat.Format32bppArgb);
 
             double min = double.MaxValue, max = double.MinValue;
             for (var d = 0; d < OutDepth; d++)

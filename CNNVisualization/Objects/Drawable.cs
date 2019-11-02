@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using ml.AI;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
@@ -9,11 +10,11 @@ namespace CNNVisualization.Objects
 {
     public class DrawableBrush
     {
-        public double[,] Brush;
-        public    int BrushSize;
-        public double BrushFade;
-        public double BrushXFade;
-        public double BrushExpOffset;
+        public readonly double[,] Brush;
+        public readonly    int BrushSize;
+        public readonly double BrushFade;
+        public readonly double BrushXFade;
+        public readonly double BrushExpOffset;
 
         public DrawableBrush(int brushSize, double brushFade, double brushXFade, double brushExpOffset)
         {
@@ -230,6 +231,58 @@ namespace CNNVisualization.Objects
             for (var i = 0; i < Size; i++)
             for (var j = 0; j < Size; j++)
                 _data[i, j] = 0;
+        }
+
+        public Volume ToVolume(int destSize)
+        {
+            var volume = new Volume(destSize, destSize, 1, 0);
+
+            var sampleSize = Size / (double)destSize;
+            var intSamplePart = Math.Ceiling(sampleSize);
+            var squaredSampleSize = sampleSize * sampleSize;
+
+            var sampleOffsetX = 0.0;
+
+            for (var x = 0; x < destSize; x++)
+            {
+                var sampleOffsetY = 0.0;
+                for (var y = 0; y < destSize; y++)
+                {
+                    var sum = 0.0;
+                    var xPortion = (sampleOffsetX - (int) sampleOffsetX);
+                    var yPortion = (sampleOffsetY - (int) sampleOffsetY);
+                    /*sum += _data[(int) Math.Floor(sampleOffsetX), (int) Math.Floor(sampleOffsetY)]
+                           * (1 - xPortion) * (1 - yPortion);*/
+
+                    for (var dataX = (int)Math.Ceiling(sampleOffsetX); dataX < (int)Math.Floor(sampleOffsetX + intSamplePart); dataX++)
+                    for (var dataY = (int)Math.Ceiling(sampleOffsetY); dataY < (int)Math.Floor(sampleOffsetY + intSamplePart); dataY++)
+                    {
+                        sum += _data[dataX, dataY];
+                    }
+
+                    /*sum += _data[(int) Math.Floor(sampleOffsetX), (int) Math.Floor(sampleOffsetY)]
+                           * xPortion * yPortion;*/
+
+                    volume.Set(x, y, 0, sum / squaredSampleSize);
+
+                    sampleOffsetY += sampleSize;
+                }
+                sampleOffsetX += sampleSize;
+            }
+
+            //normalizing data
+            var maxValue = double.MinValue;
+            var rawVolume = volume.WeightsRaw;
+            for(var i = 0; i < rawVolume.Length; i++)
+                if (rawVolume[i] > maxValue) maxValue = rawVolume[i];
+
+            if (Math.Abs(maxValue) > 1e-6)
+            {
+                for (var i = 0; i < rawVolume.Length; i++)
+                    rawVolume[i] /= maxValue;
+            }
+
+            return volume;
         }
     }
 }

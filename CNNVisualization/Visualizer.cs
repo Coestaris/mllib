@@ -14,7 +14,7 @@ namespace CNNVisualization
     public class Visualizer : WindowHandler.WindowHandler
     {
         public ConvolutionalNeuralNetwork Network;
-        public Picture[][] Textures;
+        public LayerThumb[][] LayerThumbs;
         public Texture GlobalTexture;
 
         public const float DefaultScale = 2.5f;
@@ -52,10 +52,10 @@ namespace CNNVisualization
             var dx = ax - ax / (float)Network.Layers.Count - DrawSize;
             var id = 0;
 
-            Textures = new Picture[Network.Layers.Count][];
+            LayerThumbs = new LayerThumb[Network.Layers.Count][];
             for (var i = 0; i < Network.Layers.Count; i++)
             {
-                Textures[i] = new Picture[Network.Layers[i].OutDepth];
+                LayerThumbs[i] = new LayerThumb[Network.Layers[i].OutDepth];
 
                 float scale;
                 if (Network.Layers[i].OutSize.Width == 1 &&
@@ -66,17 +66,15 @@ namespace CNNVisualization
                          (Network.Layers[i].OutSize.Height * scale / 2) / Network.Layers[i].OutDepth;
                 for (var j = 0; j < Network.Layers[i].OutDepth; j++)
                 {
-                    var bmp = Network.Layers[i].ToBitmap(j, Color.AntiqueWhite, Color.Black);
-                    var tex = new Texture(bmp);
-
-                    ResourceManager.PushTexture(id++, tex);
-                    Textures[i][j] = new Picture(
+                    LayerThumbs[i][j] = new LayerThumb(
                         new Vector2(
                             ax + dx * i,
-                            (float)(dy + (j - Network.Layers[i].OutDepth / 2) * (Network.Layers[i].OutSize.Height * scale / 2 * 2.5))),
-                        tex, new Vector2(scale, scale));
+                            (float) (dy + (j - Network.Layers[i].OutDepth / 2) *
+                                     (Network.Layers[i].OutSize.Height * scale / 2 * 2.5))),
+                        new Vector2(scale, scale),
+                        Network.Layers[i], j);
 
-                    AddObject(Textures[i][j]);
+                    AddObject(LayerThumbs[i][j]);
 
                 }
             }
@@ -91,7 +89,7 @@ namespace CNNVisualization
                 var drawPen = new Pen(new SolidBrush(Color.FromArgb(255, 30, 25, 30)));
                 float prevScale = 0;
 
-                for (var i = 0; i < Textures.Length; i++)
+                for (var i = 0; i < LayerThumbs.Length; i++)
                 {
                     float scale;
 
@@ -100,8 +98,8 @@ namespace CNNVisualization
                     else scale = IconSize / Network.Layers[0].OutSize.Width * DefaultScale;
 
 
-                    var tex = Textures[i];
-                    var prevTex = i != 0 ?Textures[i - 1] : null;
+                    var tex = LayerThumbs[i];
+                    var prevTex = i != 0 ? LayerThumbs[i - 1] : null;
 
                     if (prevTex != null)
                     {
@@ -165,6 +163,18 @@ namespace CNNVisualization
                     drawable.Position + new Vector2(60, DrawSize + 30),
                     drawable.Reset,
                     renderer, "Reset"));
+
+            AddObject(new Button(
+                id - 1, id - 2,
+                drawable.Position + new Vector2(200, DrawSize + 30),
+                () =>
+                {
+                    var volume = drawable.ToVolume(24);
+                    volume.Print(0);
+                    Network.ForwardPass(volume);
+                    Network.InputLayer.ToBitmap(0).Save("output.png");
+                },
+                renderer, "Render"));
 
             AddObject(infoRenderer);
         }
