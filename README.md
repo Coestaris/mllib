@@ -19,12 +19,15 @@ CNN stuff:
  * [Another awesome CNN visualization](http://scs.ryerson.ca/~aharley/vis/conv/flat.html)
  * [CNN Backprop example](https://pdfs.semanticscholar.org/5d79/11c93ddcb34cac088d99bd0cae9124e5dcd1.pdf)
  * [Lectures about CNNs](https://youtu.be/bNb2fEVKeEo)
+ * [CNN Backprop explanation](https://pdfs.semanticscholar.org/5d79/11c93ddcb34cac088d99bd0cae9124e5dcd1.pdf)
 
 Math stuff:
  * [Gaussian distribution explanation](https://habr.com/ru/post/208684/)
  * [List of activation functions](https://en.wikipedia.org/wiki/Activation_function)
  * [Article about cross-Entropy function](https://machinelearningmastery.com/loss-and-loss-functions-for-training-deep-learning-neural-networks/)
  * [Article about Matrix Norm](https://en.wikipedia.org/wiki/Matrix_norm)
+ * [Bresenham's line algorithm](https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm)
+ * [Linear interpolation](https://en.wikipedia.org/wiki/Linear_interpolation)
 
 TODO list:
  * [**DONE**] Feedforward Neural network using Objects
