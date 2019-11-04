@@ -54,15 +54,11 @@ namespace ml.AI.CNN
             var bmp = new Bitmap(OutSize.Width, OutSize.Height, PixelFormat.Format32bppArgb);
 
             double min = double.MaxValue, max = double.MinValue;
-            for (var d = 0; d < OutDepth; d++)
+            var rawVolume = OutVolume.WeightsRaw;
+            for(var i  = 0; i < rawVolume.Length; i++)
             {
-                for (var x = 0; x < OutSize.Width; x++)
-                for (var y = 0; y < OutSize.Height; y++)
-                {
-                    var v = OutVolume.Get(x, y, d);
-                    if (v > max) max = v;
-                    if (v < min) min = v;
-                }
+                if (rawVolume[i] > max) max = rawVolume[i];
+                if (rawVolume[i] < min) min = rawVolume[i];
             }
 
             for (var x = 0; x < OutSize.Width; x++)

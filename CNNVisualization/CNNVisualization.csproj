@@ -46,6 +46,7 @@
     <Compile Include="Objects\Drawable.cs" />
     <Compile Include="Objects\InfoRenderer.cs" />
     <Compile Include="Objects\LayerThumb.cs" />
+    <Compile Include="Objects\NameRenderer.cs" />
     <Compile Include="Objects\Picture.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

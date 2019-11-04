@@ -31,7 +31,7 @@ TODO list:
  * [**DONE**] Neural network visualization
  * [**DONE**] Feedforward Neural network using Matrices
  * [**DONE**] Feedforward Neural network using Regularization, Cross entropy cost function
- * Handwritten digit recognition visualization
+ * [**DONE**]Handwritten digit recognition visualization
  * [**DONE**] Convolutional neural network (CNN)
  * Recursive neural network (RNN)
  * Some genetic algorithms

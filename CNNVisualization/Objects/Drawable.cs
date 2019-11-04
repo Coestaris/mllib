@@ -60,7 +60,7 @@ namespace CNNVisualization.Objects
         private readonly int dataSize;
         private Random _random = new Random();
         private int _frameCounter;
-        private DrawableBrush _brush = DrawableBrush.DefaultBrush;
+        private DrawableBrush _brush = DrawableBrush.GlowingBrush;
 
         private PointF _lastImagePoint;
         private bool _lastPoint;
@@ -239,6 +239,7 @@ namespace CNNVisualization.Objects
         public Volume ToVolume(int destSize, double mult = 2)
         {
             var volume = new Volume(destSize, destSize, 1, 0);
+            var rawVolume = volume.WeightsRaw;
 
             var sampleSize = Size / (double)destSize;
             var intSamplePart = Math.Ceiling(sampleSize);
@@ -268,8 +269,7 @@ namespace CNNVisualization.Objects
                     if(ceilX < Size && ceilY < Size)
                         sum += _data[ceilX, ceilY] * xPortion * yPortion;
 
-                    volume.Set(x, y, 0, sum / squaredSampleSize);
-
+                    rawVolume[x + y * destSize] = sum / squaredSampleSize;
                     sampleOffsetY += sampleSize;
                 }
                 sampleOffsetX += sampleSize;
@@ -277,7 +277,6 @@ namespace CNNVisualization.Objects
 
             //normalizing data
             var maxValue = double.MinValue;
-            var rawVolume = volume.WeightsRaw;
             for(var i = 0; i < rawVolume.Length; i++)
                 if (rawVolume[i] > maxValue) maxValue = rawVolume[i];
 

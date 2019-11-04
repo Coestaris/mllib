@@ -65,6 +65,7 @@
     <Compile Include="AI\OBNN\ImprovedNeuralNetwork.cs" />
     <Compile Include="AI\OBNN\NeuralNetwork.cs" />
     <Compile Include="AI\OBNN\OBNNLayer.cs" />
+    <Compile Include="AI\RNN\RecurrentNeuralNetwork.cs" />
     <Compile Include="AI\Teacher.cs" />
     <Compile Include="AIMath\GaussianRandom.cs" />
     <Compile Include="AI\TrainSample.cs" />
@@ -73,6 +74,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="AI\GA" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -139,8 +139,8 @@ namespace ml.AIMath
         public void FillGaussianRandom(double mean, double dev, GaussianRandom random = null)
         {
             if (random == null) random = _gaussianRandom;
-            for (int r = 0; r < Rows; r++)
-                for (int c = 0; c < Columns; c++)
+            for (var r = 0; r < Rows; r++)
+                for (var c = 0; c < Columns; c++)
                 {
                     Data[r, c] = random.Next(mean, dev);
                 }
@@ -148,86 +148,116 @@ namespace ml.AIMath
 
         public void ApplyFunction(Func<double, double> func)
         {
-            for (int r = 0; r < Rows; r++)
-                for (int c = 0; c < Columns; c++)
-                    Data[r, c] = func(Data[r, c]);
+            for (var r = 0; r < Rows; r++)
+            for (var c = 0; c < Columns; c++)
+                Data[r, c] = func(Data[r, c]);
+        }
+
+        public void Add(Matrix b)
+        {
+            if(Rows != b.Rows && Columns != b.Columns)
+                throw new ArgumentException("Matrices should have same size");
+
+            for (var r = 0; r < Rows; r++)
+            for (var c = 0; c < Columns; c++)
+                Data[r, c] += b.Data[r, c];
         }
 
         public static Matrix operator+(Matrix a, Matrix b)
         {
-            if(a.Rows != b.Rows && a.Columns != b.Columns)
-                throw new ArgumentException("Matrices should have same size");
+            var matrix = new Matrix(a);
+            matrix.Add(b);
+            return matrix;
+        }
 
-            var result = new Matrix(a);
-            for (int r = 0; r < result.Rows; r++)
-                for (int c = 0; c < result.Columns; c++)
-                    result.Data[r, c] += b.Data[r, c];
-            return result;
+        public void Add(double v)
+        {
+            for (var r = 0; r < Rows; r++)
+            for (var c = 0; c < Columns; c++)
+                    Data[r, c] += v;
         }
 
         public static Matrix operator+(Matrix a, double v)
         {
-            var result = new Matrix(a);
-            for (int r = 0; r < result.Rows; r++)
-                for (int c = 0; c < result.Columns; c++)
-                    result.Data[r, c] += v;
+            var matrix = new Matrix(a);
+            matrix.Add(v);
+            return matrix;
+        }
 
-            return result;
+        public void Subtract(Matrix b)
+        {
+            if(Rows != b.Rows && Columns != b.Columns)
+                throw new ArgumentException("Matrices should have same size");
+
+            for (var r = 0; r < Rows; r++)
+            for (var c = 0; c < Columns; c++)
+                Data[r, c] -= b.Data[r, c];
         }
 
         public static Matrix operator-(Matrix a, Matrix b)
         {
-            if(a.Rows != b.Rows && a.Columns != b.Columns)
-                throw new ArgumentException("Matrices should have same size");
-
             var result = new Matrix(a);
-            for (int r = 0; r < result.Rows; r++)
-                for (int c = 0; c < result.Columns; c++)
-                    result.Data[r, c] -= b.Data[r, c];
+            result.Subtract(b);
             return result;
+        }
+
+        public void Subtract(double v)
+        {
+            for (var r = 0; r < Rows; r++)
+            for (var c = 0; c < Columns; c++)
+                Data[r, c] -= v;
         }
 
         public static Matrix operator-(Matrix a, double v)
         {
-            var result = new Matrix(a);
-            for (int r = 0; r < result.Rows; r++)
-                for (int c = 0; c < result.Columns; c++)
-                    result.Data[r, c] -= v;
+            var matrix = new Matrix(a);
+            matrix.Subtract(v);
+            return matrix;
+        }
 
-            return result;
+        public void Multiply(Matrix b)
+        {
+            if(Rows != b.Rows && Columns != b.Columns)
+                throw new ArgumentException("Matrices should have same size");
+
+            for (var r = 0; r < Rows; r++)
+            for (var c = 0; c < Columns; c++)
+                Data[r, c] *= b.Data[r, c];
         }
 
         public static Matrix operator*(Matrix a, Matrix b)
         {
-            if(a.Rows != b.Rows && a.Columns != b.Columns)
-                throw new ArgumentException("Matrices should have same size");
-
             var result = new Matrix(a);
-            for (int r = 0; r < result.Rows; r++)
-                for (int c = 0; c < result.Columns; c++)
-                    result.Data[r, c] *= b.Data[r, c];
-
+            result.Multiply(b);
             return result;
+        }
+
+        public void Multiply(double v)
+        {
+            for (var r = 0; r < Rows; r++)
+            for (var c = 0; c < Columns; c++)
+                Data[r, c] *= v;
         }
 
         public static Matrix operator*(Matrix a, double v)
         {
-            var result = new Matrix(a);
-            for (int r = 0; r < result.Rows; r++)
-                for (int c = 0; c < result.Columns; c++)
-                    result.Data[r, c] *= v;
+            var matrix = new Matrix(a);
+            matrix.Multiply(v);
+            return matrix;
+        }
 
-            return result;
+        public void Divide(double v)
+        {
+            for (var r = 0; r < Rows; r++)
+            for (var c = 0; c < Columns; c++)
+                Data[r, c] /= v;
         }
 
         public static Matrix operator/(Matrix a, double v)
         {
-            var result = new Matrix(a);
-            for (int r = 0; r < result.Rows; r++)
-               for (int c = 0; c < result.Columns; c++)
-                   result.Data[r, c] /= v;
-
-            return result;
+            var matrix = new Matrix(a);
+            matrix.Divide(v);
+            return matrix;
         }
 
         public double[] ToArray(bool rows = true)
@@ -264,15 +294,30 @@ namespace ml.AIMath
                 throw new ArgumentException("Matrices should have same size");
 
             var matrix = new Matrix(a.Rows, b.Columns);
-            for (int i = 0; i < matrix.Rows; i++)
+            for (var i = 0; i < matrix.Rows; i++)
+            for (var j = 0; j < matrix.Columns; j++)
             {
-                for (int j = 0; j < matrix.Columns; j++)
-                {
-                    for (int k = 0; k < a.Columns; k++)
-                        matrix.Data[i, j] = matrix.Data[i, j] + a.Data[i, k] * b.Data[k, j];
-                }
+                for (var k = 0; k < a.Columns; k++)
+                    matrix.Data[i, j] = matrix.Data[i, j] + a.Data[i, k] * b.Data[k, j];
             }
+
             return matrix;
+        }
+
+        public void Dot(Matrix b, Matrix destMatrix)
+        {
+            var a = this;
+            if(a.Columns != b.Rows ||
+               a.Rows != destMatrix.Rows ||
+               b.Columns != destMatrix.Columns)
+                throw new ArgumentException("Matrices should have same size");
+
+            for (var i = 0; i < destMatrix.Rows; i++)
+            for (var j = 0; j < destMatrix.Columns; j++)
+            {
+                for (var k = 0; k < a.Columns; k++)
+                    destMatrix.Data[i, j] = destMatrix.Data[i, j] + a.Data[i, k] * b.Data[k, j];
+            }
         }
     }
 }

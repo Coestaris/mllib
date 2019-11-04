@@ -7,6 +7,20 @@ using WindowHandler;
 
 namespace CNNVisualization.Objects
 {
+    internal struct MinMax
+    {
+        public MinMax(double min, double max)
+        {
+            Min = min;
+            Max = max;
+            Delta = max - min;
+        }
+
+        public double Delta;
+        public double Min;
+        public double Max;
+    }
+
     public class LayerThumb : DrawableObject
     {
         public Texture Texture;
@@ -27,20 +41,25 @@ namespace CNNVisualization.Objects
             return (byte) b;
         }
 
-        private unsafe void UpdatePixels(byte* ptr)
+        private unsafe void UpdatePixels(byte* ptr, MinMax layerPeak)
         {
             var rawVolume = Layer.OutVolume.WeightsRaw;
             for (var i = 0; i < _dataSize; i += 3)
             {
                 var index = i / 3;
-                var b = NormalizeColor(rawVolume[index * Layer.OutDepth + Depth]);
+                var v = rawVolume[index * Layer.OutDepth + Depth];
+
+                if (Math.Abs(layerPeak.Delta) <= 1) v -= layerPeak.Min;
+                else v = (v - layerPeak.Min) / layerPeak.Delta;
+
+                var b = NormalizeColor(v);
                 ptr[i] = b;
                 ptr[i + 1] = b;
                 ptr[i + 2] = b;
             }
         }
 
-        public unsafe void RebuildTexture()
+        internal unsafe void RebuildTexture(MinMax layerPeak)
         {
             var pbo1 = PBOs[(_index) % PBOs.Length];
             var pbo2 = PBOs[(_index + 1) % PBOs.Length];
@@ -52,7 +71,7 @@ namespace CNNVisualization.Objects
             var ptr = (byte*) GL.MapBuffer(BufferTarget.PixelUnpackBuffer, BufferAccess.WriteOnly);
             if (ptr != null)
             {
-                UpdatePixels(ptr);
+                UpdatePixels(ptr, layerPeak);
                 GL.UnmapBuffer(BufferTarget.PixelUnpackBuffer);
             }
 

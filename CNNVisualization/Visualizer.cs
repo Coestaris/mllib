@@ -20,7 +20,6 @@ namespace CNNVisualization
 
         public const float DefaultScale = 2.5f;
         public const float IconSize = 24f;
-
         public const int DrawSize = 400;
 
         public Visualizer(Window window, ConvolutionalNeuralNetwork network) : base(window)
@@ -30,9 +29,20 @@ namespace CNNVisualization
 
         private void RebuildTextures()
         {
-            foreach (var array in LayerThumbs)
-            foreach (var layerThumb in array)
-                layerThumb.RebuildTexture();
+            for (var i = 0; i <  Network.Layers.Count; i++)
+            {
+                var rawVolume = Network.Layers[i].OutVolume.WeightsRaw;
+                var min = double.MaxValue;
+                var max = double.MinValue;
+                for (var j = 0; j < rawVolume.Length; j++)
+                {
+                    if (rawVolume[j] > max) max = rawVolume[j];
+                    if (rawVolume[j] < min) min = rawVolume[j];
+                }
+
+                foreach (var layerThumb in LayerThumbs[i])
+                    layerThumb.RebuildTexture(new MinMax(min, max));
+            }
         }
 
         private void UpdateInfoRenderer(Volume output)
@@ -185,6 +195,9 @@ namespace CNNVisualization
                     Drawable.Position + new Vector2(DrawSize / 2.0f - 5, DrawSize + 30),
                     Drawable.Reset,
                     renderer, "Reset"));
+
+            AddObject(new NameRenderer(Vector2.Zero, renderer, Network, LayerThumbs, DrawSize,
+                new Size(Window.Width, Window.Height)));
 
             AddObject(InfoRenderer);
             RebuildTextures();
