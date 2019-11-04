@@ -24,7 +24,9 @@ namespace ml.AI.RNN
         public char[] Data;
         public char[] Vocab;
 
-        private 
+        private Dictionary<int, char> IndexToChar;
+        private Dictionary<char, int> CharToIndex;
+
 
         public RecurrentNeuralNetwork(string input, int hiddenCount, int outputCount, double lr)
         {
@@ -41,9 +43,17 @@ namespace ml.AI.RNN
 
             hBias = new Matrix(HiddenCount, 1).Fill(0);
             yBias = new Matrix(Vocab.Length, 1).Fill(0);
+
+            IndexToChar = new Dictionary<int, char>();
+            CharToIndex = new Dictionary<char, int>();
+            for (var i = 0; i < Vocab.Length; i++)
+            {
+                IndexToChar.Add(i, Vocab[i]);
+                CharToIndex.Add(Vocab[i], i);
+            }
         }
 
-        public Matrix[] Pass(int[] inputIndexes, int[] targetIndexes, Matrix hiddenState)
+        private Matrix[] Pass(int[] inputIndexes, int[] targetIndexes, Matrix hiddenState, out double loss)
         {
             //Forward Pass
             var xs = new Matrix[inputIndexes.Length];
@@ -51,7 +61,7 @@ namespace ml.AI.RNN
             var ys = new Matrix[inputIndexes.Length];
             var ps = new Matrix[inputIndexes.Length];
             hs[0] = new Matrix(hiddenState);
-            var loss = 0.0;
+            loss = 0.0;
 
             //calculating hidden states
             for (var t = 0; t < inputIndexes.Length; t++)
@@ -120,8 +130,10 @@ namespace ml.AI.RNN
             };
         }
 
-        public void Train()
+        public void Train(int callbackActivation, Action<int, double> callback)
         {
+
+
             var mhBias = new Matrix(hBias.Rows, hBias.Columns);
             var myBias = new Matrix(yBias.Rows, yBias.Columns);
             var mxhW = new Matrix(xhW.Rows, xhW.Columns);
@@ -129,6 +141,7 @@ namespace ml.AI.RNN
             var mhyW = new Matrix(hyW.Rows, hyW.Columns);
             var p = 0;
             var n = 0;
+            var loss = 0.0;
 
             Matrix hprev = null;
 
@@ -140,7 +153,25 @@ namespace ml.AI.RNN
                     p = 0;
                 }
 
+                var inputs = Data
+                    .Skip(p)
+                    .Take(OutputCount)
+                    .Select(ch => CharToIndex[ch])
+                    .ToArray();
 
+                var targets = Data
+                    .Skip(p + 1)
+                    .Take(OutputCount)
+                    .Select(ch => CharToIndex[ch])
+                    .ToArray();
+
+                if (n % callbackActivation == 0)
+                    callback(n, loss);
+
+
+
+                n++;
+                p++;
             }
         }
     }
