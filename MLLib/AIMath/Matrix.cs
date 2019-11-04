@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Threading;
 
 namespace ml.AIMath
 {
@@ -13,6 +14,12 @@ namespace ml.AIMath
 
         private static Random _random = new Random();
         private static GaussianRandom _gaussianRandom = new GaussianRandom(_random);
+
+        public double this[int r, int c]
+        {
+            get { return Data[r, c]; }
+            set { Data[r, c] = value; }
+        }
 
         public Matrix(double[] array, int rows, int columns, bool flip = false)
         {
@@ -84,31 +91,35 @@ namespace ml.AIMath
             Console.WriteLine("]");
         }
 
-        public void Fill(Func<int, int, double> fillFunc)
+        public Matrix Fill(Func<int, int, double> fillFunc)
         {
             for (int r = 0; r < Rows; r++)
                 for (int c = 0; c < Columns; c++)
                     Data[r, c] = fillFunc(r, c);
+
+            return this;
         }
 
-        public void Fill(double x)
+        public Matrix Fill(double x)
         {
-            for (int r = 0; r < Rows; r++)
-                for (int c = 0; c < Columns; c++)
+            for (var r = 0; r < Rows; r++)
+            for (var c = 0; c < Columns; c++)
                     Data[r, c] = x;
+
+            return this;
         }
 
-        public void FillRandom(Random random = null)
+        public Matrix FillRandom(Random random = null)
         {
             if (random == null) random = _random;
-            for (int r = 0; r < Rows; r++)
-                for (int c = 0; c < Columns; c++)
-                {
-                    Data[r, c] = random.NextDouble();
-                }
+            for (var r = 0; r < Rows; r++)
+            for (var c = 0; c < Columns; c++)
+                Data[r, c] = random.NextDouble();
+
+            return this;
         }
 
-        public void FillRandom(double min, double max, Random random = null)
+        public Matrix FillRandom(double min, double max, Random random = null)
         {
             if (min < max)
             {
@@ -118,42 +129,44 @@ namespace ml.AIMath
             }
 
             if (random == null) random = _random;
-            for (int r = 0; r < Rows; r++)
-                for (int c = 0; c < Columns; c++)
-                {
-                    Data[r, c] = Math.Abs(random.NextDouble()) * (max - min) + min;
-                }
+            for (var r = 0; r < Rows; r++)
+            for (var c = 0; c < Columns; c++)
+                Data[r, c] = Math.Abs(random.NextDouble()) * (max - min) + min;
+
+            return this;
         }
 
 
-        public void FillGaussianRandom(GaussianRandom random = null)
-        {
-            if (random == null) random = _gaussianRandom;
-            for (int r = 0; r < Rows; r++)
-                for (int c = 0; c < Columns; c++)
-                {
-                    Data[r, c] = random.Next();
-                }
-        }
-
-        public void FillGaussianRandom(double mean, double dev, GaussianRandom random = null)
+        public Matrix FillGaussianRandom(GaussianRandom random = null)
         {
             if (random == null) random = _gaussianRandom;
             for (var r = 0; r < Rows; r++)
-                for (var c = 0; c < Columns; c++)
-                {
-                    Data[r, c] = random.Next(mean, dev);
-                }
+            for (var c = 0; c < Columns; c++)
+                Data[r, c] = random.Next();
+
+            return this;
         }
 
-        public void ApplyFunction(Func<double, double> func)
+        public Matrix FillGaussianRandom(double mean, double dev, GaussianRandom random = null)
+        {
+            if (random == null) random = _gaussianRandom;
+            for (var r = 0; r < Rows; r++)
+            for (var c = 0; c < Columns; c++)
+                Data[r, c] = random.Next(mean, dev);
+
+            return this;
+        }
+
+        public Matrix ApplyFunction(Func<double, double> func)
         {
             for (var r = 0; r < Rows; r++)
             for (var c = 0; c < Columns; c++)
                 Data[r, c] = func(Data[r, c]);
+
+            return this;
         }
 
-        public void Add(Matrix b)
+        public Matrix Add(Matrix b)
         {
             if(Rows != b.Rows && Columns != b.Columns)
                 throw new ArgumentException("Matrices should have same size");
@@ -161,30 +174,32 @@ namespace ml.AIMath
             for (var r = 0; r < Rows; r++)
             for (var c = 0; c < Columns; c++)
                 Data[r, c] += b.Data[r, c];
+
+            return this;
         }
 
         public static Matrix operator+(Matrix a, Matrix b)
         {
             var matrix = new Matrix(a);
-            matrix.Add(b);
-            return matrix;
+            return matrix.Add(b);
         }
 
-        public void Add(double v)
+        public Matrix Add(double v)
         {
             for (var r = 0; r < Rows; r++)
             for (var c = 0; c < Columns; c++)
                     Data[r, c] += v;
+
+            return this;
         }
 
         public static Matrix operator+(Matrix a, double v)
         {
             var matrix = new Matrix(a);
-            matrix.Add(v);
-            return matrix;
+            return matrix.Add(v);
         }
 
-        public void Subtract(Matrix b)
+        public Matrix Subtract(Matrix b)
         {
             if(Rows != b.Rows && Columns != b.Columns)
                 throw new ArgumentException("Matrices should have same size");
@@ -192,30 +207,32 @@ namespace ml.AIMath
             for (var r = 0; r < Rows; r++)
             for (var c = 0; c < Columns; c++)
                 Data[r, c] -= b.Data[r, c];
+
+            return this;
         }
 
         public static Matrix operator-(Matrix a, Matrix b)
         {
             var result = new Matrix(a);
-            result.Subtract(b);
-            return result;
+            return result.Subtract(b);
         }
 
-        public void Subtract(double v)
+        public Matrix Subtract(double v)
         {
             for (var r = 0; r < Rows; r++)
             for (var c = 0; c < Columns; c++)
                 Data[r, c] -= v;
+
+            return this;
         }
 
         public static Matrix operator-(Matrix a, double v)
         {
             var matrix = new Matrix(a);
-            matrix.Subtract(v);
-            return matrix;
+            return matrix.Subtract(v);
         }
 
-        public void Multiply(Matrix b)
+        public Matrix Multiply(Matrix b)
         {
             if(Rows != b.Rows && Columns != b.Columns)
                 throw new ArgumentException("Matrices should have same size");
@@ -223,41 +240,44 @@ namespace ml.AIMath
             for (var r = 0; r < Rows; r++)
             for (var c = 0; c < Columns; c++)
                 Data[r, c] *= b.Data[r, c];
+
+            return this;
         }
 
         public static Matrix operator*(Matrix a, Matrix b)
         {
             var result = new Matrix(a);
-            result.Multiply(b);
-            return result;
+            return result.Multiply(b);
         }
 
-        public void Multiply(double v)
+        public Matrix Multiply(double v)
         {
             for (var r = 0; r < Rows; r++)
             for (var c = 0; c < Columns; c++)
                 Data[r, c] *= v;
+
+            return this;
         }
 
         public static Matrix operator*(Matrix a, double v)
         {
             var matrix = new Matrix(a);
-            matrix.Multiply(v);
-            return matrix;
+            return matrix.Multiply(v);
         }
 
-        public void Divide(double v)
+        public Matrix Divide(double v)
         {
             for (var r = 0; r < Rows; r++)
             for (var c = 0; c < Columns; c++)
                 Data[r, c] /= v;
+
+            return this;
         }
 
         public static Matrix operator/(Matrix a, double v)
         {
             var matrix = new Matrix(a);
-            matrix.Divide(v);
-            return matrix;
+            return matrix.Divide(v);
         }
 
         public double[] ToArray(bool rows = true)
@@ -271,6 +291,22 @@ namespace ml.AIMath
                     result[i] = Data[0, i];
 
             return result;
+        }
+
+        public Matrix Transpose(Matrix destMatrix)
+        {
+            var w = Rows;
+            var h = Columns;
+
+            if(destMatrix.Rows != Columns ||
+               destMatrix.Columns != Rows)
+                throw new ArgumentException("Matrices should have same size");
+
+            for (var i = 0; i < w; i++)
+            for (var j = 0; j < h; j++)
+                destMatrix.Data[j, i] = Data[i, j];
+
+            return destMatrix;
         }
 
         public Matrix Transpose()
@@ -304,7 +340,7 @@ namespace ml.AIMath
             return matrix;
         }
 
-        public void Dot(Matrix b, Matrix destMatrix)
+        public Matrix Dot(Matrix b, Matrix destMatrix)
         {
             var a = this;
             if(a.Columns != b.Rows ||
@@ -318,6 +354,36 @@ namespace ml.AIMath
                 for (var k = 0; k < a.Columns; k++)
                     destMatrix.Data[i, j] = destMatrix.Data[i, j] + a.Data[i, k] * b.Data[k, j];
             }
+
+            return destMatrix;
+        }
+
+        public double Sum()
+        {
+            double s = 0;
+
+            for (var i = 0; i < Rows; i++)
+            for (var j = 0; j < Columns; j++)
+                s += Data[i, j];
+
+            return s;
+        }
+
+        public Matrix Clip(double min, double max)
+        {
+            if (min > max)
+            {
+                var a = min;
+                min = max;
+                max = a;
+            }
+
+            for (var i = 0; i < Rows; i++)
+            for (var j = 0; j < Columns; j++)
+                if (Data[i, j] > max) Data[i, j] = max;
+                else if (Data[i, j] < min) Data[i, j] = min;
+
+            return this;
         }
     }
 }
