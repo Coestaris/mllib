@@ -280,6 +280,25 @@ namespace ml.AIMath
             return matrix.Divide(v);
         }
 
+        public Matrix Divide(Matrix b)
+        {
+            if(Rows != b.Rows && Columns != b.Columns)
+                throw new ArgumentException("Matrices should have same size");
+
+            for (var r = 0; r < Rows; r++)
+            for (var c = 0; c < Columns; c++)
+                Data[r, c] /= b.Data[r, c];
+
+            return this;
+        }
+
+        public static Matrix operator/(Matrix a, Matrix b)
+        {
+            var matrix = new Matrix(a);
+            return matrix.Divide(b);
+        }
+
+
         public double[] ToArray(bool rows = true)
         {
             var result = new double[rows ? Rows : Columns];

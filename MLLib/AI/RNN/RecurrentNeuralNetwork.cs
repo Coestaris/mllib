@@ -26,7 +26,7 @@ namespace ml.AI.RNN
 
         private Dictionary<int, char> IndexToChar;
         private Dictionary<char, int> CharToIndex;
-
+        private Matrix hprev;
 
         public RecurrentNeuralNetwork(string input, int hiddenCount, int outputCount, double lr)
         {
@@ -130,9 +130,68 @@ namespace ml.AI.RNN
             };
         }
 
-        public void Train(int callbackActivation, Action<int, double> callback)
+        public double GetNextCharProbability(char ch, out char outCh)
         {
+            var x = new Matrix(Vocab.Length, 1);
+            x[CharToIndex[ch], 0] = 1;
+            var h = hprev;
 
+            h = xhW.Dot(x).Add(hhW.Dot(h)).Add(hBias).ApplyFunction(ActivationFunctions.TanH);
+            var y = hyW.Dot(h).Add(yBias);
+
+            //normalized output
+            var exp = new Matrix(y).ApplyFunction(Math.Exp);
+            var p = exp.Divide(exp.Sum()).ToArray();
+
+            var maxP = double.MinValue;
+            var maxPIndex = -1;
+            for(var j = 0; j < p.Length; j++)
+                if (p[j] > maxP)
+                {
+                    maxP = p[j];
+                    maxPIndex = j;
+                }
+
+            outCh = IndexToChar[maxPIndex];
+            return p[maxPIndex];
+        }
+
+        public string Sample(char start, int count)
+        {
+            var result = start.ToString();
+            var x = new Matrix(Vocab.Length, 1);
+            x[CharToIndex[start], 0] = 1;
+            Matrix h = hprev;
+
+            for (int i = 0; i < count; i++)
+            {
+                h = xhW.Dot(x).Add(hhW.Dot(h)).Add(hBias).ApplyFunction(ActivationFunctions.TanH);
+                var y = hyW.Dot(h).Add(yBias);
+
+                //normalized output
+                var exp = new Matrix(y).ApplyFunction(Math.Exp);
+                var p = exp.Divide(exp.Sum()).ToArray();
+
+                var maxP = double.MinValue;
+                var maxPIndex = -1;
+                for(var j = 0; j < p.Length; j++)
+                    if (p[j] > maxP)
+                    {
+                        maxP = p[j];
+                        maxPIndex = j;
+                    }
+
+                result += IndexToChar[maxPIndex];
+                x.Fill(0)[maxPIndex, 0] = 1;
+            }
+
+            return result;
+        }
+
+        public void Train(int epoch, int callbackActivation, Func<int, double, bool> callback)
+        {
+            const double softingLoss = 0.9;
+            const double learningSmophing = 1e-8;
 
             var mhBias = new Matrix(hBias.Rows, hBias.Columns);
             var myBias = new Matrix(yBias.Rows, yBias.Columns);
@@ -141,11 +200,13 @@ namespace ml.AI.RNN
             var mhyW = new Matrix(hyW.Rows, hyW.Columns);
             var p = 0;
             var n = 0;
-            var loss = 0.0;
+            var softLoss = 0.0;
 
-            Matrix hprev = null;
+            hprev = null;
+            var parameters = new[] { hBias, yBias, xhW, hhW, hyW, };
+            var mparameters = new[] {mhBias, myBias, mxhW, mhhW, mhyW};
 
-            while (true)
+            while (n < epoch)
             {
                 if (p + OutputCount + 1 >= Data.Length || n == 0)
                 {
@@ -166,9 +227,19 @@ namespace ml.AI.RNN
                     .ToArray();
 
                 if (n % callbackActivation == 0)
-                    callback(n, loss);
+                    if(callback(n, softLoss)) return;
 
 
+                var loss = 0.0;
+                var derivatives = Pass(inputs, targets, hprev, out loss);
+                softLoss = softingLoss * softLoss + (1 - softingLoss) * loss;
+
+                for (int i = 0; i < parameters.Length; i++)
+                {
+                    mparameters[i].Add(derivatives[i] * derivatives[i]);
+                    parameters[i] .Add(
+                        (derivatives[i] / new Matrix(mparameters[i]).Add(learningSmophing).ApplyFunction(Math.Sqrt)).Multiply(-LR));
+                }
 
                 n++;
                 p++;
