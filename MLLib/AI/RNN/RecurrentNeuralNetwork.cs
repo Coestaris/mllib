@@ -130,7 +130,7 @@ namespace ml.AI.RNN
             };
         }
 
-        public double GetNextCharProbability(char ch, out char outCh)
+        public double[] GetNextCharProbability(char ch, out char[] outCh)
         {
             var x = new Matrix(Vocab.Length, 1);
             x[CharToIndex[ch], 0] = 1;
@@ -143,17 +143,11 @@ namespace ml.AI.RNN
             var exp = new Matrix(y).ApplyFunction(Math.Exp);
             var p = exp.Divide(exp.Sum()).ToArray();
 
-            var maxP = double.MinValue;
-            var maxPIndex = -1;
-            for(var j = 0; j < p.Length; j++)
-                if (p[j] > maxP)
-                {
-                    maxP = p[j];
-                    maxPIndex = j;
-                }
+            var index = 0;
+            var ordered = p.Select(prob => new {i = index++, v = prob}).OrderByDescending(prob => prob.v).ToArray();
 
-            outCh = IndexToChar[maxPIndex];
-            return p[maxPIndex];
+            outCh = ordered.Select(v => IndexToChar[v.i]).ToArray();
+            return ordered.Select(v => v.v).ToArray();
         }
 
         public string Sample(char start, int count)
