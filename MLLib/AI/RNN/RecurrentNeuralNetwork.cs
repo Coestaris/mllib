@@ -220,7 +220,7 @@ namespace ml.AI.RNN
                     .Select(ch => CharToIndex[ch])
                     .ToArray();
 
-                if (n % callbackActivation == 0)
+                if (n % callbackActivation == 0 && n != 0)
                     if(callback(n, softLoss)) return;
 
 

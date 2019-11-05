@@ -9,45 +9,7 @@ namespace Tests
     {
         public static void Main(string[] args)
         {
-            var input = File.ReadAllText("input.txt");
-            var rnn = new RecurrentNeuralNetwork(input, 100, 12, 0.1);
-            rnn.Train(1000, 100, (i, loss) =>
-            {
-                Console.Write(rnn.Sample(input[0], 50));
-                Console.WriteLine("=== Iteration {0}. Loss: {1}", i, loss);
-                return false;
-            });
 
-            Console.WriteLine("====");
-            Console.WriteLine("====");
-            Console.WriteLine("====");
-
-            while (true)
-            {
-                Console.Write("Input some character: ");
-                var c = Console.ReadLine();
-                var ch = c[0];
-
-                if (!rnn.Vocab.Contains(ch))
-                {
-                    Console.WriteLine("Vocab doesnt contain character {0}. Vocab: [{1}]",
-                        ch, string.Join(",", rnn.Vocab.Select(p => $"'{p}'")));
-
-                    continue;
-                }
-
-                char[] outCh;
-                var probability = rnn.GetNextCharProbability(ch, out outCh);h
-                for (var i = 0; i < 3; i++)
-                {
-                    var displayChar = "";
-                    if (outCh[i] == '\n') displayChar = "\\n";
-                    else if (outCh[i] == '\t') displayChar = "\\n";
-                    else displayChar = outCh[i].ToString();
-
-                    Console.Write("({0:F3}:{1}){2}", probability[i], displayChar, i != 2 ? ", " : "\n");
-                }
-            }
         }
     }
 }
