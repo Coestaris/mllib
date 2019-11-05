@@ -36,6 +36,7 @@ TODO list:
  * [**DONE**] Feedforward Neural network using Regularization, Cross entropy cost function
  * [**DONE**] Handwritten digit recognition visualization
  * [**DONE**] Convolutional neural network (CNN)
- * Recursive neural network (RNN)
+ * [**Done**] Single layer recurrent neural network (RNN)
+ * Recurrent Neural network using Torch
  * Some genetic algorithms
  ....
