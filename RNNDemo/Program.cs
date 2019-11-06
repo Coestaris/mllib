@@ -37,6 +37,8 @@ namespace RNNDemo
 
         public static void Main(string[] args)
         {
+            Random = new Random();
+
             var input = File.ReadAllText("input.txt");
             var rnn = new RecurrentNeuralNetwork(input, HiddenCount, TrainOutputLen, LearningRate);
             Console.WriteLine("Input has {0} char in total and {1} distinct chars",
