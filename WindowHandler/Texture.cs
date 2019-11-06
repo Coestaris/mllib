@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using OpenTK.Graphics.OpenGL;
 
 namespace WindowHandler
@@ -16,7 +17,24 @@ namespace WindowHandler
 
         public Texture(Bitmap bitmap)
         {
+            InitGLTexture(bitmap);
+        }
+
+        public Texture(string fileName)
+        {
+            FileName = fileName;
+            if(!File.Exists(fileName))
+                throw new FileNotFoundException(fileName);
+
+            InitGLTexture(new Bitmap(fileName));
+        }
+
+        private void InitGLTexture(Bitmap bitmap)
+        {
             int tex;
+            GL.Enable(EnableCap.Texture2D);
+            GL.Enable(EnableCap.Blend);
+
             GL.GenTextures(1, out tex);
             GL.BindTexture(TextureTarget.Texture2D, tex);
 
@@ -34,11 +52,6 @@ namespace WindowHandler
 
             ID = tex;
             Size = bitmap.Size;
-        }
-
-        public Texture(string fileName) : this(new Bitmap(fileName))
-        {
-            FileName = fileName;
         }
 
         public void Dispose()

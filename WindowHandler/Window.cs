@@ -16,12 +16,14 @@ namespace WindowHandler
         public Action UpdateFunc;
         public Action CloseFunc;
 
+        public Dictionary<Key, Action> KeyBinds;
         public static ResourceManager ResourceManager;
 
         public Window(int width, int height, string title) : base(width, height,
             new GraphicsMode(32, 24, 0, 8), title)
         {
             Objects = new List<DrawableObject>();
+            KeyBinds = new Dictionary<Key, Action>();
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
