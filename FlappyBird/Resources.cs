@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using ImageMagick;
+using ImageProcessor;
 using WindowHandler;
 
 namespace FlappyBird
@@ -21,8 +21,11 @@ namespace FlappyBird
 
         private Bitmap LoadBitmap(string filename)
         {
-            using (var image = new MagickImage(filename))
-                return image.ToBitmap();
+            var bmp = new Bitmap(filename);
+            using (var gr = Graphics.FromImage(bmp))
+            {
+            }
+            return bmp;
         }
 
         public Resources()
