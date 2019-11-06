@@ -59,9 +59,8 @@ if __name__ == "__main__":
     print("Archive type: \"{}\"".format(archive))
 
     if os.path.isfile(out):
-        #answer = input("Output file \"{}\" already exists. Replace it? [Y/n]: ".format(out))
-        answer = "yes"
-        if answer.lower() == "n":
+        answer = input("Output file \"{}\" already exists. Replace it? [Y/n]: ".format(out))
+        if answer.lower() != "y":
             exit(0)
     
     files = glob(filter)
@@ -73,16 +72,26 @@ if __name__ == "__main__":
         for imName in files:
             im = Image.open(imName)
             width, height = im.size
-            print(width, height)
 
             file.write(bytes(int16tobytes(width)))
             file.write(bytes(int16tobytes(height)))
-            file.write(bytes(int16tobytes(len(imName))))
-            file.write(bytes(imName, encoding="utf-8"))
-            im.convert("RGBA")
 
-            for x in range(0, width):
-                for y in range(0, height):
+            nameBytes = bytes(imName, encoding="utf-8")
+            file.write(bytes(int16tobytes(len(nameBytes))))
+            file.write(nameBytes)
+
+            im = im.convert("RGBA")
+            pixels = []
+            for y in range(0, height):
+                for x in range(0, width):
                     color = im.getpixel((x, y))
-                    print(color)
-        pass
+                    pixels += int8tobytes(color[0])
+                    pixels += int8tobytes(color[1])
+                    pixels += int8tobytes(color[2])
+                    pixels += int8tobytes(color[3])
+            
+            print("Image[{}x{}. Pixels: {}]".format(width, height, len(pixels)))
+            file.write(bytes(int32tobytes(len(pixels))))
+            file.write(bytes(pixels))
+    
+    pass
