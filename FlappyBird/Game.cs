@@ -1,5 +1,6 @@
 using FlappyBird.Objects;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Input;
 using WindowHandler;
 
 namespace FlappyBird
@@ -18,6 +19,7 @@ namespace FlappyBird
         protected override void OnStart()
         {
             AddObject(Player = new Player(Resources.Birds[0]));
+            Window.KeyBinds.Add(Key.Space, Player.Flap);
             base.OnStart();
         }
     }

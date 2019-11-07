@@ -113,26 +113,35 @@ namespace WindowHandler
             DrawTexture(texture.ID, vector, texture.Size);
         }
 
-        protected void DrawTexture(Texture texture, Vector2 vector, Vector2 scale)
+        protected void DrawTexture(Texture texture, Vector2 vector, Vector2 scale, double rotation)
         {
+            GL.PushMatrix(); //Save the current matrix.
+            GL.Translate(vector.X, vector.Y, 0);
+            GL.Rotate(rotation, 0, 0, 1);
+
             GL.Disable(EnableCap.Blend);
             GL.Color3(Color.White);
             GL.BindTexture(TextureTarget.Texture2D, texture.ID);
+
             GL.Begin(BeginMode.Quads);
 
             GL.TexCoord2(0, 0);
-            GL.Vertex2(vector);
+            GL.Vertex2(-texture.Size.Width / 2, -texture.Size.Height / 2);
 
             GL.TexCoord2(1, 0);
-            GL.Vertex2(vector.X + texture.Size.Width * scale.X, vector.Y);
+            GL.Vertex2(texture.Size.Width / 2, -texture.Size.Height / 2);
 
             GL.TexCoord2(1, 1);
-            GL.Vertex2(vector.X + texture.Size.Width * scale.X, vector.Y + texture.Size.Height * scale.Y);
+            GL.Vertex2(texture.Size.Width / 2, texture.Size.Height / 2);
 
             GL.TexCoord2(0, 1);
-            GL.Vertex2(vector.X, vector.Y + texture.Size.Height * scale.Y);
+            GL.Vertex2(-texture.Size.Width / 2, texture.Size.Height / 2);
+
 
             GL.End();
+
+            GL.PopMatrix();
+
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.Enable(EnableCap.Blend);
         }

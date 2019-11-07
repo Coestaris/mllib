@@ -34,6 +34,10 @@ namespace WindowHandler
                 Exit();
             }
 
+            foreach (var keyBind in KeyBinds)
+                if (input.IsKeyDown(keyBind.Key))
+                    keyBind.Value();
+
             for(var i = 0; i < Objects.Count; i++)
                 Objects[i].Update();
 

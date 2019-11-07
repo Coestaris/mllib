@@ -17,7 +17,7 @@ from zlib import compress
 # n bytes: data
 # 4 bytes(if compression turned on): original data length
 #
-# All images stored in 8.8.8.8 RGBa format
+# All images stored in 8.8.8.8 aRGB format
 
 def int8tobytes(value):
     return [value & 0xFF]
@@ -89,10 +89,10 @@ if __name__ == "__main__":
             for y in range(0, height):
                 for x in range(0, width):
                     color = im.getpixel((x, y))
+                    pixels += int8tobytes(color[3]) #Argb
                     pixels += int8tobytes(color[0])
                     pixels += int8tobytes(color[1])
                     pixels += int8tobytes(color[2])
-                    pixels += int8tobytes(color[3])
             
             print("Image[{}x{}. Pixels: {}]".format(width, height, len(pixels)))
             

@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Runtime.InteropServices;
 using WindowHandler;
 
 namespace FlappyBird
@@ -27,35 +28,20 @@ namespace FlappyBird
             public int Height;
             public byte[] Data;
 
-            public unsafe Bitmap ToBitmap()
+            public Bitmap ToBitmap()
             {
-                var bmp = new Bitmap(Width, Height);
+                var bmp = new Bitmap(Width, Height, PixelFormat.Format32bppArgb);
                 if(Data.Length != Width * Height * 4)
                     throw new ArgumentException();
-/*
-
-                var data = bmp.LockBits(new Rectangle(0, 0, Width, Height),
-                    ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-
-                var ptr = (byte*)data.Scan0.ToPointer();
-
-                fixed(byte* src = Data)
-                    Buffer.MemoryCopy(
-                        src,
-                        ptr,
-                        Data.Length,
-                        Width * Height * 4);
-
-                bmp.UnlockBits(data);*/
 
                 for (var y = 0; y < Height; y++)
                 for (var x = 0; x < Width; x++)
                 {
                     var color = Color.FromArgb(
-                        Data[(y * Width + x) * 4 + 3],
                         Data[(y * Width + x) * 4],
                         Data[(y * Width + x) * 4 + 1],
-                        Data[(y * Width + x) * 4 + 2]);
+                        Data[(y * Width + x) * 4 + 2],
+                        Data[(y * Width + x) * 4 + 3]);
 
                     bmp.SetPixel(x, y, color);
                 }
@@ -87,7 +73,7 @@ namespace FlappyBird
 
         private static byte[] Decompress(byte[] data, int resultLength)
         {
-            using ( var outStream = new MemoryStream())
+            using (var outStream = new MemoryStream())
             {
                 var inStream  = new MemoryStream(data);
                 var deflateStream = new DeflateStream(inStream, CompressionMode.Decompress);
