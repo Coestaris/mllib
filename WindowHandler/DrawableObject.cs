@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using System.Globalization;
 using OpenTK;
@@ -84,9 +85,9 @@ namespace WindowHandler
             DrawTexture(texture, Position - offsetPoint);
         }
 
-        protected void DrawTexture(int texture, Vector2 vector, Size size)
+        protected static void DrawTexture(int texture, Vector2 vector, Size size)
         {
-            GL.Disable(EnableCap.Blend);
+            //GL.Disable(EnableCap.Blend);
             GL.Color3(Color.White);
             GL.BindTexture(TextureTarget.Texture2D, texture);
             GL.Begin(BeginMode.Quads);
@@ -105,21 +106,27 @@ namespace WindowHandler
 
             GL.End();
             GL.BindTexture(TextureTarget.Texture2D, 0);
-            GL.Enable(EnableCap.Blend);
+            //GL.Enable(EnableCap.Blend);
         }
 
-        protected void DrawTexture(Texture texture, Vector2 vector)
+        protected static void DrawTexture(Texture texture, Vector2 vector)
         {
             DrawTexture(texture.ID, vector, texture.Size);
         }
 
-        protected void DrawTexture(Texture texture, Vector2 vector, Vector2 scale, double rotation)
+        protected static void DrawTexture(Texture texture, Vector2 vector, Vector2 scale, double rotation = 0)
         {
+            if (Math.Abs(rotation) < 1e-2)
+            {
+                DrawTexture(texture.ID, vector, texture.Size);
+                return;
+            }
+
             GL.PushMatrix(); //Save the current matrix.
             GL.Translate(vector.X, vector.Y, 0);
             GL.Rotate(rotation, 0, 0, 1);
 
-            GL.Disable(EnableCap.Blend);
+            //GL.Disable(EnableCap.Blend);
             GL.Color3(Color.White);
             GL.BindTexture(TextureTarget.Texture2D, texture.ID);
 
@@ -143,7 +150,7 @@ namespace WindowHandler
             GL.PopMatrix();
 
             GL.BindTexture(TextureTarget.Texture2D, 0);
-            GL.Enable(EnableCap.Blend);
+            //GL.Enable(EnableCap.Blend);
         }
 
         private static float clipValue(float v, float min, float max)
@@ -164,6 +171,10 @@ namespace WindowHandler
                 (int) clipValue(a.B * k + b.B * (1 - k), 0, 255));
         }
 
+        public void Destroy()
+        {
+            Parent.Objects.Remove(this);
+        }
 
         public DrawableObject(Vector2 position)
         {

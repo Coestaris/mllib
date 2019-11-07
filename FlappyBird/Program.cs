@@ -6,7 +6,7 @@ namespace FlappyBird
     {
         public static void Main(string[] args)
         {
-            var window = new Window(500, 600, "FlappyBird");
+            var window = new Window(600, 600, "FlappyBird");
             var resorces = new Resources();
 
             new Game(window, resorces).Start();
