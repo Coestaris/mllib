@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using WindowHandler;
 
@@ -84,14 +85,37 @@ namespace FlappyBird
             return _pack[filename].ToBitmap();
         }
 
+        private static byte[] Decompress(byte[] data, int resultLength)
+        {
+            using ( var outStream = new MemoryStream())
+            {
+                var inStream  = new MemoryStream(data);
+                var deflateStream = new DeflateStream(inStream, CompressionMode.Decompress);
+
+                deflateStream.CopyTo(outStream);
+                outStream.Position = 0;
+
+                deflateStream.Close();
+                inStream.Close();
+
+                return outStream.ToArray();
+            }
+        }
+
         public Resources()
         {
             using (var stream = new FileStream(PackName, FileMode.Open))
             {
-                var byte4buffer = new byte[4];
+                var byte1buffer = new byte[1];
                 var byte2buffer = new byte[2];
-                stream.Read(byte4buffer, 0, 4);
+                var byte4buffer = new byte[4];
+                var useCompressing = false;
+
                 _pack = new Dictionary<string, PackImage>();
+                stream.Read(byte4buffer, 0, 4);
+
+                stream.Read(byte1buffer, 0, 1);
+                useCompressing = byte1buffer[0] == 1;
 
                 var count = GetUInt32(byte4buffer);
                 for (var i = 0; i < count; i++)
@@ -114,6 +138,13 @@ namespace FlappyBird
 
                     var dataBuffer = new byte[dataLen];
                     stream.Read(dataBuffer, 0, (int)dataLen);
+
+                    if (useCompressing)
+                    {
+                        stream.Read(byte4buffer, 0, 4);
+                        var uncompressedLen = GetUInt32(byte4buffer);
+                        dataBuffer = Decompress(dataBuffer, (int)uncompressedLen);
+                    }
 
                     _pack.Add(name, new PackImage
                     {

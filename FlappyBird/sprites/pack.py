@@ -2,9 +2,11 @@ from PIL import Image
 import os
 from glob import glob
 from sys import argv
+from zlib import compress
 
 ## Structure
 # 4 bytes - count of images
+# 1 byte - compression type (0 - none, 1 - deflate)
 #
 # Image structure
 # 2 bytes: width
@@ -13,6 +15,7 @@ from sys import argv
 # n bytes: name
 # 4 bytes: data length
 # n bytes: data
+# 4 bytes(if compression turned on): original data length
 #
 # All images stored in 8.8.8.8 RGBa format
 
@@ -37,7 +40,7 @@ if __name__ == "__main__":
 
     out = "out.pack"
     filter = "*.png"
-    archive = "none"
+    archive = "zlib"
 
     if "--help" in argv:
         print("Usage: python pack.py --out --filter --archive")
@@ -68,6 +71,7 @@ if __name__ == "__main__":
 
     with open(out, "wb") as file:
         file.write(bytes(int32tobytes(len(files))))
+        file.write(bytes([0 if archive == "None" else 1]))
 
         for imName in files:
             im = Image.open(imName)
@@ -91,7 +95,13 @@ if __name__ == "__main__":
                     pixels += int8tobytes(color[3])
             
             print("Image[{}x{}. Pixels: {}]".format(width, height, len(pixels)))
-            file.write(bytes(int32tobytes(len(pixels))))
-            file.write(bytes(pixels))
-    
+            
+            if archive == "none":
+                file.write(bytes(int32tobytes(len(pixels))))    
+                file.write(bytes(pixels))
+            else:
+                compresssed = compress(bytes(pixels))[2:-4]
+                file.write(bytes(int32tobytes(len(compresssed))))    
+                file.write(compresssed)
+                file.write(bytes(int32tobytes(len(pixels))))  
     pass
