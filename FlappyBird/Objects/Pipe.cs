@@ -17,7 +17,7 @@ namespace FlappyBird.Objects
         private double _x;
         private double _yOffset;
 
-        private const float PipeWidth = 60;
+        private const float PipeWidth = 120;
 
         public RectangleF Rectangle1;
         public RectangleF Rectangle2;
@@ -37,15 +37,15 @@ namespace FlappyBird.Objects
             if (_x < -_texture.Size.Width)
                 Destroy();
 
-            Rectangle1 = new RectangleF((float)_x - _texture.Size.Width / 2.0f, 0,
-                _texture.Size.Width,
-                Parent.Height / 2.0f - (float) _yOffset - PipeWidth);
+            Rectangle1.X = (float) _x - _texture.Size.Width / 2.0f;
+            Rectangle1.Y = 0;
+            Rectangle1.Width = _texture.Size.Width;
+            Rectangle1.Height = Parent.Height / 2.0f - (float) _yOffset - PipeWidth;
 
-            Rectangle2 = new RectangleF(
-                (float)_x - _texture.Size.Width / 2.0f,
-                Parent.Height / 2.0f - (float)_yOffset + PipeWidth,
-                _texture.Size.Width,
-                Parent.Height / 2.0f);
+            Rectangle2.X = (float) _x - _texture.Size.Width / 2.0f;
+            Rectangle2.Y = Parent.Height / 2.0f - (float) _yOffset + PipeWidth;
+            Rectangle2.Width = _texture.Size.Width;
+            Rectangle2.Height = Parent.Height / 2.0f;
 
         }
 
@@ -56,37 +56,41 @@ namespace FlappyBird.Objects
 
             GL.Begin(BeginMode.LineStrip);
 
-            GL.Vertex2(new Vector2(rectangle.Location.X, rectangle.Location.Y));
-            GL.Vertex2(new Vector2(rectangle.Location.X, rectangle.Location.Y + rectangle.Height));
+            GL.Vertex2(rectangle.Location.X, rectangle.Location.Y);
+            GL.Vertex2(rectangle.Location.X, rectangle.Location.Y + rectangle.Height);
 
-            GL.Vertex2(new Vector2(rectangle.Location.X, rectangle.Location.Y + rectangle.Height));
-            GL.Vertex2(new Vector2(rectangle.Location.X + rectangle.Width, rectangle.Location.Y + rectangle.Height));
+            GL.Vertex2(rectangle.Location.X, rectangle.Location.Y + rectangle.Height);
+            GL.Vertex2(rectangle.Location.X + rectangle.Width, rectangle.Location.Y + rectangle.Height);
 
-            GL.Vertex2(new Vector2(rectangle.Location.X + rectangle.Width, rectangle.Location.Y + rectangle.Height));
-            GL.Vertex2(new Vector2(rectangle.Location.X + rectangle.Width, rectangle.Location.Y));
+            GL.Vertex2(rectangle.Location.X + rectangle.Width, rectangle.Location.Y + rectangle.Height);
+            GL.Vertex2(rectangle.Location.X + rectangle.Width, rectangle.Location.Y);
 
-            GL.Vertex2(new Vector2(rectangle.Location.X + rectangle.Width, rectangle.Location.Y));
-            GL.Vertex2(new Vector2(rectangle.Location.X, rectangle.Location.Y));
+            GL.Vertex2(rectangle.Location.X + rectangle.Width, rectangle.Location.Y);
+            GL.Vertex2(rectangle.Location.X, rectangle.Location.Y);
 
             GL.End();
         }
 
         public override void Draw()
         {
-            DrawTexture(_texture, new Vector2(
-                    (float)_x - _texture.Size.Width / 2.0f,
-                    Parent.Height / 2.0f + PipeWidth - (float)_yOffset),
-                new Vector2( 1, 1));
+            DrawTexture(
+                _texture,
+                (float) _x - _texture.Size.Width / 2.0f,
+                Parent.Height / 2.0f + PipeWidth - (float) _yOffset,
+                1,
+                1);
 
 
-            DrawTexture(_texture, new Vector2(
-                    (float)_x,
-                    Parent.Height / 2.0f - PipeWidth - (float)_yOffset - _texture.Size.Height / 2.0f),
-                new Vector2(1, 1), 180);
+            DrawTexture(
+                _texture,
+                (float) _x,
+                Parent.Height / 2.0f - PipeWidth - (float) _yOffset - _texture.Size.Height / 2.0f,
+                -1,
+                1,
+                180);
 
-
-            DrawRectangle(Rectangle1, Color.Blue);
-            DrawRectangle(Rectangle2, Color.Purple);
+            //DrawRectangle(Rectangle1, Color.Blue);
+            //DrawRectangle(Rectangle2, Color.Purple);
         }
 
         public bool CheckCollision(Player player)

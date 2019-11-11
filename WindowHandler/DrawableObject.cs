@@ -81,11 +81,13 @@ namespace WindowHandler
 
         protected void DrawCenteredTexture(Texture texture, bool x, bool y)
         {
-            var offsetPoint = new Vector2(x ? texture.Size.Width / 2 : 0, y ? texture.Size.Height / 2 : 0);
-            DrawTexture(texture, Position - offsetPoint);
+            float offX = x ? texture.Size.Width / 2 : 0;
+            float offY = y ? texture.Size.Height / 2 : 0;
+
+            DrawTexture(texture, Position.X - offX, Position.Y);
         }
 
-        protected static void DrawTexture(int texture, Vector2 vector, Size size)
+        protected static void DrawTexture(int texture, float posX, float posY, float sizeX, float sizeY)
         {
             //GL.Disable(EnableCap.Blend);
             GL.Color3(Color.White);
@@ -93,37 +95,37 @@ namespace WindowHandler
             GL.Begin(BeginMode.Quads);
 
             GL.TexCoord2(0, 0);
-            GL.Vertex2(vector);
+            GL.Vertex2(posX, posY);
 
             GL.TexCoord2(1, 0);
-            GL.Vertex2(vector.X + size.Width, vector.Y);
+            GL.Vertex2(posX + sizeX, posY);
 
             GL.TexCoord2(1, 1);
-            GL.Vertex2(vector.X + size.Width, vector.Y + size.Height);
+            GL.Vertex2(posX + sizeX, posY + sizeY);
 
             GL.TexCoord2(0, 1);
-            GL.Vertex2(vector.X, vector.Y + size.Height);
+            GL.Vertex2(posX, posY + sizeY);
 
             GL.End();
             GL.BindTexture(TextureTarget.Texture2D, 0);
             //GL.Enable(EnableCap.Blend);
         }
 
-        protected static void DrawTexture(Texture texture, Vector2 vector)
+        protected static void DrawTexture(Texture texture, float posX, float posY)
         {
-            DrawTexture(texture.ID, vector, texture.Size);
+            DrawTexture(texture.ID, posX, posY, texture.Size.Width, texture.Size.Height);
         }
 
-        protected static void DrawTexture(Texture texture, Vector2 vector, Vector2 scale, double rotation = 0)
+        protected static void DrawTexture(Texture texture, float posX, float posY, float scaleX, float scaleY, double rotation = 0)
         {
             if (Math.Abs(rotation) < 1e-2)
             {
-                DrawTexture(texture.ID, vector, texture.Size);
+                DrawTexture(texture.ID, posX, posY, texture.Size.Width, texture.Size.Height);
                 return;
             }
 
             GL.PushMatrix(); //Save the current matrix.
-            GL.Translate(vector.X, vector.Y, 0);
+            GL.Translate(posX, posY, 0);
             GL.Rotate(rotation, 0, 0, 1);
 
             //GL.Disable(EnableCap.Blend);
@@ -133,16 +135,16 @@ namespace WindowHandler
             GL.Begin(BeginMode.Quads);
 
             GL.TexCoord2(0, 0);
-            GL.Vertex2(-texture.Size.Width / 2, -texture.Size.Height / 2);
+            GL.Vertex2(-texture.Size.Width / 2.0f * scaleX, -texture.Size.Height / 2.0f * scaleY);
 
             GL.TexCoord2(1, 0);
-            GL.Vertex2(texture.Size.Width / 2, -texture.Size.Height / 2);
+            GL.Vertex2(texture.Size.Width / 2.0f * scaleX, -texture.Size.Height / 2.0f * scaleY);
 
             GL.TexCoord2(1, 1);
-            GL.Vertex2(texture.Size.Width / 2, texture.Size.Height / 2);
+            GL.Vertex2(texture.Size.Width / 2.0f * scaleX, texture.Size.Height / 2.0f * scaleY);
 
             GL.TexCoord2(0, 1);
-            GL.Vertex2(-texture.Size.Width / 2, texture.Size.Height / 2);
+            GL.Vertex2(-texture.Size.Width / 2.0f * scaleX, texture.Size.Height / 2.0f * scaleY);
 
 
             GL.End();

@@ -18,21 +18,28 @@ namespace FlappyBird.Objects
 
         private bool   _flapped = false;
 
-        private const double MaxYVel  =  -12;
-        private const double YAcc     =   -1;
+        private const double MaxYVel    = -12;
+        private const double YAcc       =  -1;
 
-        private const double FlapYVel =     7;
-        private const double FLapRotVel =  -4;
+        private const double MinRotVel  = -40;
+        private const double FlapYVel   =   7;
+        private const double FLapRotVel =  -6;
 
-        private const double RotAcc   =    .4;
-        private const double RotMax   =    35;
+        private const double RotAcc     =  .6;
+        private const double RotMax     =  35;
         private const int AnimationSpeed =  4;
 
         public RectangleF Rectangle;
 
-        public Player(Texture[] playerTextures) : base(new Vector2(200, 400))
+        public int Score;
+        public double Fitness;
+
+        public double Speed;
+
+        public Player(Texture[] playerTextures, double speed) : base(new Vector2(200, 400))
         {
             _playerTextures = playerTextures;
+            Speed = speed;
             Flap();
         }
 
@@ -63,16 +70,21 @@ namespace FlappyBird.Objects
                     Position.X - _playerTextures[0].Size.Width / 2.0f,
                     Position.Y - _playerTextures[0].Size.Height / 2.0f),
                 _playerTextures[0].Size);
+
+            Fitness += Speed;
         }
 
         public override void Draw()
         {
-            DrawTexture(_playerTextures[_textureCounter],
-                Position,
-                Vector2.One,
-                _rot < -40 ? -40 : _rot);
+            DrawTexture(
+                _playerTextures[_textureCounter],
+                Position.X,
+                Position.Y,
+                1,
+                1,
+                _rot < MinRotVel ? MinRotVel : _rot);
 
-            Pipe.DrawRectangle(Rectangle, Color.Chocolate);
+            //Pipe.DrawRectangle(Rectangle, Color.Chocolate);
         }
 
         public void Flap()

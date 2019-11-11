@@ -30,10 +30,11 @@ namespace FlappyBird.Objects
         public override void Draw()
         {
             var background = (int)Math.Ceiling(Parent.Width / (float)_backgroundTexture.Size.Width) + 1;
-            for(var i = 0; i < background; i++)
-                DrawTexture(_backgroundTexture, new Vector2(
-                    (float)_bx + _backgroundTexture.Size.Width * (i - _backgroundOffset),
-                    0));
+            for (var i = 0; i < background; i++)
+                DrawTexture(
+                    _backgroundTexture,
+                    (float) _bx + _backgroundTexture.Size.Width * (i - _backgroundOffset),
+                    0);
         }
     }
 }

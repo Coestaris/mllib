@@ -15,10 +15,11 @@ namespace FlappyBird
         public Player Player;
         public Ground Ground;
 
-        public const double Speed = 1.8;
         public List<Pipe> Pipes;
+        private int _frameCounter = 0;
 
-        private int couter = 0;
+        public const double Speed = 1.8;
+        public const int PipeFreq = 120;
 
         public Game(Window window, Resources resources) : base(window)
         {
@@ -29,7 +30,7 @@ namespace FlappyBird
 
         protected override void OnUpdate()
         {
-            if (couter % 120 == 0)
+            if (_frameCounter % PipeFreq == 0)
             {
                 Pipe pipe;
                 InsertObject(1, pipe = new Pipe(Resources.Pipes[0], -Speed,
@@ -37,7 +38,7 @@ namespace FlappyBird
                 Pipes.Add(pipe);
             }
 
-            couter++;
+            _frameCounter++;
             var collided = false;
             foreach (var pipe in Pipes)
                 if (pipe.CheckCollision(Player))
@@ -50,6 +51,8 @@ namespace FlappyBird
 
             if(collided)
                 Reset();
+
+            //_frameCounter / (float) PipeFreq;
         }
 
         public void Reset()
@@ -59,10 +62,10 @@ namespace FlappyBird
             Pipes.Clear();
 
             AddObject(new Background(Resources.Backgrounds[0], -Speed));
-            AddObject(Player = new Player(Resources.Birds[0]));
+            AddObject(Player = new Player(Resources.Birds[0], Speed));
             AddObject(Ground = new Ground(Resources.Base, -Speed));
 
-            couter = 0;
+            _frameCounter = 0;
             Window.KeyBinds.Add(Key.Space, Player.Flap);
         }
 

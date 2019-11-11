@@ -17,7 +17,7 @@ namespace CNNVisualization.Objects
 
         public override void Draw()
         {
-            DrawTexture(Texture, Position, Scale);
+            DrawTexture(Texture, Position.X, Position.Y, Scale.X, Scale.Y);
         }
     }
 }

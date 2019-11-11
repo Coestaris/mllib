@@ -60,7 +60,7 @@ namespace CNNVisualization.Objects
         private readonly int dataSize;
         private Random _random = new Random();
         private int _frameCounter;
-        private DrawableBrush _brush = DrawableBrush.GlowingBrush;
+        private DrawableBrush _brush = DrawableBrush.SuperGlowingBrush;
 
         private PointF _lastImagePoint;
         private bool _lastPoint;
@@ -224,7 +224,7 @@ namespace CNNVisualization.Objects
             //if (_frameCounter % 2 == 0)
                 UpdateTexture();
 
-            DrawTexture(Texture, Position);
+            DrawTexture(Texture, Position.X, Position.Y);
 
             _frameCounter++;
         }

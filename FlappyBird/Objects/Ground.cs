@@ -30,9 +30,9 @@ namespace FlappyBird.Objects
         {
             var ground = (int)Math.Ceiling(Parent.Width / (float)_groundTexture.Size.Width) + 1;
             for(var i = 0; i < ground; i++)
-                DrawTexture(_groundTexture, new Vector2(
+                DrawTexture(_groundTexture,
                     (float)_x + _groundTexture.Size.Width * (i - _groundOffset),
-                    (float)GroundY * Parent.Height));
+                    (float)GroundY * Parent.Height);
         }
 
         public bool CheckCollision(Player player)
