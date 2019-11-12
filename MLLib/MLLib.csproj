@@ -58,6 +58,7 @@
     <Compile Include="AI\CNN\Layers\SubsamplingLayer.cs" />
     <Compile Include="AI\CNN\OutputLayer.cs" />
     <Compile Include="AI\CNN\Trainer.cs" />
+    <Compile Include="AI\GA\Genome.cs" />
     <Compile Include="AI\Network.cs" />
     <Compile Include="AI\MBNN\NeuralNetwork.cs" />
     <Compile Include="AI\OBNN\CostFunctions.cs" />
@@ -74,9 +75,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="AI\GA" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

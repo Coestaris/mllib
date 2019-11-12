@@ -60,7 +60,7 @@ namespace CNNVisualization.Objects
         private readonly int dataSize;
         private Random _random = new Random();
         private int _frameCounter;
-        private DrawableBrush _brush = DrawableBrush.SuperGlowingBrush;
+        private DrawableBrush _brush = DrawableBrush.GlowingBrush;
 
         private PointF _lastImagePoint;
         private bool _lastPoint;
