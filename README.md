@@ -12,7 +12,8 @@ Neural network stuff:
  * http://neuralnetworksanddeeplearning.com
  * [Great videos about FNN](https://www.youtube.com/watch?v=8bNIkfRJZpo)
  * [A lot of tricks to improve FNN](http://cs231n.github.io/neural-networks-2)
-
+ * [Neural networks optimization methods like Adadelta, Adam, etc.(russian)](https://habr.com/ru/post/318970/)
+ 
 CNN stuff:
  * [Great visualizations of CNN](https://cs.stanford.edu/people/karpathy/convnetjs)
  * [JS Convolutional neural network Library](https://github.com/karpathy/convnetjs)
@@ -21,8 +22,20 @@ CNN stuff:
  * [Lectures about CNNs](https://youtu.be/bNb2fEVKeEo)
  * [CNN Backprop explanation](https://pdfs.semanticscholar.org/5d79/11c93ddcb34cac088d99bd0cae9124e5dcd1.pdf)
 
+RNN stuff:
+ * [RNN implementation in 100 lines](https://gist.github.com/karpathy/d4dee566867f8291f086)
+ * [RNN implementation](https://github.com/karpathy/char-rnn)
+ * [Great lecture about RNN](https://www.youtube.com/watch?v=6niqTuYFZLQ)
+ * [Another video about RNN](https://www.youtube.com/watch?v=lWkFhVq9-nc)
+ 
+GA:
+ * [General GA overview](https://towardsdatascience.com/introduction-to-genetic-algorithms-including-example-code-e396e98d8bf3)
+ * [Article about NeuroEvolution](https://homepages.inf.ed.ac.uk/pkoehn/publications/gann94.pdf)
+ * [Real-Coded Genetic Algorithms](https://engineering.purdue.edu/~sudhoff/ee630/Lecture04.pdf)
+     
+
 Math stuff:
- * [Gaussian distribution explanation](https://habr.com/ru/post/208684/)
+ * [Gaussian distribution explanation (russian)](https://habr.com/ru/post/208684/)
  * [List of activation functions](https://en.wikipedia.org/wiki/Activation_function)
  * [Article about cross-Entropy function](https://machinelearningmastery.com/loss-and-loss-functions-for-training-deep-learning-neural-networks/)
  * [Article about Matrix Norm](https://en.wikipedia.org/wiki/Matrix_norm)
@@ -38,5 +51,7 @@ TODO list:
  * [**DONE**] Convolutional neural network (CNN)
  * [**Done**] Single layer recurrent neural network (RNN)
  * Recurrent Neural network using Torch
- * Some genetic algorithms
+ * Abstract generic algorithm
+ * Flappybird using neuroevolution
+ * NEAT algorithm
  ....

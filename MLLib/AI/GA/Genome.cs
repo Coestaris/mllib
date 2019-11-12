@@ -90,8 +90,6 @@ namespace ml.AI.GA
             points.Add(len);
             pointsCount++;
 
-            Console.WriteLine(string.Join(", ", points));
-
             var child1 = new Genome();
             var child2 = new Genome();
 
