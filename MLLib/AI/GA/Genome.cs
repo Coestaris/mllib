@@ -15,7 +15,7 @@ namespace ml.AI.GA
         SBC
     }
 
-    public class Genome
+    public class Genome : ICloneable
     {
         public List<double> Genes;
 
@@ -23,6 +23,12 @@ namespace ml.AI.GA
         private static GaussianRandom _gaussianRandom = new GaussianRandom(_random);
 
         public const double GaussianMean = .5;
+
+        public const double LinearCrossoverMin = .2;
+        public const double LinearCrossoverMax = .8;
+
+        public const double BlendCrossoverMin = .45;
+        public const double BlendCrossoverMax = .55;
 
         private Genome()
         {
@@ -32,6 +38,23 @@ namespace ml.AI.GA
         public Genome(List<double> genes)
         {
             Genes = genes;
+        }
+
+        public object Clone()
+        {
+            return new Genome
+            {
+                Genes = new List<double>(Genes)
+            };
+        }
+
+        public void Mutate(double mutationRate, bool gaussian)
+        {
+            for (var i = 0; i < Genes.Count; i++)
+                Genes[i] += Random(
+                    gaussian,
+                    -mutationRate * Genes[i],
+                    mutationRate * Genes[i]);
         }
 
         public static Genome[] Crossover(
@@ -46,9 +69,11 @@ namespace ml.AI.GA
                     return CrossoverNPoint(parent1, parent2, gaussian, 2);
                 case CrossoverAlgorithm.ThreePoint:
                     return CrossoverNPoint(parent1, parent2, gaussian, 3);
-
                 case CrossoverAlgorithm.Linear:
+                    return CrossoverLinear(parent1, parent2, gaussian);
                 case CrossoverAlgorithm.Blend:
+                    return CrossoverBlend(parent1, parent2, gaussian);
+
                 case CrossoverAlgorithm.SBC:
                 default:
                     throw new ArgumentOutOfRangeException(nameof(algorithm), algorithm, null);
@@ -75,6 +100,76 @@ namespace ml.AI.GA
                 rand = _random.NextDouble();
 
             return rand;
+        }
+
+        private static Genome[] CrossoverSBC(Genome parent1, Genome parent2, bool gaussian)
+        {
+            var len = parent1.Genes.Count;
+            var child1 = new Genome();
+            var child2 = new Genome();
+
+            for (var i = 0; i < len; i++)
+            {
+                var p1 = parent1.Genes[i];
+                var p2 = parent2.Genes[i];
+                var u = Random(gaussian);
+                //todo:::
+                child1.Genes.Add(0);
+                child2.Genes.Add(0);
+            }
+
+            return new[]
+            {
+                child1,
+                child2
+            };
+        }
+
+
+        private static Genome[] CrossoverBlend(Genome parent1, Genome parent2, bool gaussian)
+        {
+            var len = parent1.Genes.Count;
+            var child1 = new Genome();
+            var child2 = new Genome();
+
+            for (var i = 0; i < len; i++)
+            {
+                var p1 = parent1.Genes[i];
+                var p2 = parent2.Genes[i];
+                var a = Random(gaussian, BlendCrossoverMin, BlendCrossoverMax);
+
+                child1.Genes.Add(Random(gaussian, p1 - a * (p2 - p1), p2 + a * (p2 - p1)));
+                child2.Genes.Add(Random(gaussian, p1 - a * (p2 - p1), p2 + a * (p2 - p1)));
+            }
+
+            return new[]
+            {
+                child1,
+                child2
+            };
+        }
+
+        private static Genome[] CrossoverLinear(Genome parent1, Genome parent2, bool gaussian)
+        {
+            var len = parent1.Genes.Count;
+            var child1 = new Genome();
+            var child2 = new Genome();
+            var a = Random(gaussian, LinearCrossoverMin, LinearCrossoverMax);
+
+            for (var i = 0; i < len; i++)
+            {
+                var p1 = parent1.Genes[i];
+                var p2 = parent2.Genes[i];
+
+                child1.Genes.Add(a * p1 + (1 - a) * p2);
+                child2.Genes.Add(a * p2 + (1 - a) * p1);
+            }
+
+            return new[]
+            {
+                child1,
+                child2
+            };
         }
 
         private static Genome[] CrossoverNPoint(Genome parent1, Genome parent2, bool gaussian, int pointsCount)
