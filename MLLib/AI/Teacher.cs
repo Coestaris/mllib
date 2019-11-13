@@ -127,7 +127,7 @@ namespace ml.AI
                 }
                 MonitorInfos.Add(info);
                 if(!SilentMode) Console.WriteLine(sb);
-                ResetError();
+                //ResetError();
             }
         }
 

@@ -84,7 +84,7 @@ namespace WindowHandler
             float offX = x ? texture.Size.Width / 2 : 0;
             float offY = y ? texture.Size.Height / 2 : 0;
 
-            DrawTexture(texture, Position.X - offX, Position.Y);
+            DrawTexture(texture, Position.X - offX, Position.Y - offY);
         }
 
         protected static void DrawTexture(int texture, float posX, float posY, float sizeX, float sizeY)
@@ -120,7 +120,7 @@ namespace WindowHandler
         {
             if (Math.Abs(rotation) < 1e-2)
             {
-                DrawTexture(texture.ID, posX, posY, texture.Size.Width, texture.Size.Height);
+                DrawTexture(texture.ID, posX, posY, texture.Size.Width * scaleX, texture.Size.Height * scaleY);
                 return;
             }
 
