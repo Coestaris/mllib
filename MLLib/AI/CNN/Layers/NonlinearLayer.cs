@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using ml.AIMath;
+using MLLib.AIMath;
 
-namespace ml.AI.CNN.Layers
+namespace MLLib.AI.CNN.Layers
 {
     public class ReLuLayer : CNNLayer
     {

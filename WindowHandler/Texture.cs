@@ -4,7 +4,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using OpenTK.Graphics.OpenGL;
 
-namespace WindowHandler
+namespace MLLib.WindowHandler
 {
     public class Texture : IDisposable
     {

@@ -6,7 +6,7 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 
-namespace WindowHandler
+namespace MLLib.WindowHandler
 {
     public class Window : GameWindow
     {

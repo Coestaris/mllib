@@ -4,7 +4,7 @@ using System.Drawing;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 
-namespace WindowHandler
+namespace MLLib.WindowHandler
 {
     public class StringRenderer
     {

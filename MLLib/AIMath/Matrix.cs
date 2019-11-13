@@ -2,7 +2,7 @@ using System;
 using System.Drawing;
 using System.Threading;
 
-namespace ml.AIMath
+namespace MLLib.AIMath
 {
     public class Matrix
     {

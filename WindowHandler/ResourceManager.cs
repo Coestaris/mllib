@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace WindowHandler
+namespace MLLib.WindowHandler
 {
     public class ResourceManager
     {

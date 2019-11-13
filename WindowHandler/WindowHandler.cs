@@ -1,4 +1,4 @@
-namespace WindowHandler
+namespace MLLib.WindowHandler
 {
     public abstract class WindowHandler
     {

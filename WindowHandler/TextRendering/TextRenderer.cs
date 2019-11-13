@@ -3,7 +3,7 @@ using System.Drawing;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 
-namespace WindowHandler
+namespace MLLib.WindowHandler
 {
     public class TextRenderer : IDisposable
     {

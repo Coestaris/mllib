@@ -1,6 +1,6 @@
 using System;
 
-namespace ml.AIMath
+namespace MLLib.AIMath
 {
 	public class GaussianRandom
 	{

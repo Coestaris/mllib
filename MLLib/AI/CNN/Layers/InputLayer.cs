@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using ml.AIMath;
+using MLLib.AIMath;
 
-namespace ml.AI.CNN.Layers
+namespace MLLib.AI.CNN.Layers
 {
     public class InputLayer : CNNLayer
     {

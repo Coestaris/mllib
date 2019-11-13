@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ml.AI
+namespace MLLib.AI
 {
     public struct TeacherMonitorInfo
     {

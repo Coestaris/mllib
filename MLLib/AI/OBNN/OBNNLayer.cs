@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using System.Text;
-using ml.AIMath;
+using MLLib.AIMath;
 
-namespace ml.AI.OBNN
+namespace MLLib.AI.OBNN
 {
     public class NNLayer
     {

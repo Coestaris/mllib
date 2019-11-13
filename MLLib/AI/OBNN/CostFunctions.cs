@@ -1,7 +1,7 @@
 using System;
-using ml.AIMath;
+using MLLib.AIMath;
 
-namespace ml.AI.OBNN
+namespace MLLib.AI.OBNN
 {
     public abstract class CostFunction
     {

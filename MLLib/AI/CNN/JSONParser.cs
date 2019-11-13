@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using ml.AI.CNN.Layers;
+using MLLib.AI.CNN.Layers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace ml.AI.CNN
+namespace MLLib.AI.CNN
 {
     /*
      *"sx": 5,

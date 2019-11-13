@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ml.AIMath;
+using MLLib.AIMath;
 
-namespace ml.AI.RNN
+namespace MLLib.AI.RNN
 {
     //Single layer char based RNN
     public class RecurrentNeuralNetwork

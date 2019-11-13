@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using ml.AIMath;
+using MLLib.AIMath;
 
-namespace ml.AI.GA
+namespace MLLib.AI.GA
 {
     public enum CrossoverAlgorithm
     {

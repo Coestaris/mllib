@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
-using ml.AIMath;
+using MLLib.AIMath;
 
-namespace ml.AI.MBNN
+namespace MLLib.AI.MBNN
 {
     public class NeuralNetwork : Network
     {

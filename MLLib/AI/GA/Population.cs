@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ml.AI.GA
+namespace MLLib.AI.GA
 {
     public class Population
     {

@@ -1,4 +1,4 @@
-namespace ml.AI.CNN
+namespace MLLib.AI.CNN
 {
     public abstract class OutputLayer : CNNLayer
     {

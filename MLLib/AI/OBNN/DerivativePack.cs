@@ -1,4 +1,4 @@
-namespace ml.AI.OBNN
+namespace MLLib.AI.OBNN
 {
     internal struct DerivativePack
     {

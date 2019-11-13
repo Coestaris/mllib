@@ -1,4 +1,4 @@
-namespace ml.AI
+namespace MLLib.AI
 {
     public abstract class TrainSample
     {

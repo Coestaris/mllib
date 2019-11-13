@@ -5,7 +5,7 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 
-namespace WindowHandler
+namespace MLLib.WindowHandler
 {
     public abstract class DrawableObject
     {

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Drawing;
-using ml.AI.CNN.Layers;
+using MLLib.AI.CNN.Layers;
 
-namespace ml.AI.CNN.Layers
+namespace MLLib.AI.CNN.Layers
 {
     public class FullyConnectedLayer : CNNLayer
     {

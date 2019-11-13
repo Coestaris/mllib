@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ml.AIMath;
+using MLLib.AIMath;
 
-namespace ml.AI.OBNN
+namespace MLLib.AI.OBNN
 {
     public class NeuralNetwork : Network
     {

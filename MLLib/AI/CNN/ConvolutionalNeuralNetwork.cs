@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using ml.AI.CNN.Layers;
+using MLLib.AI.CNN.Layers;
 
-namespace ml.AI.CNN
+namespace MLLib.AI.CNN
 {
     public class ConvolutionalNeuralNetwork
     {
@@ -74,8 +74,6 @@ namespace ml.AI.CNN
 
             if(!(layers.Last() is OutputLayer))
                 throw new ArgumentException("Last layer should be Output layer");
-
-
         }
     }
 }

@@ -1,7 +1,7 @@
 using System;
-using ml.AIMath;
+using MLLib.AIMath;
 
-namespace ml.AI
+namespace MLLib.AI
 {
     public abstract class Network
     {

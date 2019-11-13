@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace ml.AI.CNN.Layers
+namespace MLLib.AI.CNN.Layers
 {
     public class SubsamplingLayer : CNNLayer
     {

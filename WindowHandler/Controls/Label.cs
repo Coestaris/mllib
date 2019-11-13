@@ -1,6 +1,6 @@
 using OpenTK;
 
-namespace WindowHandler.Controls
+namespace MLLib.WindowHandler.Controls
 {
     public class Label : DrawableObject
     {

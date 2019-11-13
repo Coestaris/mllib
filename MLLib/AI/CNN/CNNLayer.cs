@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace ml.AI.CNN
+namespace MLLib.AI.CNN
 {
     public abstract class CNNLayer
     {

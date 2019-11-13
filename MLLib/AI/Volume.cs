@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using ml.AIMath;
+using MLLib.AIMath;
 using Newtonsoft.Json.Linq;
 
-namespace ml.AI
+namespace MLLib.AI
 {
     public struct Volume
     {

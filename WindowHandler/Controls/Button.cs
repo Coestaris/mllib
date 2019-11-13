@@ -2,7 +2,7 @@ using System;
 using OpenTK;
 using OpenTK.Input;
 
-namespace WindowHandler.Controls
+namespace MLLib.WindowHandler.Controls
 {
     public class Button : DrawableObject
     {

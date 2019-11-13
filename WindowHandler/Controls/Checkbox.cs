@@ -3,7 +3,7 @@ using System.Drawing;
 using OpenTK;
 using OpenTK.Input;
 
-namespace WindowHandler.Controls
+namespace MLLib.WindowHandler.Controls
 {
     public class Checkbox : DrawableObject
     {
