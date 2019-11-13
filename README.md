@@ -2,6 +2,10 @@
 
 The repository where I learn artificial neural networks and AI
 
+Applications:
+ * Few application using this library can be found [here](https://github.com/Coestaris/mllib.Tests).
+ * AI learns to play flappybird can be found [here](https://github.com/Coestaris/NEBird)
+
 ##### Some useful resources
 Neural network stuff:
  * [Backpropagation example](https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/)
