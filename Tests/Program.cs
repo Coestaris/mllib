@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using ml.AI.GA;
-using ml.AI.RNN;
 
 namespace Tests
 {

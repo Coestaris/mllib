@@ -8,3 +8,5 @@ packages/
 ml\.sln\.DotSettings\.user
 
 *.user
+
+ml\.Tests/
