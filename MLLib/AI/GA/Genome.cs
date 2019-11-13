@@ -17,7 +17,11 @@ namespace ml.AI.GA
 
     public class Genome : ICloneable
     {
+        public int CreatureID;
         public List<double> Genes;
+        public double Fitness;
+
+        private Func<Genome, double> _fitnessFunc;
 
         private static Random _random = new Random();
         private static GaussianRandom _gaussianRandom = new GaussianRandom(_random);
@@ -30,25 +34,33 @@ namespace ml.AI.GA
         public const double BlendCrossoverMin = .45;
         public const double BlendCrossoverMax = .55;
 
-        private Genome()
+        private Genome(Func<Genome, double> fitnessFunc)
         {
             Genes= new List<double>();
+            _fitnessFunc = fitnessFunc;
         }
 
-        public Genome(List<double> genes)
+        public Genome(List<double> genes, Func<Genome, double> fitnessFunc)
         {
             Genes = genes;
+            _fitnessFunc = fitnessFunc ?? (genome => 0);
         }
+
 
         public object Clone()
         {
-            return new Genome
+            return new Genome(_fitnessFunc)
             {
-                Genes = new List<double>(Genes)
+                Genes = new List<double>(Genes),
             };
         }
 
-        public void Mutate(double mutationRate, bool gaussian)
+        internal void CalculateFitness()
+        {
+            Fitness = _fitnessFunc(this);
+        }
+
+        internal void Mutate(double mutationRate, bool gaussian)
         {
             for (var i = 0; i < Genes.Count; i++)
                 Genes[i] += Random(
@@ -57,7 +69,7 @@ namespace ml.AI.GA
                     mutationRate * Genes[i]);
         }
 
-        public static Genome[] Crossover(
+        internal static Genome[] Crossover(
             Genome parent1, Genome parent2,
             CrossoverAlgorithm algorithm, bool gaussian)
         {
@@ -81,13 +93,13 @@ namespace ml.AI.GA
         }
 
         //returns random value in range [min, max]
-        private static double Random(bool gaussian, double min, double max)
+        internal static double Random(bool gaussian, double min, double max)
         {
             return Random(gaussian) * (max - min) + min;
         }
 
         //returns random value in range [0, 1]
-        private static double Random(bool gaussian)
+        internal static double Random(bool gaussian)
         {
             double rand;
             if (gaussian)
@@ -105,8 +117,8 @@ namespace ml.AI.GA
         private static Genome[] CrossoverSBC(Genome parent1, Genome parent2, bool gaussian)
         {
             var len = parent1.Genes.Count;
-            var child1 = new Genome();
-            var child2 = new Genome();
+            var child1 = new Genome(parent1._fitnessFunc);
+            var child2 = new Genome(parent1._fitnessFunc);
 
             for (var i = 0; i < len; i++)
             {
@@ -129,8 +141,8 @@ namespace ml.AI.GA
         private static Genome[] CrossoverBlend(Genome parent1, Genome parent2, bool gaussian)
         {
             var len = parent1.Genes.Count;
-            var child1 = new Genome();
-            var child2 = new Genome();
+            var child1 = new Genome(parent1._fitnessFunc);
+            var child2 = new Genome(parent1._fitnessFunc);
 
             for (var i = 0; i < len; i++)
             {
@@ -152,8 +164,8 @@ namespace ml.AI.GA
         private static Genome[] CrossoverLinear(Genome parent1, Genome parent2, bool gaussian)
         {
             var len = parent1.Genes.Count;
-            var child1 = new Genome();
-            var child2 = new Genome();
+            var child1 = new Genome(parent1._fitnessFunc);
+            var child2 = new Genome(parent1._fitnessFunc);
             var a = Random(gaussian, LinearCrossoverMin, LinearCrossoverMax);
 
             for (var i = 0; i < len; i++)
@@ -185,8 +197,8 @@ namespace ml.AI.GA
             points.Add(len);
             pointsCount++;
 
-            var child1 = new Genome();
-            var child2 = new Genome();
+            var child1 = new Genome(parent1._fitnessFunc);
+            var child2 = new Genome(parent1._fitnessFunc);
 
             for (var i = 0; i < len; i++)
             {

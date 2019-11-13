@@ -9,31 +9,38 @@ namespace Tests
 {
     internal class Program
     {
+        public static double FitnessFunc(Genome gen)
+        {
+            var x = gen.Genes[0];
+            var y = gen.Genes[1];
+
+            return -(x * x / 10.0 + y * y / 6.0) + 12.0;
+        }
+
         public static void Main(string[] args)
         {
-            var gen1 = new Genome(new List<double>());
-            var gen2 = new Genome(new List<double>());
+            var random = new Random();
+            var population = new Population(50, i => new Genome(
+                new List<double>
+                {
+                    random.Next() % 2 == 0 ? random.NextDouble() * 10 - 20 : random.NextDouble() * 10 + 10,
+                    random.Next() % 2 == 0 ? random.NextDouble() * 10 - 20 : random.NextDouble() * 10 + 10,
+                },
+                FitnessFunc));
 
-            for (var i = 0; i < 10; i++)
+            Genome bestCreature = null;
+            while (bestCreature == null || Math.Abs(bestCreature.Fitness - 12) > 1e-4)
             {
-                gen1.Genes.Add(i);
-                gen2.Genes.Add(10 - i);
+                bestCreature = population.BestCreature(false);
+                Console.WriteLine("X: {0:F3}, Y : {1:F3}, Fitness: {2:F5}",
+                    bestCreature.Genes[0],
+                    bestCreature.Genes[1],
+                    bestCreature.Fitness);
+
+                population.Selection(false);
+                population.Crossover( CrossoverAlgorithm.Blend);
+                population.Mutate(0.2);
             }
-
-            var children = Genome.Crossover(gen1, gen2, CrossoverAlgorithm.Linear, true);
-            Console.WriteLine($"Parent1: [{string.Join(", ", gen1.Genes)}]");
-            Console.WriteLine($"Parent2: [{string.Join(", ", gen2.Genes)}]");
-
-            Console.WriteLine($"Child1:  [{string.Join(", ", children[0].Genes)}]");
-            Console.WriteLine($"Child2:  [{string.Join(", ", children[1].Genes)}]");
-
-            for (var i = 0; i < 10; i++)
-            {
-                children[1].Mutate(.1, true);
-                Console.WriteLine($"Child2:  [{string.Join(", ", children[1].Genes)}]");
-            }
-
-
         }
     }
 }
