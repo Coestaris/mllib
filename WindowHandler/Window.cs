@@ -11,6 +11,7 @@ namespace MLLib.WindowHandler
     public class Window : GameWindow
     {
         public List<DrawableObject> Objects;
+        public WindowHandler Handler;
         public Color4 BackgroundColor;
 
         public Action UpdateFunc;

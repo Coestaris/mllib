@@ -4,15 +4,12 @@ using MLLib.AIMath;
 
 namespace MLLib.AI.GA
 {
-    public enum CrossoverAlgorithm
+    public interface ICreature
     {
-        SinglePoint,
-        TwoPoint,
-        ThreePoint,
-
-        Linear,
-        Blend,
-        SBC
+        void Reset();
+        object GetState();
+        bool Step(int time);
+        double GetFitness();
     }
 
     public class Genome : ICloneable
@@ -20,6 +17,10 @@ namespace MLLib.AI.GA
         public int CreatureID;
         public List<double> Genes;
         public double Fitness;
+
+        private bool _isCreature;
+        private ICreature _creature;
+        public object State;
 
         private Func<Genome, double> _fitnessFunc;
 
@@ -36,8 +37,15 @@ namespace MLLib.AI.GA
 
         private Genome(Func<Genome, double> fitnessFunc)
         {
-            Genes= new List<double>();
+            Genes = new List<double>();
             _fitnessFunc = fitnessFunc;
+        }
+
+        public Genome(List<double> genes, ICreature creature)
+        {
+            Genes = genes;
+            _isCreature = true;
+            _creature = creature;
         }
 
         public Genome(List<double> genes, Func<Genome, double> fitnessFunc)
@@ -52,12 +60,25 @@ namespace MLLib.AI.GA
             return new Genome(_fitnessFunc)
             {
                 Genes = new List<double>(Genes),
+                State =  State,
+                _creature =  _creature,
+                _isCreature =  _isCreature,
+                CreatureID = CreatureID
             };
         }
 
         internal void CalculateFitness()
         {
-            Fitness = _fitnessFunc(this);
+            if (_isCreature)
+            {
+                var time = 0;
+                _creature.Reset();
+                while (_creature.Step(time++)) { }
+
+                State = _creature.GetState();
+                Fitness = _creature.GetFitness();
+            }
+            else Fitness = _fitnessFunc(this);
         }
 
         internal void Mutate(double mutationRate, bool gaussian)

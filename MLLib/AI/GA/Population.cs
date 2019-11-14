@@ -4,6 +4,11 @@ using System.Linq;
 
 namespace MLLib.AI.GA
 {
+    public class CreaturePopulation
+    {
+        public Population GenePopulation;
+    }
+
     public class Population
     {
         public int Count;

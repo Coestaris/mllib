@@ -5,16 +5,18 @@ namespace MLLib.WindowHandler
         public Window Window;
         public ResourceManager ResourceManager;
 
-        protected void InsertObject(int index, DrawableObject obj)
+        public DrawableObject InsertObject(int index, DrawableObject obj)
         {
             obj.Parent = Window;
             Window.Objects.Insert(index, obj);
+            return obj;
         }
 
-        protected void AddObject(DrawableObject obj)
+        public DrawableObject AddObject(DrawableObject obj)
         {
             obj.Parent = Window;
             Window.Objects.Add(obj);
+            return obj;
         }
 
         public WindowHandler(Window window)
@@ -22,6 +24,7 @@ namespace MLLib.WindowHandler
             ResourceManager = new ResourceManager();
             Window.ResourceManager = ResourceManager;
             Window = window;
+            window.Handler = this;
         }
 
         protected virtual void OnUpdate() {}

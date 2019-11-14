@@ -11,9 +11,9 @@ namespace MLLib.WindowHandler
     {
         private bool _lastHover;
         private bool _lastClick;
+        private bool _destroyed;
 
         public Window Parent;
-
         public Vector2 Position;
 
         public abstract void Draw();
@@ -175,7 +175,11 @@ namespace MLLib.WindowHandler
 
         public void Destroy()
         {
-            Parent.Objects.Remove(this);
+            if (!_destroyed)
+            {
+                Parent.Objects.Remove(this);
+                _destroyed = true;
+            }
         }
 
         public DrawableObject(Vector2 position)

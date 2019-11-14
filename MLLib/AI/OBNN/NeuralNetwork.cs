@@ -5,13 +5,15 @@ using MLLib.AIMath;
 
 namespace MLLib.AI.OBNN
 {
-    public class NeuralNetwork : Network
+    public class NeuralNetwork : Network, ICloneable
     {
-        public readonly List<NNLayer> Layers;
+        public List<NNLayer> Layers;
         public double LearningRate = 0.5;
 
         protected double[][] _biasNudges;
         protected double[][] _weightNudges;
+
+        private NeuralNetwork() {}
 
         public NeuralNetwork(IReadOnlyList<int> layerSizes)
         {
@@ -169,6 +171,17 @@ namespace MLLib.AI.OBNN
                 throw new ArgumentException("Sizes of input and input layer doesn't match", nameof(expected));
 
             return Layers.Last().CalculateError(expected);
+        }
+
+        public object Clone()
+        {
+            return new NeuralNetwork()
+            {
+                _biasNudges = (double[][]) _biasNudges.Clone(),
+                _weightNudges = (double[][]) _weightNudges.Clone(),
+                LearningRate = LearningRate,
+                Layers = Layers.Select(p => (NNLayer)p.Clone()).ToList()
+            };
         }
     }
 }

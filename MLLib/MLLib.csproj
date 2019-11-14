@@ -58,7 +58,9 @@
     <Compile Include="AI\CNN\Layers\SubsamplingLayer.cs" />
     <Compile Include="AI\CNN\OutputLayer.cs" />
     <Compile Include="AI\CNN\Trainer.cs" />
+    <Compile Include="AI\GA\CrossoverAlgorithm.cs" />
     <Compile Include="AI\GA\Genome.cs" />
+    <Compile Include="AI\GA\NeuroEvolution.cs" />
     <Compile Include="AI\GA\Population.cs" />
     <Compile Include="AI\Network.cs" />
     <Compile Include="AI\MBNN\NeuralNetwork.cs" />

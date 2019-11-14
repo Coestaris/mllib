@@ -5,18 +5,20 @@ using MLLib.AIMath;
 
 namespace MLLib.AI.OBNN
 {
-    public class NNLayer
+    public class NNLayer : ICloneable
     {
         private static Random _random = new Random((int)DateTime.Now.ToBinary());
         private static GaussianRandom _gaussianRandom = new GaussianRandom(_random);
 
         public int Size;
         public int NextLayerSize;
-        public   readonly double[] Activations;
-        public   readonly double[] Biases;
-        public   readonly double[] Weights; //to right
-        internal readonly double[] _Zs;
-        internal readonly DerivativePack[] Derivatives;
+        public   double[] Activations;
+        public   double[] Biases;
+        public   double[] Weights; //to right
+        internal double[] _Zs;
+        internal DerivativePack[] Derivatives;
+
+        private NNLayer() { }
 
         internal NNLayer(int size, int nextLayerSize, int prevLayerSize)
         {
@@ -112,6 +114,20 @@ namespace MLLib.AI.OBNN
             for (var i = 0; i < Size; i++)
                 acc += Math.Pow(expected[i] - Activations[i], 2);
             return acc;
+        }
+
+        public object Clone()
+        {
+            return new NNLayer
+            {
+                Size = Size,
+                NextLayerSize = NextLayerSize,
+                Activations = (double[])Activations.Clone(),
+                Biases = (double[])Biases.Clone(),
+                Weights = (double[])Weights.Clone(),
+                _Zs = (double[])_Zs.Clone(),
+                Derivatives = (DerivativePack[])Derivatives.Clone(),
+            };
         }
     }
 }
