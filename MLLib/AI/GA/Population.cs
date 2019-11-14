@@ -4,11 +4,6 @@ using System.Linq;
 
 namespace MLLib.AI.GA
 {
-    public class CreaturePopulation
-    {
-        public Population GenePopulation;
-    }
-
     public class Population
     {
         public int Count;
@@ -40,7 +35,9 @@ namespace MLLib.AI.GA
         public Genome BestCreature(bool min)
         {
             foreach (var genome in Pop)
+            {
                 genome.CalculateFitness();
+            }
 
             return GetSortedPop(min)[0];
         }
@@ -90,6 +87,14 @@ namespace MLLib.AI.GA
         {
             foreach (var genome in Pop)
                 genome.Mutate(mutationRate, gaussian);
+        }
+
+        public List<object> GetStates()
+        {
+            foreach (var genome in Pop)
+                genome.CalculateFitness();
+
+            return Pop.Select(p => p.State).ToList();
         }
     }
 }

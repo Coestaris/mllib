@@ -4,14 +4,6 @@ using MLLib.AIMath;
 
 namespace MLLib.AI.GA
 {
-    public interface ICreature
-    {
-        void Reset();
-        object GetState();
-        bool Step(int time);
-        double GetFitness();
-    }
-
     public class Genome : ICloneable
     {
         public int CreatureID;
@@ -35,10 +27,14 @@ namespace MLLib.AI.GA
         public const double BlendCrossoverMin = .45;
         public const double BlendCrossoverMax = .55;
 
-        private Genome(Func<Genome, double> fitnessFunc)
+        private Genome(Genome genome)
         {
             Genes = new List<double>();
-            _fitnessFunc = fitnessFunc;
+            _isCreature = genome._isCreature;
+            _fitnessFunc = genome._fitnessFunc;
+
+            if (_isCreature)
+                _creature = genome._creature.CreatureChild();
         }
 
         public Genome(List<double> genes, ICreature creature)
@@ -57,14 +53,7 @@ namespace MLLib.AI.GA
 
         public object Clone()
         {
-            return new Genome(_fitnessFunc)
-            {
-                Genes = new List<double>(Genes),
-                State =  State,
-                _creature =  _creature,
-                _isCreature =  _isCreature,
-                CreatureID = CreatureID
-            };
+            return new Genome(this);
         }
 
         internal void CalculateFitness()
@@ -73,6 +62,8 @@ namespace MLLib.AI.GA
             {
                 var time = 0;
                 _creature.Reset();
+                _creature.Update(this);
+
                 while (_creature.Step(time++)) { }
 
                 State = _creature.GetState();
@@ -138,8 +129,8 @@ namespace MLLib.AI.GA
         private static Genome[] CrossoverSBC(Genome parent1, Genome parent2, bool gaussian)
         {
             var len = parent1.Genes.Count;
-            var child1 = new Genome(parent1._fitnessFunc);
-            var child2 = new Genome(parent1._fitnessFunc);
+            var child1 = new Genome(parent1);
+            var child2 = new Genome(parent1);
 
             for (var i = 0; i < len; i++)
             {
@@ -162,8 +153,8 @@ namespace MLLib.AI.GA
         private static Genome[] CrossoverBlend(Genome parent1, Genome parent2, bool gaussian)
         {
             var len = parent1.Genes.Count;
-            var child1 = new Genome(parent1._fitnessFunc);
-            var child2 = new Genome(parent1._fitnessFunc);
+            var child1 = new Genome(parent1);
+            var child2 = new Genome(parent1);
 
             for (var i = 0; i < len; i++)
             {
@@ -185,8 +176,8 @@ namespace MLLib.AI.GA
         private static Genome[] CrossoverLinear(Genome parent1, Genome parent2, bool gaussian)
         {
             var len = parent1.Genes.Count;
-            var child1 = new Genome(parent1._fitnessFunc);
-            var child2 = new Genome(parent1._fitnessFunc);
+            var child1 = new Genome(parent1);
+            var child2 = new Genome(parent1);
             var a = Random(gaussian, LinearCrossoverMin, LinearCrossoverMax);
 
             for (var i = 0; i < len; i++)
@@ -218,8 +209,8 @@ namespace MLLib.AI.GA
             points.Add(len);
             pointsCount++;
 
-            var child1 = new Genome(parent1._fitnessFunc);
-            var child2 = new Genome(parent1._fitnessFunc);
+            var child1 = new Genome(parent1);
+            var child2 = new Genome(parent1);
 
             for (var i = 0; i < len; i++)
             {

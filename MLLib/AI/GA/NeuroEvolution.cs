@@ -12,7 +12,7 @@ namespace MLLib.AI.GA
             foreach (var layer in neuralNetwork.Layers)
             {
                 genes.AddRange(layer.Biases);
-                genes.AddRange(layer.Weights);
+                if(layer.Weights != null) genes.AddRange(layer.Weights);
             }
             return new Genome(genes, creature);
         }
@@ -25,8 +25,12 @@ namespace MLLib.AI.GA
             {
                 layer.Biases = genome.Genes.Skip(offset).Take(layer.Biases.Length).ToArray();
                 offset += layer.Biases.Length;
-                layer.Weights = genome.Genes.Skip(offset).Take(layer.Weights.Length).ToArray();
-                offset += layer.Weights.Length;
+
+                if (layer.Weights != null)
+                {
+                    layer.Weights = genome.Genes.Skip(offset).Take(layer.Weights.Length).ToArray();
+                    offset += layer.Weights.Length;
+                }
             }
 
             return newNN;

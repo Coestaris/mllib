@@ -124,7 +124,7 @@ namespace MLLib.AI.OBNN
                 NextLayerSize = NextLayerSize,
                 Activations = (double[])Activations.Clone(),
                 Biases = (double[])Biases.Clone(),
-                Weights = (double[])Weights.Clone(),
+                Weights = (double[]) Weights?.Clone(),
                 _Zs = (double[])_Zs.Clone(),
                 Derivatives = (DerivativePack[])Derivatives.Clone(),
             };
