@@ -36,22 +36,28 @@ namespace MLLib.AI.GA
 
         public Genome BestCreature(bool min)
         {
-            foreach (var genome in Pop)
-                genome.CalculateFitness();
-
             return GetSortedPop(min)[0];
         }
 
-        public void MultiThreadSelection(bool minimize, int threads, int take = -1)
+        public void EvaluateFitness()
+        {
+            foreach (var genome in Pop)
+                genome.CalculateFitness();
+        }
+
+        public void MultiThreadEvaluateFitness(int threads)
         {
             _threads = new Thread[threads];
             for(var i = 0; i < threads; i++)
                 _threads[i] = new Thread(AsyncFitnessFunc);
 
-            var genomes = Pop.ToArray().Split(threads).Select(p => p.ToArray()).ToArray();
+            var genomes = Pop.ToArray().Split(Pop.Count / threads).Select(p => p.ToArray()).ToArray();
 
             for (var i = 0; i < threads; i++)
                 _threads[i].Start(genomes[i]);
+
+            for (var i = 0; i < threads; i++)
+                _threads[i].Join();
         }
 
         private static void AsyncFitnessFunc(object obj)
@@ -61,15 +67,9 @@ namespace MLLib.AI.GA
                 genome.CalculateFitness();
         }
 
-        public List<object> Selection(bool minimize, int take = -1)
+        public void Selection(bool minimize, int take = -1)
         {
-            foreach (var genome in Pop)
-                genome.CalculateFitness();
-
-            var states = Pop.Select(p => p.State).ToList();
             Pop = GetSortedPop(minimize).Take(take == -1 ? Count / 2 : take).ToList();
-
-            return states;
         }
 
         private List<Genome> GetSortedPop(bool min)
@@ -79,16 +79,14 @@ namespace MLLib.AI.GA
 
         private int ClipCrossoverIndex(int i, bool min)
         {
-            if (min)
-                return i < 0 ? 0 : i;
-            else
-                return i > Pop.Count - 1 ? Pop.Count - 1: i;
+            if (min) return i < 0 ? 0 : i;
+            return i > Pop.Count - 1 ? Pop.Count - 1: i;
         }
 
         public void Crossover(CrossoverAlgorithm algorithm, bool gaussian = true)
         {
             var newPop = new List<Genome>();
-            for (var i = 0; i < Count / 2; i += 2)
+            while (newPop.Count + Pop.Count < Count)
             {
                 var minIndex = ClipCrossoverIndex(-CrossoverRange, true);
                 var maxIndex = ClipCrossoverIndex(CrossoverRange, false);
@@ -102,9 +100,18 @@ namespace MLLib.AI.GA
                     i2 = ClipCrossoverIndex(i2 + 1, false);
                 }
 
-                newPop.AddRange(Genome.Crossover(Pop[i1], Pop[i2], algorithm, gaussian));
+                var newGenomes = Genome.Crossover(Pop[i1], Pop[i2], algorithm, gaussian);
+
+                if(newPop.Count < Count - Pop.Count)
+                    newPop.Add(newGenomes[0]);
+                if(newPop.Count < Count - Pop.Count)
+                    newPop.Add(newGenomes[1]);
             }
+
             Pop.AddRange(newPop);
+
+            if(Pop.Count != Count)
+                throw new Exception();
         }
 
         public void Mutate(double mutationRate, bool gaussian = false)
@@ -116,6 +123,11 @@ namespace MLLib.AI.GA
         public double AverageFitness()
         {
             return Pop.Sum(p => p.Fitness) / Pop.Count;
+        }
+
+        public List<object> GetStates()
+        {
+            return Pop.Select(p => p.State).ToList();
         }
     }
 }

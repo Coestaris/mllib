@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using MLLib.AI.GA;
 using MLLib.AI.OBNN;
 
@@ -39,6 +40,8 @@ namespace Tests
             DoTest(0, 1);
             DoTest(1, 0);
             DoTest(1, 1);
+
+            Thread.Sleep(5);
             return false;
         }
 

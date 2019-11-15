@@ -30,6 +30,8 @@ namespace Tests
             Genome bestCreature = null;
             while (bestCreature == null || Math.Abs(bestCreature.Fitness - 12) > 1e-4)
             {
+                population.EvaluateFitness();
+
                 bestCreature = population.BestCreature(false);
                 Console.WriteLine("X: {0:F3}, Y : {1:F3}, Fitness: {2:F5}",
                     bestCreature.Genes[0],
@@ -44,7 +46,7 @@ namespace Tests
 
         public static void CalculateXOR()
         {
-            var population = new Population(100, i =>
+            var population = new Population(1000, i =>
             {
                 var nn = new NeuralNetwork(new[] {2, 10, 10, 2});
                 nn.FillRandom();
@@ -52,10 +54,14 @@ namespace Tests
                 return NeuroEvolution.NNToGenome(nn, new XORSolver(nn));
             });
 
+            var start = DateTime.Now;
             Genome bestCreature = null;
             var generation = 0;
             while (bestCreature == null || Math.Abs(bestCreature.Fitness) > 1e-5)
             {
+                population.MultiThreadEvaluateFitness(8); //12seconds
+                //population.EvaluateFitness(); //136seconds
+
                 bestCreature = population.BestCreature(true);
                 Console.WriteLine("Generation {0}. Best: {1:F9}. Average: {2:F4}",
                     generation++,
@@ -67,6 +73,7 @@ namespace Tests
                 population.Mutate(1);
             }
 
+            Console.WriteLine("Done in: {0}ms", (DateTime.Now - start).TotalMilliseconds);
             while (true)
             {
                 Console.Write("Enter two bits: ");
