@@ -35,19 +35,17 @@ namespace MLLib.AI.GA
         public Genome BestCreature(bool min)
         {
             foreach (var genome in Pop)
-            {
                 genome.CalculateFitness();
-            }
 
             return GetSortedPop(min)[0];
         }
 
-        public void Selection(bool minimize)
+        public void Selection(bool minimize, int take = -1)
         {
             foreach (var genome in Pop)
                 genome.CalculateFitness();
 
-            Pop = GetSortedPop(minimize).Take(Count / 2).ToList();
+            Pop = GetSortedPop(minimize).Take(take == -1 ? Count / 2 : take).ToList();
         }
 
         private List<Genome> GetSortedPop(bool min)
@@ -60,15 +58,16 @@ namespace MLLib.AI.GA
             if (min)
                 return i < 0 ? 0 : i;
             else
-                return i > Count / 2 - 1 ? Count / 2 - 1: i;
+                return i > Pop.Count - 1 ? Pop.Count - 1: i;
         }
 
-        public void Crossover(CrossoverAlgorithm algorithm, bool hardParent = false, bool gaussian = true)
+        public void Crossover(CrossoverAlgorithm algorithm, bool gaussian = true)
         {
+            var newPop = new List<Genome>();
             for (var i = 0; i < Count / 2; i += 2)
             {
-                var minIndex = ClipCrossoverIndex(i - CrossoverRange, true);
-                var maxIndex = ClipCrossoverIndex(i + CrossoverRange, false);
+                var minIndex = ClipCrossoverIndex(-CrossoverRange, true);
+                var maxIndex = ClipCrossoverIndex(CrossoverRange, false);
 
                 var i1 = (int)Genome.Random(gaussian, minIndex, maxIndex);
                 var i2 = (int)Genome.Random(gaussian, minIndex, maxIndex);
@@ -79,8 +78,9 @@ namespace MLLib.AI.GA
                     i2 = ClipCrossoverIndex(i2 + 1, false);
                 }
 
-                Pop.AddRange(Genome.Crossover(Pop[i1], Pop[i2], algorithm, gaussian));
+                newPop.AddRange(Genome.Crossover(Pop[i1], Pop[i2], algorithm, gaussian));
             }
+            Pop.AddRange(newPop);
         }
 
         public void Mutate(double mutationRate, bool gaussian = false)
@@ -95,6 +95,11 @@ namespace MLLib.AI.GA
                 genome.CalculateFitness();
 
             return Pop.Select(p => p.State).ToList();
+        }
+
+        public double AverageFitness()
+        {
+            return Pop.Sum(p => p.Fitness) / Pop.Count;
         }
     }
 }

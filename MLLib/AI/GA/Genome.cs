@@ -9,9 +9,9 @@ namespace MLLib.AI.GA
         public int CreatureID;
         public List<double> Genes;
         public double Fitness;
+        public ICreature Creature;
 
         private bool _isCreature;
-        private ICreature _creature;
         public object State;
 
         private Func<Genome, double> _fitnessFunc;
@@ -21,11 +21,13 @@ namespace MLLib.AI.GA
 
         public const double GaussianMean = .5;
 
-        public const double LinearCrossoverMin = .2;
-        public const double LinearCrossoverMax = .8;
+        public const double LinearCrossoverMin = .4;
+        public const double LinearCrossoverMax = .6;
 
         public const double BlendCrossoverMin = .45;
         public const double BlendCrossoverMax = .55;
+
+        public const double CrossoverSwapChance = 0.6;
 
         private Genome(Genome genome)
         {
@@ -34,14 +36,14 @@ namespace MLLib.AI.GA
             _fitnessFunc = genome._fitnessFunc;
 
             if (_isCreature)
-                _creature = genome._creature.CreatureChild();
+                Creature = genome.Creature.CreatureChild();
         }
 
         public Genome(List<double> genes, ICreature creature)
         {
             Genes = genes;
             _isCreature = true;
-            _creature = creature;
+            Creature = creature;
         }
 
         public Genome(List<double> genes, Func<Genome, double> fitnessFunc)
@@ -61,13 +63,13 @@ namespace MLLib.AI.GA
             if (_isCreature)
             {
                 var time = 0;
-                _creature.Reset();
-                _creature.Update(this);
+                Creature.Reset();
+                Creature.Update(this);
 
-                while (_creature.Step(time++)) { }
+                while (Creature.Step(time++)) { }
 
-                State = _creature.GetState();
-                Fitness = _creature.GetFitness();
+                State = Creature.GetState();
+                Fitness = Creature.GetFitness();
             }
             else Fitness = _fitnessFunc(this);
         }
@@ -75,10 +77,7 @@ namespace MLLib.AI.GA
         internal void Mutate(double mutationRate, bool gaussian)
         {
             for (var i = 0; i < Genes.Count; i++)
-                Genes[i] += Random(
-                    gaussian,
-                    -mutationRate * Genes[i],
-                    mutationRate * Genes[i]);
+                Genes[i] += Random(gaussian) * (mutationRate * 2) - mutationRate;
         }
 
         internal static Genome[] Crossover(
@@ -97,6 +96,8 @@ namespace MLLib.AI.GA
                     return CrossoverLinear(parent1, parent2, gaussian);
                 case CrossoverAlgorithm.Blend:
                     return CrossoverBlend(parent1, parent2, gaussian);
+                case CrossoverAlgorithm.RandomSwap:
+                    return CrossoverRandomSwap(parent1, parent2, gaussian);
 
                 case CrossoverAlgorithm.SBC:
                 default:
@@ -124,6 +125,35 @@ namespace MLLib.AI.GA
                 rand = _random.NextDouble();
 
             return rand;
+        }
+
+        private static Genome[] CrossoverRandomSwap(Genome parent1, Genome parent2, bool gaussian)
+        {
+            var len = parent1.Genes.Count;
+            var child1 = new Genome(parent1);
+            var child2 = new Genome(parent1);
+
+            for (var i = 0; i < len; i++)
+            {
+                var p1 = parent1.Genes[i];
+                var p2 = parent2.Genes[i];
+                if (Random(gaussian) > CrossoverSwapChance)
+                {
+                    child1.Genes.Add(p2);
+                    child2.Genes.Add(p1);
+                }
+                else
+                {
+                    child1.Genes.Add(p1);
+                    child2.Genes.Add(p2);
+                }
+            }
+
+            return new[]
+            {
+                child1,
+                child2
+            };
         }
 
         private static Genome[] CrossoverSBC(Genome parent1, Genome parent2, bool gaussian)
@@ -179,6 +209,7 @@ namespace MLLib.AI.GA
             var child1 = new Genome(parent1);
             var child2 = new Genome(parent1);
             var a = Random(gaussian, LinearCrossoverMin, LinearCrossoverMax);
+            //var a = 0.6;
 
             for (var i = 0; i < len; i++)
             {

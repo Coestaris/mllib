@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using ml.AI.GA;
+using System.Linq;
+using MLLib.AI.GA;
+using MLLib.AI.OBNN;
 
 namespace Tests
 {
-    internal class Program
+    internal static class Program
     {
         public static double FitnessFunc(Genome gen)
         {
@@ -14,7 +16,7 @@ namespace Tests
             return -(x * x / 10.0 + y * y / 6.0) + 12.0;
         }
 
-        public static void Main(string[] args)
+        public static void SearchingMaximum()
         {
             var random = new Random();
             var population = new Population(50, i => new Genome(
@@ -35,9 +37,59 @@ namespace Tests
                     bestCreature.Fitness);
 
                 population.Selection(false);
-                population.Crossover( CrossoverAlgorithm.Blend);
+                population.Crossover(CrossoverAlgorithm.Blend);
                 population.Mutate(0.2);
             }
+        }
+
+        public static void CalculateXOR()
+        {
+            var population = new Population(100, i =>
+            {
+                var nn = new NeuralNetwork(new[] {2, 10, 10, 2});
+                nn.FillRandom();
+
+                return NeuroEvolution.NNToGenome(nn, new XORSolver(nn));
+            });
+
+            Genome bestCreature = null;
+            var generation = 0;
+            while (bestCreature == null || Math.Abs(bestCreature.Fitness) > 1e-5)
+            {
+                bestCreature = population.BestCreature(true);
+                Console.WriteLine("Generation {0}. Best: {1:F9}. Average: {2:F4}",
+                    generation++,
+                    bestCreature.Fitness,
+                    population.AverageFitness());
+
+                population.Selection(true, 3);
+                population.Crossover(CrossoverAlgorithm.Blend);
+                population.Mutate(1);
+            }
+
+            while (true)
+            {
+                Console.Write("Enter two bits: ");
+                var bits = Console.ReadLine().Split(' ');
+                if(bits.Length != 2)
+                    break;
+
+                var a = double.Parse(bits[0]);
+                var b = double.Parse(bits[1]);
+
+                var output = (bestCreature.Creature as XORSolver).NeuralNetwork
+                    .ForwardPass(new[] {a, b}).ToList();
+                var max = output.IndexOf(output.Max());
+
+                Console.WriteLine("{0} ^ {1} = {2} [{3:F4}, {4:F4}]",
+                    a, b, max == 1 ? 1 : 0, output[0], output[1]);
+            }
+        }
+
+        public static void Main(string[] args)
+        {
+           CalculateXOR();
+           //SearchingMaximum();
         }
     }
 }

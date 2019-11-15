@@ -8,6 +8,7 @@ namespace MLLib.AI.GA
 
         Linear,
         Blend,
-        SBC
+        SBC,
+        RandomSwap
     }
 }
