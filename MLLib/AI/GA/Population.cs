@@ -47,14 +47,23 @@ namespace MLLib.AI.GA
 
         public void MultiThreadEvaluateFitness(int threads)
         {
+            var len = Pop.Count / threads;
+            var off = Pop.Count % threads;
+            if (off != 0) threads++;
+
+            var genomes = Pop.ToArray().Split(len).Select(p => p.ToArray()).ToArray();
+
             _threads = new Thread[threads];
             for(var i = 0; i < threads; i++)
                 _threads[i] = new Thread(AsyncFitnessFunc);
 
-            var genomes = Pop.ToArray().Split(Pop.Count / threads).Select(p => p.ToArray()).ToArray();
-
             for (var i = 0; i < threads; i++)
-                _threads[i].Start(genomes[i]);
+            {
+                if(i == threads - 1)
+                    _threads[i].Start(Pop.Skip(len * (threads - 1)).ToArray());
+                else
+                    _threads[i].Start(genomes[i]);
+            }
 
             for (var i = 0; i < threads; i++)
                 _threads[i].Join();
@@ -88,8 +97,8 @@ namespace MLLib.AI.GA
             var newPop = new List<Genome>();
             while (newPop.Count + Pop.Count < Count)
             {
-                var minIndex = ClipCrossoverIndex(-CrossoverRange, true);
-                var maxIndex = ClipCrossoverIndex(CrossoverRange, false);
+                var minIndex = ClipCrossoverIndex(0, true);
+                var maxIndex = ClipCrossoverIndex(Pop.Count, false);
 
                 var i1 = (int)Genome.Random(gaussian, minIndex, maxIndex);
                 var i2 = (int)Genome.Random(gaussian, minIndex, maxIndex);
