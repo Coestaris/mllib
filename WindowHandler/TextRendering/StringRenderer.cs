@@ -22,6 +22,7 @@ namespace MLLib.WindowHandler
         private readonly int _texture;
         private readonly Dictionary<char, CharInfo> _charInfos;
 
+        private float _fontHeight;
         public readonly string CharSet;
         public readonly Font Font;
         public readonly Brush Brush;
@@ -72,10 +73,7 @@ namespace MLLib.WindowHandler
                 xOff = nextX;
             }
 
-            GL.Enable(EnableCap.Blend);
-            GL.Enable(EnableCap.Texture2D);
-            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-            GL.BlendEquation(BlendEquationMode.FuncAdd);
+            _fontHeight = font.GetHeight();
         }
 
 
@@ -85,7 +83,7 @@ namespace MLLib.WindowHandler
 
             var xOff = pos.X;
             var y1 = pos.Y;
-            var y2 = pos.Y + Font.GetHeight();
+            var y2 = pos.Y + _fontHeight;
             foreach (var c in str)
             {
                 var ci = _charInfos[c];
