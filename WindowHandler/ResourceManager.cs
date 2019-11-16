@@ -13,6 +13,7 @@ namespace MLLib.WindowHandler
             _stringRenderers = new List<StringRenderer>();
         }
 
+        public List<StringRenderer> StringRenderers => _stringRenderers;
         public int TexturesCount => _textures.Count;
 
         public void PushRenderer(StringRenderer renderer)

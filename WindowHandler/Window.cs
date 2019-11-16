@@ -17,14 +17,16 @@ namespace MLLib.WindowHandler
         public Action UpdateFunc;
         public Action CloseFunc;
 
-        public Dictionary<Key, Action> KeyBinds;
+        public Dictionary<Key, Action> KeyDownBinds;
+        public Dictionary<Key, Action> KeyUpBinds;
         public static ResourceManager ResourceManager;
 
         public Window(int width, int height, string title) : base(width, height,
             new GraphicsMode(32, 24, 0, 8), title)
         {
             Objects = new List<DrawableObject>();
-            KeyBinds = new Dictionary<Key, Action>();
+            KeyDownBinds = new Dictionary<Key, Action>();
+            KeyUpBinds = new Dictionary<Key, Action>();
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
@@ -35,7 +37,11 @@ namespace MLLib.WindowHandler
                 Exit();
             }
 
-            foreach (var keyBind in KeyBinds)
+            foreach (var keyBind in KeyDownBinds)
+                if (input.IsKeyDown(keyBind.Key))
+                    keyBind.Value();
+
+            foreach (var keyBind in KeyUpBinds)
                 if (input.IsKeyDown(keyBind.Key))
                     keyBind.Value();
 

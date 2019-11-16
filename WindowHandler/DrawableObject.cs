@@ -165,7 +165,7 @@ namespace MLLib.WindowHandler
 
         protected Color LerpColor(Color a, Color b, float k)
         {
-            //k = (float)MLLib.AI.NNLayer.Sigmoid(k);
+            k = clipValue(k, 0, 1);
             return Color.FromArgb(
                 0,
                 (int) clipValue(a.R * k + b.R * (1 - k), 0, 255),
