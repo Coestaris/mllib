@@ -19,6 +19,8 @@ namespace MLLib.WindowHandler
 
         public Dictionary<Key, Action> KeyDownBinds;
         public Dictionary<Key, Action> KeyUpBinds;
+        public Dictionary<MouseButton, Action> MouseDownBind;
+        public Dictionary<MouseButton, Action> MouseUpBind;
         public static ResourceManager ResourceManager;
 
         public Window(int width, int height, string title) : base(width, height,
@@ -27,11 +29,14 @@ namespace MLLib.WindowHandler
             Objects = new List<DrawableObject>();
             KeyDownBinds = new Dictionary<Key, Action>();
             KeyUpBinds = new Dictionary<Key, Action>();
+            MouseDownBind = new Dictionary<MouseButton, Action>();
+            MouseUpBind = new Dictionary<MouseButton, Action>();
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             var input = Keyboard.GetState();
+            var mouse = Mouse.GetState();
             if (input.IsKeyDown(Key.Escape))
             {
                 Exit();
@@ -43,6 +48,14 @@ namespace MLLib.WindowHandler
 
             foreach (var keyBind in KeyUpBinds)
                 if (input.IsKeyDown(keyBind.Key))
+                    keyBind.Value();
+
+            foreach (var keyBind in MouseDownBind)
+                if (mouse.IsButtonDown(keyBind.Key))
+                    keyBind.Value();
+
+            foreach (var keyBind in MouseUpBind)
+                if (mouse.IsButtonUp(keyBind.Key))
                     keyBind.Value();
 
             for(var i = 0; i < Objects.Count; i++)
