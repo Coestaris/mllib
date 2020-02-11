@@ -65,6 +65,7 @@
     <Compile Include="AI\GA\Population.cs" />
     <Compile Include="AI\NEAT\ConnectionGene.cs" />
     <Compile Include="AI\NEAT\Genome.cs" />
+    <Compile Include="AI\NEAT\InnovationCounter.cs" />
     <Compile Include="AI\NEAT\NodeGene.cs" />
     <Compile Include="AI\Network.cs" />
     <Compile Include="AI\MBNN\NeuralNetwork.cs" />

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace MLLib.AI.NEAT
 {
 
@@ -12,5 +14,13 @@ namespace MLLib.AI.NEAT
 
         internal int ID;
         internal Type NodeType;
+
+        internal List<ConnectionGene> InputConnections;
+
+        public NodeGene(int id, Type nodeType)
+        {
+            ID = id;
+            NodeType = nodeType;
+        }
     }
 }
